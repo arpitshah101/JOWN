@@ -1,0 +1,16 @@
+{
+    "include": [
+        "src/**/*",
+        "typings/index.d.ts"
+    ],
+    "compilerOptions": {
+        "noImplicitAny": true,
+        "removeComments": true,
+        "sourceMap": true,
+        "target": "es5"
+    },
+    "exclude": [
+        "node_modules"
+    ],
+    "compileOnSave": false
+}
