@@ -4,8 +4,8 @@
   "description": "",
   "main": "./dist/main.js",
   "scripts": {
-    "start": "node dist/main.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node dest/main.js",
+    "test": "mocha dest/test/*"
   },
   "author": "",
   "license": "ISC",
@@ -17,9 +17,11 @@
     "browserify": "^13.1.1",
     "gulp": "^3.9.1",
     "gulp-sourcemaps": "^2.2.0",
+    "gulp-spawn-mocha": "^3.1.0",
     "gulp-typescript": "^3.1.2",
     "gulp-uglify": "^2.0.0",
     "gulp-util": "^3.0.7",
+    "istanbul": "^0.4.5",
     "tsify": "^2.0.2",
     "typescript": "^2.0.7",
     "vinyl-buffer": "^1.0.0",
