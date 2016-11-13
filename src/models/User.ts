@@ -37,8 +37,8 @@ interface User {
     userId: String,
     password: String,
     roles: String[]
-};
+}
 
-export interface Document extends mongoose.Document, User { };
+export interface Document extends mongoose.Document, User { }
 
 export var model = mongoose.model<Document>('User', userSchema);
