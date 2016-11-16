@@ -13,10 +13,10 @@ export class DataManager {
         return null;
     }
 
-    getData(instanceId: String, formName?: String): Object {
-        let query = Data.model.find({instanceId: instanceId, formName: formName});
-        query.exec(function(err: any, res: Data.Document[]) {
-            return res;
+    getData(instanceId: String, formName?: String): any {
+        let query = Data.model.findOne({instanceId: instanceId, formName: formName});
+        query.exec(function(err: any, res: Data.Document) {
+            return res.data;
         });
     }
 

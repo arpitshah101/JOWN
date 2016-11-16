@@ -6,8 +6,6 @@ import { DataManager } from '../modules/datamanager';
 var router = Router();
 
 
-
-
 //this function returns a boolean 
 //variable to indicates if file/form is saved successfully.
 function isSuccess() : boolean{
