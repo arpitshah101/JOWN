@@ -1,6 +1,8 @@
 import { Request, Router, Response　} from 'express';
 import * as mongoose from 'mongoose';
 
+import { DataManager } from '../modules/datamanager';
+
 var router = Router();
 
 
@@ -34,6 +36,8 @@ function getData(req:Request, res:Response){
       Implementation
     */
     let instanceId = req.params['instanceId'];
+    let result = DataManager.prototype.getData(instanceId);
+    res.json(result);
 }
 
 //retrive form based on instance id
