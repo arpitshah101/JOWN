@@ -43,7 +43,7 @@ let userSchema = new Schema({
 }, {versionKey: false});
 
 
-interface User {
+export interface User {
     userName: String,
     userEmail: String,
     userId: String,

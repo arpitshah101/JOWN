@@ -41,7 +41,7 @@ let workflowSchema = new Schema({
 }, {versionKey: false});
 
 
-interface Workflow {
+export interface Workflow {
     workflowId: Number,
 	workflowName: String,
 	owner: [User],
