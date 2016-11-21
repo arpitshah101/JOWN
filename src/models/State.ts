@@ -3,38 +3,34 @@ import * as mongoose from 'mongoose';
 let Schema = mongoose.Schema;
 
 let stateSchema = new Schema({
-
     condition: {
         type: String,
-        required: true
+        required: true,
+        default: "true"
     },
-
     status: {
         type: String,
         required: true
     },
-
-    action: {
+    task: {
         type: String,
         required: true
     },
-
     nextStates: {
         type: [Schema.Types.ObjectId],
-        required: true
+        required: true,
+        default: []
     },
-
     stateId: {
         type: Number,
         required: true
     }
-
 }, {versionKey: false});
 
 export interface State {
     condition: String,
     status: String,
-    action: String,
+    task: String,
     nextStates: State[],
     stateId: number    
 }
