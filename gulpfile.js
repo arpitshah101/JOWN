@@ -37,7 +37,7 @@ gulp.task("clean-dest", function() {
 /*
     Used to compile all .ts files and place them in the corresponding directory structure within "dest" folder
 */
-gulp.task("compile-ts", function() {
+gulp.task("compile-ts", ['clean-dest'], function() {
     return tsProject.src()
         .pipe(tsProject())
         .js.pipe(gulp.dest(basePaths.dest));
@@ -52,27 +52,20 @@ gulp.task("copy-public", function() {
 });
 
 gulp.task("copy-tests", function() {
-    return gulp.src([basePaths.src + '/tests/**'], {base: basePaths.src})
+    return gulp.src([basePaths.src + 'test/**'], {base: basePaths.src})
         .pipe(gulp.dest(basePaths.dest));
 });
 
-// gulp.task("run-tests", function() {
-//     exec('mocha ' + folderPath, function (error, stdout, stderr) {
-//         if (error) {
-//             console.error('exec error: ' + error);
-//             return;
-//         }
-//     });    
-// });
-
-gulp.task('test', function() {
+gulp.task('test', ['copy-tests', 'compile-ts'], function() {
   return gulp
-    .src(['dest/test/*.test.js'])
-    .pipe(mocha());
+    .src("dest/test/*.js")
+    .pipe(mocha({
+        R: 'spec',
+        istanbul: true
+    }));
 });
 
-gulp.task("default", function() {
-    gulp.run('clean-dest', 'compile-ts', 'copy-public', 'copy-tests');
+gulp.task("default",['clean-dest', 'compile-ts', 'copy-tests', 'copy-public', 'test'], function() {
 
     // ----------------- USE FOR WHEN PUBLIC FOLDER IS FINALLY OCCUPIED -----------------
     
