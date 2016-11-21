@@ -4,7 +4,7 @@
         "typings/index.d.ts"
     ],
     "compilerOptions": {
-        "noImplicitAny": true,
+        "noImplicitAny": false,
         "removeComments": true,
         "sourceMap": true,
         "target": "es5"
