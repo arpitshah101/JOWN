@@ -1,4 +1,5 @@
 var assert = require('assert');
+var Promise = require('bluebird');
 
 var taskRunner = require('../modules/taskRunner'); 
 
@@ -35,13 +36,17 @@ describe('TaskRunner', function() {
     describe('#run', function() {
         var tests = [
             {arg: 'jownprint hello', expected: "hello"},
-            {arg: 'email "Hello "', expected: 1}
+            {arg: 'email "Hello "', expected: 1},
+            {arg: 'ls -al', expected: 0},
+            {arg: 'echo "hello Professor Borgida!"', expected: 0}
         ];
 
         tests.forEach(function(test) {
             it('correctly runs ' + test.arg + ' function', function() {
                 var res = taskRunner.TaskRunner.prototype.run(test.arg);
-                assert.deepEqual(res, test.expected); 
+                res.then(function(resolve, reject) {
+                    assert.deepEqual(resolve, test.expected);
+                });
             });
         });
     });
