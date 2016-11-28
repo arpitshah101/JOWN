@@ -3,26 +3,25 @@ import * as mongoose from 'mongoose';
 let Schema = mongoose.Schema;
 
 let dataSchema = new Schema({
-
-    instanceId: {
-        type: String,
-        required: true
+    data: {
+        type: {},
+        required: true,
+        default: {}
     },
     formName: {
         type: String,
         default: null
     },
-    data: {
-        type: {},
-        required: true,
-        default: {}
-    }
-}, {versionType: false});
+    instanceId: {
+        type: String,
+        required: true
+    },
+}, { skipVersioning: true });
 
 export interface Data {
-    instanceId: string,
+    data: any,
     formName: string,
-    data: any
+    instanceId: string,
 }
 
 export interface Document extends mongoose.Document, Data { }
