@@ -4,19 +4,21 @@ let Schema = mongoose.Schema;
 
 let userSchema = new Schema({
     
-    name: {
+    userName: {
         type: String,
         required: true
     },
     
-    email: {
+    userEmail: {
         type: String,
-        required: true
+        required: true,
+		unique: true
     },
 
     userId: {
-        type: String,
-        required: true
+        type: Number,
+        required: true,
+		unique: true
     },
 
     password: {
@@ -24,21 +26,33 @@ let userSchema = new Schema({
         required: true
     },
 
-    roles: {
+    roles: { // is this best kept track off in this way in mongodb? or function like keeping different tables in sql?
         type: [String],
         required: true
-    }
+    },
+	
+	created: {
+		type: Date,
+		default: Date.now
+	},
+	
+	workflowInstances: {
+		type: [Number]
+	}
 
 }, {versionKey: false});
 
-interface User {
-    name: String,
-    email: String,
+
+export interface User {
+    userName: String,
+    userEmail: String,
     userId: String,
     password: String,
-    roles: String[]
-}
+    roles: String[],
+	created: Date,
+	workflowInstances: [Number]
+};
 
-export interface Document extends mongoose.Document, User { }
+export interface Document extends mongoose.Document, User { };
 
 export var model = mongoose.model<Document>('User', userSchema);

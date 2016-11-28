@@ -42,10 +42,11 @@ describe('TaskRunner', function() {
         ];
 
         tests.forEach(function(test) {
-            it('correctly runs ' + test.arg + ' function', function() {
+            it('correctly runs ' + test.arg + ' function', function(done) {
                 var res = taskRunner.TaskRunner.prototype.run(test.arg);
                 res.then(function(resolve, reject) {
                     assert.deepEqual(resolve, test.expected);
+                    done();
                 });
             });
         });

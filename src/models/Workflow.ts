@@ -6,16 +6,28 @@ let Schema = mongoose.Schema;
 
 let workflowSchema = new Schema({
 
-    name: {
+    workflowId: {
+        type: Number,
+        required: true,
+		unique: true
+    },
+	
+    workflowName: {
         type: String,
         required: true
     },
 
-    workflowId: {
-        type: Number,
-        required: true
-    },
-
+	owner: {
+		type: [User], //Or userIds?
+		required: true
+	},
+	
+	created: {
+		type: Date,
+		required: true,
+		default: Date.now
+	},
+	
     stateList: {
         type: [Schema.Types.ObjectId],
         required: true
@@ -28,13 +40,16 @@ let workflowSchema = new Schema({
 
 }, {versionKey: false});
 
-interface Workflow {
-    name: String,
-    workflowId: number,
+
+export interface Workflow {
+    workflowId: Number,
+	workflowName: String,
+	owner: [User],
+	created: Date,
     stateList: State.State[],
     formList: Form.Form[]
-}
+};
 
-export interface Document extends mongoose.Document, Workflow { }
+export interface Document extends mongoose.Document, Workflow { };
 
 var model = mongoose.model<Document>('Workflow', workflowSchema);
