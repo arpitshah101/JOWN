@@ -41,7 +41,9 @@ gulp.task("clean-dest", function () {
 */
 gulp.task("compile-ts", ['clean-dest'], function () {
     return tsProject.src()
-        .pipe(tsProject())
+        .pipe(tsProject({
+            skipLibCheck: true
+        }))
         .js.pipe(gulp.dest(basePaths.dest));
 });
 
