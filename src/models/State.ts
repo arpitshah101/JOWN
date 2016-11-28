@@ -3,48 +3,45 @@ import * as mongoose from 'mongoose';
 let Schema = mongoose.Schema;
 
 let stateSchema = new Schema({
-
-	stateId: {
-		type: Number,
-		required: true,
-		unique: true
-	},
-	
-    condition: {
-        type: String, //Should this be an array?
+    completedAt: {
+        type: Date
     },
-
-    stateStatus: { //Would prefer to call this "status" but gets marked as keyword to me
+    condition: {
         type: String,
         required: true,
-		default: 'future' 	//Not sure what to call states. We need for future, present and past.
-							// present = active? future = _? past = completed?
+        default: "true"
     },
-	
-	completedAt: {
-		type: Date
-	},
-	
-    action: {
-        type: String,
-        required: true
-    },
-
     nextStates: {
         type: [Schema.Types.ObjectId],
-        required: true
+        required: true,
+        default: []
     },
-	
-}, {versionKey: false});
-
+    stateId: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    stateStatus: {
+        type: String,
+        required: true,
+        // present = active? future = _? past = completed?
+        // incomplete, active, completed
+        default: 'incomplete'
+    },
+    task: {
+        type: String,
+        required: true,
+        default: 'do nothing'
+    },
+}, { versionKey: false });
 
 export interface State {
-	stateId: Number,
+    completedAt: Date,
     condition: String,
+    nextStates: State[],
+    stateId: String,
     stateStatus: String,
-	completedAt: Date,
-    action: String,
-    nextStates: State[], 
+    task: String
 };
 
 export interface Document extends mongoose.Document, State { };

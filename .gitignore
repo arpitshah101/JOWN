@@ -2,4 +2,5 @@ node_modules
 typings
 bower_components
 dest
+coverage
 .vscode

@@ -3,6 +3,33 @@ J.O.W.N. - Just Our Workflow Notation
 
 This is the prototyping repository for prototyping various behavior and learning the technologies in a *sandbox* environment for usage in the actual project codebase.
 
+# Setup
+
+**Prereq:** Node.js & NPM are installed and are added to the path.
+
+You should have access to some bash terminal for the following commands. 
+
+Clone the Git repository. 
+```
+git clone git@github.com:arpitshah101/JOWN.git
+```
+
+Install the following global dependencies:  
+```
+npm install -g bower gulp typescript tslint typings
+```
+
+Install all the local npm dependencies. 
+```
+npm install
+```
+
+Install all the type definitions for TypeScript. 
+```
+typings install
+```
+
+
 ## Technologies Used so far
 1. TypeScript
     * For backend code to provide typechecking despite ultimately being compiled to JavaScript.
