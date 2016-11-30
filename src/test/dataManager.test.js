@@ -5,7 +5,7 @@ mongoose.Promise = require('bluebird');
 
 mongoose.connect('mongodb://localhost:27017/jown-test');
 
-var DataManager = require("../modules/datamanager").DataManager.prototype;
+var DataManager = require("../modules/dataManager").DataManager.prototype;
 var Data = require("../models/Data").model;
 
 describe('DataManager', function () {
