@@ -60,9 +60,24 @@ describe('DataManager', function () {
 	});
 
 	describe("#saveData", function() {
-		it("should return Promise<true> if existing data is updated successfully");
-		it("should return Promise<true> if new data is saved successfully");
-		it("should return Promise<false> if data is not updated successfully");
-		it("should return Promise<false> if data is not saved successfully");
+		it('should return Promise<true> if existing data is updated successfully', function (done) {
+			DataManager.saveData(testData.instanceId, testData.formName, testData.data)
+				.then(function (response, reject) {
+					assert.deepEqual(response, true);
+					done();
+				});
+		});
+
+		it('should return Promise<true> if new data is saved successfully', function (done) {
+			DataManager.saveData("RandomId", "RandomName", "One ring")
+				.then(function (response, reject) {
+					assert.deepEqual(response, true);
+					done();
+				});
+		});
+
+		//Not implemented yet
+		it('should return Promise<false> if new data is not saved successfully');
+		
 	});
 });
