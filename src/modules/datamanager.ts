@@ -1,12 +1,12 @@
 // promise-bluebird.d.ts
-import * as Bluebird from 'bluebird';
+import * as Bluebird from "bluebird";
 
-declare module 'mongoose' {
-  type Promise<T> = Bluebird<T>;
+declare module "mongoose" {
+    type Promise<T> = Bluebird<T>;
 }
-import * as mongoose from 'mongoose';
+import * as mongoose from "mongoose";
 
-import * as Data from '../models/Data';
+import * as Data from "../models/Data";
 
 export class DataManager {
 
@@ -29,10 +29,7 @@ export class DataManager {
                 if (doc) {
                     doc.data = dataObj;
                     return doc.save()
-                        .then(
-                            (doc: Data.Document) => true,
-                            (reason: any) => false,
-                        );
+                        .then((doc: Data.Document) => true, (reason: any) => false);
                 }
                 else {
                     let newData = new Data.model({
@@ -41,12 +38,9 @@ export class DataManager {
                         instanceId: instanceId
                     });
                     return newData.save()
-                        .then(
-                            (doc: Data.Document) => true,
-                            (reason: any) => false
-                        );
+                        .then((doc: Data.Document) => true, (reason: any) => false);
                 }
-            })
+            });
         return overallPromise;
     }
 }
