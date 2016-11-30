@@ -1,7 +1,7 @@
 import { Request, Router, Response } from "express";
 import * as mongoose from "mongoose";
 
-import { DataManager } from "../modules/datamanager";
+import { DataManager } from "../modules/dataManager";
 
 let router = Router();
 
