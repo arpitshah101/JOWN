@@ -1,7 +1,5 @@
 import * as mongoose from "mongoose";
 
-import { DataManager } from "./datamanager";
-
 export class PreDefTasks {
     public jownprint(args?: string[]): string {
         if (!args) return null;
