@@ -33,14 +33,15 @@ let userSchema = new Schema({
 	
 	created: {
 		type: Date,
-		default: Date.now
+		default: Date.now,
+        required: true
 	},
 	
 	workflowInstances: {
 		type: [Number]
 	}
 
-}, {versionKey: false});
+}, {skipVersioning: false});
 
 
 export interface User {
