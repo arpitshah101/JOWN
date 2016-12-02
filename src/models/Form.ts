@@ -6,7 +6,7 @@ let Schema = mongoose.Schema;
 let formSchema = new Schema({
 
 	workflowId: {
-		type: Number
+		type: Number,
 		required: true //Or handled by mongoDB?
 	},
 	
@@ -21,13 +21,13 @@ let formSchema = new Schema({
     },
 	
 	editor: {
-		type: [User] //NEEDS TO BE IMPORTED SOMEHOW! import * as User from '/User.ts'? or userId?
+		type: [User], //NEEDS TO BE IMPORTED SOMEHOW! import * as User from '/User.ts'? or userId?
 		required: true
 	},
 	
 	savedAt: {
-		type: Date
-		required: true
+		type: Date,
+		required: true,
 		default: Date.now //Assuming "now" is at creation of the instance
 
 }, {versionType: false});
@@ -36,7 +36,7 @@ let formSchema = new Schema({
 export interface Form {
     name: String,
     status: String,
-	edit: [User],
+	edit: [User], // VSC tells me "cant find name User" but user is imported at top. What gives?
 	savedAt: Date
 };
 
