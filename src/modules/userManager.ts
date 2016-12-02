@@ -11,7 +11,7 @@ export class UserManager {
 
     createUser(name: String, email: String, userId: String, password: String, roles: String[]): Bluebird<boolean> {
         
-        let overallPromise = this.userExists(userId, roles)
+        let overallPromise = this.userExists(userId)
             .then((doc: User.Document) => {
                 if (doc) {
                     return Bluebird.resolve(false);
@@ -35,15 +35,21 @@ export class UserManager {
         
     }
 
-    deleteUser(userId: String): void {
-        User.model.findOneAndRemove({ userId: userId }, function (err) {
-            if (err) {
-                console.error(err);
-            }
-            else {
-                console.log("User Deleted!");
-            }
-        });
+    deleteUser(userId: String): Bluebird<boolean> {
+
+        let overallPromise = this.userExists(userId)
+            .then((doc: User.Document) => {
+                if (doc) {
+                    return Bluebird.resolve(true);
+                }
+    
+                else {
+                    return Bluebird.resolve(false);
+                }
+            });
+
+        return overallPromise;
+
     }
 
     modifyUser(originalId: String, name: String, email: String, userId: String, password: String, role: String): void {
@@ -63,12 +69,12 @@ export class UserManager {
         });
     }
 
-    userExists(userId: String, roles: String[]): Bluebird<User.Document> {
+    userExists(userId: String): Bluebird<User.Document> {
         
-        let query = User.model.findOne({ userId: userId, role: roles }).exec();
+        let query = User.model.findOne({ userId: userId }).exec();
         return query.then((doc: User.Document) => {
             return Bluebird.resolve(doc);
-        })
+        });
 
     }
 

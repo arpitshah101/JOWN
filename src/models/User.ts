@@ -16,7 +16,7 @@ let userSchema = new Schema({
     },
 
     userId: {
-        type: Number,
+        type: String,
         required: true,
 		unique: true
     },
