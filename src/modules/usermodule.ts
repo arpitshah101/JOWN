@@ -7,8 +7,8 @@ export class UserModule {
 
     createUser(name: String, email: String, userId: String, password: String, roles: String[]): void {
         let u = new user(<User.User>{
-            name: name,
-            email: email,
+            userName: name,
+            userEmail: email,
             userId: userId,
             password: password,
             roles: roles
