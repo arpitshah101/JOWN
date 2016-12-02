@@ -21,7 +21,7 @@ let formSchema = new Schema({
     },
 	
 	editor: {
-		type: [User], //NEEDS TO BE IMPORTED SOMEHOW! import * as User from '/User.ts'? or userId?
+		type: [User],
 		required: true
 	},
 	
@@ -30,11 +30,11 @@ let formSchema = new Schema({
 		required: true,
 		default: Date.now //Assuming "now" is at creation of the instance
 
-}, {versionType: false});
+}, { versionKey: false }); // VSC tells me "property assignment expected"
 
 
 export interface Form {
-    name: String,
+    formName: String,
     status: String,
 	edit: [User], // VSC tells me "cant find name User" but user is imported at top. What gives?
 	savedAt: Date
