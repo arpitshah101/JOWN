@@ -37,16 +37,19 @@ export class UserManager {
 
     deleteUser(userId: String): Bluebird<boolean> {
 
-        let overallPromise = this.userExists(userId)
+        let query = User.model.findOneAndRemove(userId).exec()
             .then((doc: User.Document) => {
-                if (doc) {
-                    return Bluebird.resolve(true);
-                }
-    
-                else {
-                    return Bluebird.resolve(false);
-                }
-            });
+                return Bluebird.resolve(doc);
+            })
+
+        let overallPromise = query.then((doc: User.Document) => {
+            if (doc) {
+                return Bluebird.resolve(true);
+            }
+            else {
+                return Bluebird.resolve(false);
+            }
+        })
 
         return overallPromise;
 

@@ -18,17 +18,12 @@ describe('UserManager', function () {
 		roles: ["Professor"]
 	};
 
-	afterEach(function (done) {
-		User.remove({}, function () {
-			done();
-		});
-	});
-
 	describe('#createUser', function () {
 		it('successfully creates a user', function (done) {
 			UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles)
 				.then(function (response, reject) {
                     assert.deepEqual(response, true);
+                    User.remove();
 					done();
 				});
 		});
@@ -38,6 +33,7 @@ describe('UserManager', function () {
 			UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles)
 				.then(function (response, reject) {
 					assert.deepEqual(response, false);
+                    User.remove();
 					done();
 				});
 		});
@@ -54,7 +50,7 @@ describe('UserManager', function () {
 		});
 
 		it('unable to delete a user', function (done) {
-            UserManager.deleteUser("123")
+            UserManager.deleteUser("456")
 				.then(function (response, reject) {
                     assert.deepEqual(response, false);
 					done();
