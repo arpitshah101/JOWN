@@ -40,7 +40,7 @@ let userSchema = new Schema({
 		type: [Number]
 	}
 
-}, {versionKey: false});
+}, {versionKey: "false"});
 
 
 export interface User {

@@ -7,8 +7,8 @@ export class UserModule {
 
     createUser(name: String, email: String, userId: String, password: String, roles: String[]): void {
         let u = new user(<User.User>{
-            name: name,
-            email: email,
+            userName: name,
+            userEmail: email,
             userId: userId,
             password: password,
             roles: roles
@@ -39,8 +39,8 @@ export class UserModule {
     modifyUser(originalId: String, name: String, email: String, userId: String, password: String, role: String): void {
         let query = { "userId": originalId };
         let update = {
-            name: { name: name },
-            email: { email: email },
+            userName: { userName: name },
+            userEmail: { userEmail: email },
             userId: { userId: userId },
             password: { password: password },
             role: { role: role }
