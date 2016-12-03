@@ -40,7 +40,7 @@ export class UserManager {
         let query = User.model.findOneAndRemove(userId).exec()
             .then((doc: User.Document) => {
                 return Bluebird.resolve(doc);
-            })
+            });
 
         let overallPromise = query.then((doc: User.Document) => {
             if (doc) {
@@ -49,27 +49,38 @@ export class UserManager {
             else {
                 return Bluebird.resolve(false);
             }
-        })
+        });
 
         return overallPromise;
 
     }
 
-    modifyUser(originalId: String, name: String, email: String, userId: String, password: String, role: String): void {
-        let query = { "userId": originalId };
-        let update = {
-            userName: { userName: name },
-            userEmail: { userEmail: email },
-            userId: { userId: userId },
-            password: { password: password },
-            role: { role: role }
-        };
+    modifyUser(userId: String, email: String, password: String, roles: String[]): Bluebird<boolean> {
 
-        User.model.findOneAndUpdate(query, update, { new: true }, function (err, u) {
-            if (err) {
-                console.error(err);
-            }
-        });
+        let query = {
+            userId: userId
+        }
+
+        let update = {
+            userEmail: email,
+            password: password,
+            roles: roles
+        }
+
+        let overallQuery  = User.model.findOneAndUpdate(query, update, {new: true}).exec();
+
+        let overallPromise = overallQuery
+            .then((doc: User.Document) => {
+                if (doc) {
+                    return Bluebird.resolve(true);
+                }
+                else {
+                    return Bluebird.resolve(false);
+                }
+            });
+
+        return overallPromise;
+
     }
 
     userExists(userId: String): Bluebird<User.Document> {
