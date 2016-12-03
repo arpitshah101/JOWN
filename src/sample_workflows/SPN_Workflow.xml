@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jown>
+	<workflow name="SPN Workflow">
+		<form name="Student SPN Request Form" alias="studentForm">
+			<entity>
+				<key>lastName</key>
+				<label>Last Name</label>
+			</entity>
+			<entity>
+				<key>firstName</key>
+				<label>firstName</label>
+			</entity>
+			<entity>
+				<key>midInit</key>
+				<label>Middle Initial</label>
+			</entity>
+			<entity>
+				<key>ruid</key>
+				<label>RUID</label>
+			</entity>
+			<entity>
+				<key>email</key>
+				<label>Official Rutgers Email Only</label>
+			</entity>
+			<entity>
+				<key>gradDate</key>
+				<label>Declared Graduation Date (month/year)</label>
+			</entity>
+			<entity>
+				<key>gpa</key>
+				<label>Cumulative GPA</label>
+			</entity>
+			<entity>
+				<key>isSasHonors</key>
+				<label>Are you a member of the School of Arts and Sciences Honors Program?</label>
+			</entity>
+			<entity>
+				<key>semYear</key>
+				<label>Semester and Year</label>
+			</entity>
+			<entity>
+				<key>course1</key>
+				<label>Course 1 (School # | Subject # | Course # | Section # | Index # | Credits | Title)</label>
+			</entity>
+			<entity>
+				<key>course2</key>
+				<label>Course 2 (School # | Subject # | Course # | Section # | Index # | Credits | Title)</label>
+			</entity>
+			<entity>
+				<key>profEmail</key>
+				<label>Email of Rutgers Graduate Course Professor</label>
+			</entity>
+		</form>
+		<form name="Graduate Professor Form" alias="profForm">
+			<entity>
+				<key>isApproved</key>
+				<label>Recommend Approval?</label>
+			</entity>
+			<entity>
+				<key>signature</key>
+				<label>Professor's Name</label>
+			</entity>
+			<entity>
+				<key>date</key>
+				<label>Date</label>
+			</entity>
+		</form>
+		<form name="DCS Graduate Secretary Form" alias="dcsGradSecForm">
+			<entity>
+				<key>spn</key>
+				<label>SPN #</label>
+			</entity>
+		</form>
+		<form name="Graduate School Form" alias="gradSchForm">
+			<entity>
+				<key>isApproved</key>
+				<label>Approved?</label>
+			</entity>
+			<entity>
+				<key>signature</key>
+				<label>Graduate School Faculty Name</label>
+			</entity>
+			<entity>
+				<key>date</key>
+				<label>Date</label>
+			</entity>
+		</form>
+
+		<!-- Student creates new instance -->
+		<event id="0.START">
+			<!-- START is a condition keyword referring to the start event of an instance -->
+			<condition>START</condition>
+			<transitions>
+				<!-- go to state 0 -->
+				<transition>
+					<condition>true</condition>
+					<dest>0.FILE_REQUEST_FORM</dest>
+				</transition>
+			</transitions>
+		</event>
+		<state id="0.FILE_REQUEST_FORM">
+			<condition>true</condition>
+			<action>assign form studentForm to INSTANCE.CREATOR</action>
+		</state>
+
+		<!-- When student form is submitted -->
+		<event id="1.START">
+			<condition>studentForm._$.FORM_STATUS == "submitted"</condition>
+			<transitions>
+				<transition>
+					<condition>true</condition>
+					<dest>1.REVIEW_FORM</dest>
+				</transition>
+			</transitions>
+		</event>
+		<state id="1.REVIEW_FORM">
+			<condition>true</condition>
+			<action>assign form profForm to studentForm.profEmail</action>
+		</state>
+
+		<!-- When professor form is submitted -->
+		<event id="2.START">
+			<condition>profForm._$.FORM_STATUS == "submitted"</condition>
+			<transitions>
+				<transition>
+					<condition>true</condition>
+					<dest>2.SAVE_REQUEST_FORM</dest>
+				</transition>
+			</transitions>
+		</event>
+		<state id="2.SAVE_REQUEST_FORM">
+			<condition>true</condition>
+			<action>save studentForm+profForm</action>
+		</state>
+		<state id="2.ASSIGN_SPN">
+			<condition>true</condition>
+			<action>assign form dcsGradSecForm to USERS.dcsGradSec</action>
+		</state>
+
+		<event id="2.RECEIVE_SIGNED_FORM">
+			<condition>gradSchForm._$.FORM_STATUS == "submitted"</condition>
+			<transitions>
+				<transition>
+					<condition>true</condition>
+					<dest>2.</dest>
+				</transition>
+			</transitions>
+		</event>
+		<state id="2.SAVE_FORM">
+			<condition>true</condition>
+			<action>save studentForm+profForm+dcsGradSecForm+gradSchForm</action>
+		</state>
+
+
+		<!-- When DCS Grad Sec form is submitted -->
+		<event id="3.START">
+			<condition>dcsGradSecForm._$.FORM_STATUS == "submitted"</condition>
+			<transitions>
+				<transition>
+					<condition>true</condition>
+					<dest>3</dest>
+				</transition>
+			</transitions>
+		</event>
+		<state stateNum="3">
+			<condition>true</condition>
+			<action>assign form gradSchForm to USERS.gradSchRep</action>
+		</state>
+
+
+
+
+		<state stateNum="1">
+			<condition></condition>
+			<action></action>
+		</state>
+		<state stateNum="1">
+			<condition></condition>
+			<action></action>
+		</state>
+		<state stateNum="1">
+			<condition></condition>
+			<action></action>
+		</state>
+		<state stateNum="1">
+			<condition></condition>
+			<action></action>
+		</state>
+		
+	</workflow>
+</jown>
