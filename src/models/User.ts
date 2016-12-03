@@ -1,24 +1,24 @@
-import * as mongoose from 'mongoose';
+import * as mongoose from "mongoose";
 
 let Schema = mongoose.Schema;
 
 let userSchema = new Schema({
-    
+
     userName: {
         type: String,
         required: true
     },
-    
+
     userEmail: {
         type: String,
         required: true,
-		unique: true
+        unique: true
     },
 
     userId: {
         type: String,
         required: true,
-		unique: true
+        unique: true
     },
 
     password: {
@@ -30,30 +30,30 @@ let userSchema = new Schema({
         type: [String],
         required: true
     },
-	
-	created: {
-		type: Date,
-		default: Date.now,
+
+    created: {
+        type: Date,
+        default: Date.now,
         required: true
-	},
-	
-	workflowInstances: {
-		type: [Number]
-	}
+    },
+
+    workflowInstances: {
+        type: [Number]
+    }
 
 }, {skipVersioning: false});
 
 
 export interface User {
-    userName: String,
-    userEmail: String,
-    userId: String,
-    password: String,
-    roles: String[],
-	created: Date,
-	workflowInstances: [Number]
+    userName: String;
+    userEmail: String;
+    userId: String;
+    password: String;
+    roles: String[];
+    created: Date;
+    workflowInstances: [Number];
 };
 
 export interface Document extends mongoose.Document, User { };
 
-export var model = mongoose.model<Document>('User', userSchema);
+export let model = mongoose.model<Document>("User", userSchema);

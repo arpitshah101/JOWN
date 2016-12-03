@@ -10,13 +10,13 @@ import * as User from "../models/User";
 export class UserManager {
 
     createUser(name: String, email: String, userId: String, password: String, roles: String[]): Bluebird<boolean> {
-        
+
         let overallPromise = this.userExists(userId)
             .then((doc: User.Document) => {
                 if (doc) {
                     return Bluebird.resolve(false);
                 }
-    
+
                 else {
                     let newUser = new User.model({
                         userName: name,
@@ -32,7 +32,7 @@ export class UserManager {
             });
 
         return overallPromise;
-        
+
     }
 
     deleteUser(userId: String): Bluebird<boolean> {
@@ -59,13 +59,13 @@ export class UserManager {
 
         let query = {
             userId: userId
-        }
+        };
 
         let update = {
             userEmail: email,
             password: password,
             roles: roles
-        }
+        };
 
         let overallQuery  = User.model.findOneAndUpdate(query, update, {new: true}).exec();
 
@@ -84,7 +84,7 @@ export class UserManager {
     }
 
     userExists(userId: String): Bluebird<User.Document> {
-        
+
         let query = User.model.findOne({ userId: userId }).exec();
         return query.then((doc: User.Document) => {
             return Bluebird.resolve(doc);
