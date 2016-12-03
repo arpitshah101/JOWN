@@ -89,4 +89,23 @@ describe('UserManager', function () {
 				});
 		});
 	});
+
+    describe('#userExists', function () {
+		it('successfully checks if a user exists', function (done) {
+            UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles);
+            UserManager.userExists(testUser.userId)
+				.then(function (response, reject) {
+                    assert.deepEqual(response, testUser);
+					done();
+				});
+		});
+
+		it('successfully checks if a user does not exist', function (done) {
+            UserManager.userExists(testUser.userId)
+				.then(function (response, reject) {
+                    assert.deepEqual(response, null);
+					done();
+				});
+		});
+	});
 });
