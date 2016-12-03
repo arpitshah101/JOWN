@@ -1,9 +1,5 @@
 import * as Bluebird from "bluebird";
 
-declare module "mongoose" {
-    type Promise<T> = Bluebird<T>;
-}
-
 import * as mongoose from "mongoose";
 import * as User from "../models/User";
 

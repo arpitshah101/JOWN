@@ -26,7 +26,7 @@ let userSchema = new Schema({
         required: true
     },
 
-    roles: { // is this best kept track off in this way in mongodb? or function like keeping different tables in sql?
+    roles: {
         type: [String],
         required: true
     },
@@ -51,7 +51,7 @@ export interface User {
     password: String;
     roles: String[];
     created: Date;
-    workflowInstances: [Number];
+    workflowInstances: [Object];
 };
 
 export interface Document extends mongoose.Document, User { };
