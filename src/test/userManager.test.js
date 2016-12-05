@@ -15,7 +15,8 @@ describe('UserManager', function () {
         userEmail: "johnsmith@gmail.com",
         userId: "123",
 		password: "abc123",
-		roles: ["Professor"]
+		roles: ["Professor"],
+		created: new Date(Date.now())
 	};
 
     afterEach(function (done) {
@@ -85,6 +86,35 @@ describe('UserManager', function () {
 		});
 	});
     
+	describe('#getNextTenUsers', function () {
+		it('successfully gets the next 1-10 users', function (done) {
+			UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles)
+				.then(UserManager.createUser(testUser.userName, "newEmail@gmail.com", "newUserId", "newPassword", testUser.roles))
+				.then(UserManager.getNextTenUsers(testUser.created))
+				.then(function (response) {
+                    assert.deepEqual(typeof response, typeof [User.User]);
+					done();
+				},
+				function (reject) {
+					assert.deepEqual(typeof reject, null);
+					done();
+				});
+		});
+
+		it('unable to get the next 1-10 users', function (done) {
+            UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles)
+				.then(UserManager.getNextTenUsers(testUser.created))
+				.then(function (response) {
+                    assert.deepEqual(typeof response, null);
+					done();
+				},
+				function (reject) {
+					assert.deepEqual(typeof reject, typeof [User.User]);
+					done();
+				});
+		});
+	});
+
     describe('#modifyUser', function () {
 		it('successfully modifies a user', function (done) {
 			let newRoles = ["newRole1", "newRole2"];

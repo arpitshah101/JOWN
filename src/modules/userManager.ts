@@ -88,10 +88,23 @@ export class UserManager {
 
     }
 
-    getNextTenUsers(): [User.User] {
-        /*
-        implementation
-        */
-        return null;
+    getNextTenUsers(created: Date): Bluebird<User.User[]> {
+        
+        let query = User.model.
+            find({created: { $gt: created }}).
+            limit(10).
+            sort('created').
+            exec();
+
+        return query.then(
+            function (response) {
+                return query.then((doc: User.User[]) => {
+                    return Bluebird.resolve(doc);
+                });
+			},
+			function (reject) {
+                return Bluebird.reject(reject);
+			});
+
     }
 }
