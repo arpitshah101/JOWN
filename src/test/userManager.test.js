@@ -34,17 +34,25 @@ describe('UserManager', function () {
 	describe('#createUser', function () {
 		it('successfully creates a user', function (done) {
 			UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles)
-				.then(function (response, reject) {
+				.then(function (response) {
                     assert.deepEqual(response, true);
+					done();
+				},
+				function (reject) {
+					assert.deepEqual(reject, false);
 					done();
 				});
 		});
 
 		it('unable to create a user', function (done) {
-            UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles);
-			UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles)
-				.then(function (response, reject) {
-					assert.deepEqual(response, false);
+            UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles)
+				.then(UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles))
+				.then(function (response) {
+                    assert.deepEqual(response, false);
+					done();
+				},
+				function (reject) {
+					assert.deepEqual(reject, true);
 					done();
 				});
 		});
@@ -52,18 +60,26 @@ describe('UserManager', function () {
 
     describe('#deleteUser', function () {
 		it('successfully deletes a user', function (done) {
-            UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles);
-            UserManager.deleteUser(testUser.userId)
-				.then(function (response, reject) {
+            UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles)
+				.then(UserManager.deleteUser(testUser.userId))
+				.then(function (response) {
                     assert.deepEqual(response, true);
+					done();
+				},
+				function (reject) {
+					assert.deepEqual(reject, false);
 					done();
 				});
 		});
 
 		it('unable to delete a user', function (done) {
             UserManager.deleteUser(testUser.userId)
-				.then(function (response, reject) {
+				.then(function (response) {
                     assert.deepEqual(response, false);
+					done();
+				},
+				function (reject) {
+					assert.deepEqual(reject, true);
 					done();
 				});
 		});
@@ -71,11 +87,15 @@ describe('UserManager', function () {
     
     describe('#modifyUser', function () {
 		it('successfully modifies a user', function (done) {
-            UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles);
-            let newRoles = ["newRole1", "newRole2"];
-            UserManager.modifyUser(testUser.userId, "newEmail@gmail.com", "newPassword", newRoles)
-				.then(function (response, reject) {
+			let newRoles = ["newRole1", "newRole2"];
+            UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles)
+				.then(UserManager.modifyUser(testUser.userId, "newEmail@gmail.com", "newPassword", newRoles))
+				.then(function (response) {
                     assert.deepEqual(response, true);
+					done();
+				},
+				function (reject) {
+					assert.deepEqual(reject, false);
 					done();
 				});
 		});
@@ -83,27 +103,39 @@ describe('UserManager', function () {
 		it('unable to modify a user', function (done) {
             let newRoles = ["newRole1", "newRole2"];
 			UserManager.modifyUser(testUser.userId, "newEmail@gmail.com", "newPassword", newRoles)
-				.then(function (response, reject) {
+				.then(function (response) {
 					assert.deepEqual(response, false);
+					done();
+				},
+				function (reject) {
+					assert.deepEqual(reject, true);
 					done();
 				});
 		});
 	});
 
     describe('#userExists', function () {
-		it('successfully checks if a user exists', function (done) {
-            UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles);
-            UserManager.userExists(testUser.userId)
-				.then(function (response, reject) {
-                    assert.deepEqual(response, testUser);
+		it('successfully checks that a user exists', function (done) {
+            UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles)
+				.then(UserManager.userExists(testUser.userId))
+				.then(function (response) {
+                    assert.deepEqual(response, true);
+					done();
+				},
+				function (reject) {
+					assert.deepEqual(reject, false);
 					done();
 				});
 		});
 
-		it('successfully checks if a user does not exist', function (done) {
+		it('successfully checks that a user does not exist', function (done) {
             UserManager.userExists(testUser.userId)
-				.then(function (response, reject) {
+				.then(function (response) {
                     assert.deepEqual(response, null);
+					done();
+				},
+				function (reject) {
+					assert.deepEqual(reject, testUser);
 					done();
 				});
 		});
