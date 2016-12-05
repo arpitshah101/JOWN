@@ -1,7 +1,8 @@
 import * as mongoose from "mongoose";
 import * as Promise from "bluebird";
+import * as ExpressionNode from "../models/ExpressionNode";
 
-class ConditionParser {
+export class ConditionParser {
 
     /**
      * Function that takes a "java style" conditional and looks for logical operators. If it finds any it splits up the
@@ -12,6 +13,31 @@ class ConditionParser {
      */
     deconstructCondition (condition: String) {
         condition = condition.trim();
+
+        let ret = []; // TRY SORT OUT [String]
+        let currCondition = "";
+
+        for (let i = 0 ; i < condition.length ; i++) {
+            let c = condition.charAt(i);
+            if (c.match(/[^A-Za-z]+/)) {
+                if( c === "&" || c === "|" ) {
+                    if ((currCondition !== "") && (ret.indexOf(currCondition) === -1)) { // NEEDS TO BE FIXED TO HANDLE DUPLICATES. ONLY CHECK LAST ITEM IN LIST.
+                        ret.push(currCondition);
+                        currCondition = "";
+                    }
+                }
+            }
+            else {
+                currCondition = currCondition.concat(c);
+            }
+
+            if (i === (condition.length - 1)) {
+                ret.push(currCondition);
+            }
+        }
+
+        return ret;
+
     }
 
     /**
@@ -22,27 +48,28 @@ class ConditionParser {
      *          index 1: the operator
      *          index 2: the right side of the condition
      */
-    parseCondtion (condition: String): [String] {
+    parseCondtion (condition: String) {
 
         condition = condition.trim();
 
-        let result: [String];
+        let result = [];
+
         let splitIndex = this.isCondition(condition);
-        if ( splitIndex === -1) {
+        if ( splitIndex === undefined) {
             return undefined; // error, not a java conditional statement
         }
 
+        result.push(condition.substr(0, splitIndex).trim());
         // Less than 0 means condition is a conditional with a single character operator
         if (splitIndex < 0) {
-            Math.abs(++splitIndex);
-            result[0] = condition.substr(splitIndex + 1).trim();
-            result[1] = condition.substr(splitIndex, 1);
+            Math.abs(splitIndex);
+            result.push(condition.substr(splitIndex, 1));
+            result.push(condition.substr(splitIndex + 1).trim());
         }
         else {
-            result[0] = condition.substr(splitIndex + 2).trim();
-            result[1] = condition.substr(splitIndex, 1);
+            result.push(condition.substr(splitIndex, 2));
+            result.push(condition.substr(splitIndex + 2).trim());
         }
-        result[2] = condition.substr(0, splitIndex).trim();
 
         return result;
     }
@@ -55,7 +82,7 @@ class ConditionParser {
      *          the negative value of the index -1 if the test passes by finding a single character operator
      *          -1 to not end up in a situation where the index = 1 and becomes -1 which is the test fail code
      */
-    isCondition (condition: String): number {
+    isCondition (condition: String) {
         let i = -1;
         if ((i = condition.indexOf("==")) !== -1 ) {
             return this.plusOffsetIsEdge(i, condition.length, 2);
@@ -66,11 +93,29 @@ class ConditionParser {
         } else if ((i = condition.indexOf("<=")) !== -1 ) {
             return this.plusOffsetIsEdge(i, condition.length, 2);
         } else if ((i = condition.indexOf(">")) !== -1 ) {
-            return -(this.plusOffsetIsEdge(i, condition.length, 1) - 1);
+            let ret = this.plusOffsetIsEdge(i, condition.length, 1)
+            //return ret;
+
+            if ( ret === undefined ) {
+                return ret;
+            }
+            else {
+                return -ret;
+            }
+
         } else if ((i = condition.indexOf("<")) !== -1 ) {
-            return -(this.plusOffsetIsEdge(i, condition.length, 1) - 1);
+            let ret = this.plusOffsetIsEdge(i, condition.length, 1)
+            //return ret;
+
+            if ( ret === undefined ) {
+                return ret;
+            }
+            else {
+                return -ret;
+            }
+
         }
-        return i;
+        return undefined;
     }
 
     /**
@@ -83,9 +128,9 @@ class ConditionParser {
      */
     plusOffsetIsEdge (index: number, length: number, offset: number): number {
         if (index === 0) {
-            return -1; // CONSIDER CHANGING THIS TO UNDEFINED
+            return undefined;
         } else if ((index + offset) === length) {
-            return -1; // CONSIDER CHANGING THIS TO UNDEFINED
+            return undefined;
         }
         else {
             return index;
