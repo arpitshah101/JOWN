@@ -6,8 +6,11 @@ describe("ConditionParser", function() {
 
     describe("#deconstructCondition", function() {
         var tests = [
-            {arg: "testin && testenin", expected: ["testin", "testenin"]},
-            {arg: " this && isa || test     ", expected: ["this", "isa", "test"]}
+            {arg: "testin && testenin", expected: ["testin", "&&", "testenin"]},
+            {arg: " this && isa || test     ", expected: ["this", "&&", "isa", "||", "test"]},
+            {arg: "  tis && teh || test ||", expected: undefined},
+            {arg: " another && (test || to) || test", expected: ["another", "&&", ["(", "test", "||", "to", ")"], "||", "test"]},
+            {arg: " testing &&&& to || getundefined", expected: undefined}
         ];
 
         tests.forEach(function(test) {

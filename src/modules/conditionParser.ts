@@ -5,11 +5,38 @@ import * as ExpressionNode from "../models/ExpressionNode";
 export class ConditionParser {
 
     /**
+     * 
+     */
+    buildEvaluationTree (condition: String) {
+        condition = condition.trim();
+
+        let parsedCondition = this.deconstructCondition(condition);
+        if (parsedCondition === undefined) {
+            return undefined;
+        }
+
+        for (let i = 0 ; i < parsedCondition.length ; i++) {
+            if (Array.isArray(parsedCondition[i])) {
+
+            }
+        }
+
+    }
+
+    /**
+     * 
+     */
+    addArrayToTree (arr: [any]) {
+
+    }
+
+    /**
      * Function that takes a "java style" conditional and looks for logical operators. If it finds any it splits up the
      * string and passes the pieces to parseCondition, if it does not find any it passes the entire string to
      * parseCondition.
      * @param   condition: String condition the conditional statement
      * @return  a tree containing all the different conditions split up by logical operators
+     *          undefined if the conditional is not properly formatted
      */
     deconstructCondition (condition: String) {
         condition = condition.trim();
@@ -18,12 +45,40 @@ export class ConditionParser {
         let currCondition = "";
 
         for (let i = 0 ; i < condition.length ; i++) {
+            // From here until the end of the loop, C is the character at index i
             let c = condition.charAt(i);
             if (c.match(/[^A-Za-z]+/)) {
-                if( c === "&" || c === "|" ) {
+                if ((i === 0) && (c === "(")) {
+                    ret.push(c);
+                }
+                if ((i !== 0) && (c === "(")) {
+                    let recRet = this.deconstructCondition(condition.substr(i));
+                    i = i + recRet[recRet.length - 1];
+                    console.log(i + " -- " + recRet);
+                    recRet.pop();
+                    console.log(recRet + "<<<<");
+                    ret.push(recRet);
+                } else if ((i !== 0) && (c === ")")) {
+                    ret.push(currCondition);
+                    ret.push(c);
+                    ret.push(i);
+                    return ret;
+                } else if (c === "&" || c === "|") {
                     if ((currCondition !== "") && (ret.indexOf(currCondition) === -1)) { // NEEDS TO BE FIXED TO HANDLE DUPLICATES. ONLY CHECK LAST ITEM IN LIST.
                         ret.push(currCondition);
                         currCondition = "";
+                    }
+                    // See if there are any names left in the condition
+                    if (!this.hasNextCondition(condition, i)) {
+                        return undefined;
+                    }
+                    if ((c === condition.charAt(i + 1)) && (condition.charAt(i + 2).match(/[A-Za-z ]/))) {
+                        c = c.concat(c);
+                        ret.push(c);
+                        i++;
+                    }
+                    else {
+                        return undefined;
                     }
                 }
             }
@@ -35,9 +90,25 @@ export class ConditionParser {
                 ret.push(currCondition);
             }
         }
-
+        console.log(ret);
         return ret;
 
+    }
+
+    /**
+     * Function that checks if there is a trailing condition after logical AND or logical or
+     * @param   condition which is the string to check in
+     *          index which is the index of where to start checking
+     * @return  returns true if there is a trailing condition, false otherwise
+     */
+    hasNextCondition (condition: String, index: number) {
+        for (let j = index ; j < condition.length ; j++) {
+            let c = condition.charAt(j);
+            if (c.match(/[A-Za-z]/)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -93,9 +164,7 @@ export class ConditionParser {
         } else if ((i = condition.indexOf("<=")) !== -1 ) {
             return this.plusOffsetIsEdge(i, condition.length, 2);
         } else if ((i = condition.indexOf(">")) !== -1 ) {
-            let ret = this.plusOffsetIsEdge(i, condition.length, 1)
-            //return ret;
-
+            let ret = this.plusOffsetIsEdge(i, condition.length, 1);
             if ( ret === undefined ) {
                 return ret;
             }
@@ -104,9 +173,7 @@ export class ConditionParser {
             }
 
         } else if ((i = condition.indexOf("<")) !== -1 ) {
-            let ret = this.plusOffsetIsEdge(i, condition.length, 1)
-            //return ret;
-
+            let ret = this.plusOffsetIsEdge(i, condition.length, 1);
             if ( ret === undefined ) {
                 return ret;
             }
