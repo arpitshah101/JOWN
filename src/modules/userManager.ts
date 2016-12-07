@@ -5,106 +5,129 @@ import * as User from "../models/User";
 
 export class UserManager {
 
-    createUser(name: String, email: String, userId: String, password: String, roles: String[]): Bluebird<boolean> {
+	public createUser(name: String, email: String, userId: String,
+					password: String, roles: String[], created?: Date): Bluebird<boolean> {
+		return new Bluebird<boolean>((resolve, reject) => {
+			this.userExists(userId)
+				.then((doc: User.IDocument) => {
+					return (doc !== null && doc !== undefined);
+				})
+				.then((successFlag) => {
+					if (successFlag) {
+						reject("An account already exists with the provided credentials.");
+					}
+					else {
+						let newUser = new User.model({
+							password,
+							roles,
+							userEmail: email,
+							userId,
+							userName: name,
+						});
 
-        let overallPromise = this.userExists(userId)
-            .then((doc: User.Document) => {
-                if (doc) {
-                    return Bluebird.resolve(false);
-                }
+						/**
+						 * For testing purposes. Allows custom creation date to differentiate users during automated test cases
+						 * where users are created nearly simultaneously
+						 */
+						if (created) {
+							newUser.created = created;
+						}
 
-                else {
-                    let newUser = new User.model({
-                        userName: name,
-                        userEmail: email,
-                        userId: userId,
-                        password: password,
-                        roles: roles
-                    });
+						return newUser.save();
+					}
+				})
+				.then((doc) => {
+					resolve(true);
+				})
+				.catch((reason: mongoose.NativeError) => {
+					if (reason.name === "MongoError" && reason.message.match("insertDocument.+duplicate\\skey\\serror.*").length > 0) {
+						reject("An account already exists with the provided credentials.");
+					}
+					else {
+						console.log(reason);
+						reject("Failed to create an account with the provided credentials.");
+					}
+				});
+		});
+	}
 
-                    return newUser.save()
-                        .then((doc: User.Document) => true, (reason: any) => false);
-                }
-            });
+	public deleteUser(userId: String): Bluebird<boolean> {
+		return new Bluebird<boolean>((resolve, reject) => {
+			User.model.findOneAndRemove(userId).exec()
+				.then((doc: User.IDocument) => {
+					if (doc) {
+						resolve(true);
+					}
+					else {
+						reject("User doesn't exist.");
+					}
+				})
+				.catch((reason: any) => {
+					reject(reason);
+				});
+		});
+	}
 
-        return overallPromise;
+	public modifyUser(userId: String, email: String, password: String, roles: String[]): Bluebird<boolean> {
+		return new Bluebird<boolean>((resolve, reject) => {
+			let query = {
+				userId,
+			};
 
-    }
+			let update = {
+				userEmail: email,
+				password,
+				roles,
+			};
 
-    deleteUser(userId: String): Bluebird<boolean> {
+			User.model.findOneAndUpdate(query, update, { new: true }).exec()
+				.then((doc: User.IDocument) => {
+					if (doc) {
+						resolve(true);
+					}
+					else {
+						reject(`No user exists with the provided userId: ${userId}`);
+					}
+				});
+		});
+	}
 
-        let query = User.model.findOneAndRemove(userId).exec()
-            .then((doc: User.Document) => {
-                return Bluebird.resolve(doc);
-            });
+	public userExists(userId: String): Bluebird<User.IDocument> {
+		let query = User.model.findOne({ userId }).exec();
+		return query.then((doc: User.IDocument) => {
+			return Bluebird.resolve(doc);
+		});
+	}
 
-        let overallPromise = query.then((doc: User.Document) => {
-            if (doc) {
-                return Bluebird.resolve(true);
-            }
-            else {
-                return Bluebird.resolve(false);
-            }
-        });
+	public getNextTenUsers(created: Date): Bluebird<User.IUser[]> {
+		return new Bluebird<User.IUser[]>((resolve, reject) => {
+			User.model
+				.find({})
+				.exec()
+				.then((response) => {
+					return User.model
+						.find({ created: { $gt: created } })
+						.limit(10)
+						.sort("created")
+						.exec();
+				}).then((doc) => {
+					resolve(doc);
+				})
+				.catch((reason) => {
+					reject(reason);
+				});
+		});
+	}
 
-        return overallPromise;
-
-    }
-
-    modifyUser(userId: String, email: String, password: String, roles: String[]): Bluebird<boolean> {
-
-        let query = {
-            userId: userId
-        };
-
-        let update = {
-            userEmail: email,
-            password: password,
-            roles: roles
-        };
-
-        let overallQuery  = User.model.findOneAndUpdate(query, update, {new: true}).exec();
-
-        let overallPromise = overallQuery
-            .then((doc: User.Document) => {
-                if (doc) {
-                    return Bluebird.resolve(true);
-                }
-                else {
-                    return Bluebird.resolve(false);
-                }
-            });
-
-        return overallPromise;
-
-    }
-
-    userExists(userId: String): Bluebird<User.Document> {
-
-        let query = User.model.findOne({ userId: userId }).exec();
-        return query.then((doc: User.Document) => {
-            return Bluebird.resolve(doc);
-        });
-
-    }
-
-    getNextTenUsers(created: Date): Bluebird<User.User[]> {
-        
-        let query = User.model.
-            find({created: { $gt: created }}).
-            limit(10).
-            sort('created').
-            exec();
-
-        return query.then(
-            function (response) {
-                return query.then((doc: User.User[]) => {
-                    return Bluebird.resolve(doc);
-                });
-			},
-			function (reject) {
-                return Bluebird.reject(reject);
-			});
-
-    }
+	public getUserCount(): Bluebird<number> {
+		return new Bluebird<number>((resolve, reject) => {
+			User.model.count({}).exec()
+				.then((response) => {
+					resolve(response);
+				})
+				.catch((reason) => {
+					reject(reason);
+				});
+		});
+	}
 }

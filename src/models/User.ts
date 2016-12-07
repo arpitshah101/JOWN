@@ -4,56 +4,49 @@ let Schema = mongoose.Schema;
 
 let userSchema = new Schema({
 
-    userName: {
-        type: String,
-        required: true
-    },
+	created: {
+		default: new Date(Date.now()),
+		required: true,
+		type: Date,
+	},
+	password: {
+		required: true,
+		type: String,
+	},
+	roles: {
+		required: true,
+		type: [String],
+	},
+	userEmail: {
+		required: true,
+		type: String,
+		unique: true,
+	},
+	userId: {
+		required: true,
+		type: String,
+		unique: true,
+	},
+	userName: {
+		required: true,
+		type: String,
+	},
+	workflowInstances: {
+		type: [Number],
+	},
 
-    userEmail: {
-        type: String,
-        required: true,
-        unique: true
-    },
+}, { skipVersioning: false });
 
-    userId: {
-        type: String,
-        required: true,
-        unique: true
-    },
-
-    password: {
-        type: String,
-        required: true
-    },
-
-    roles: {
-        type: [String],
-        required: true
-    },
-
-    created: {
-        type: Date,
-        default: new Date(Date.now()),
-        required: true
-    },
-
-    workflowInstances: {
-        type: [Number]
-    }
-
-}, {skipVersioning: false});
-
-
-export interface User {
-    userName: String;
-    userEmail: String;
-    userId: String;
-    password: String;
-    roles: String[];
-    created: Date;
-    workflowInstances: [Object];
+export interface IUser {
+	userName: String;
+	userEmail: String;
+	userId: String;
+	password: String;
+	roles: String[];
+	created: Date;
+	workflowInstances: [Object];
 };
 
-export interface Document extends mongoose.Document, User { };
+export interface IDocument extends mongoose.Document, IUser { };
 
-export let model = mongoose.model<Document>("User", userSchema);
+export let model = mongoose.model<IDocument>("User", userSchema);
