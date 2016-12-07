@@ -1,58 +1,52 @@
-import * as mongoose from 'mongoose';
+import * as mongoose from "mongoose";
 
 let Schema = mongoose.Schema;
 
 let userSchema = new Schema({
-    
-    userName: {
-        type: String,
-        required: true
-    },
-    
-    userEmail: {
-        type: String,
-        required: true,
-		unique: true
-    },
 
-    userId: {
-        type: Number,
-        required: true,
-		unique: true
-    },
-
-    password: {
-        type: String,
-        required: true
-    },
-
-    roles: { // is this best kept track off in this way in mongodb? or function like keeping different tables in sql?
-        type: [String],
-        required: true
-    },
-	
 	created: {
+		default: new Date(Date.now()),
+		required: true,
 		type: Date,
-		default: Date.now
 	},
-	
+	password: {
+		required: true,
+		type: String,
+	},
+	roles: {
+		required: true,
+		type: [String],
+	},
+	userEmail: {
+		required: true,
+		type: String,
+		unique: true,
+	},
+	userId: {
+		required: true,
+		type: String,
+		unique: true,
+	},
+	userName: {
+		required: true,
+		type: String,
+	},
 	workflowInstances: {
-		type: [Number]
-	}
+		type: [Number],
+	},
 
-}, {versionKey: "false"});
+}, { skipVersioning: false });
 
-
-export interface User {
-    userName: String,
-    userEmail: String,
-    userId: String,
-    password: String,
-    roles: String[],
-	created: Date,
-	workflowInstances: [Number]
+export interface IUser {
+	userName: String;
+	userEmail: String;
+	userId: String;
+	password: String;
+	roles: String[];
+	created: Date;
+	workflowInstances: [Object];
 };
 
-export interface Document extends mongoose.Document, User { };
+export interface IDocument extends mongoose.Document, IUser { };
 
-export var model = mongoose.model<Document>('User', userSchema);
+export let model = mongoose.model<IDocument>("User", userSchema);
