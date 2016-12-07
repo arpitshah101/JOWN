@@ -1,7 +1,7 @@
 export class ExpressionNode {
 
-    expression: String;
-    left: ExpressionNode;
-    right: ExpressionNode;
+	public expression: String;
+	public left: ExpressionNode;
+	public right: ExpressionNode;
 
 }

@@ -1,29 +1,29 @@
-import * as mongoose from 'mongoose';
+import * as mongoose from "mongoose";
 
 let Schema = mongoose.Schema;
 
 let dataSchema = new Schema({
-    data: {
-        type: {},
-        required: true,
-        default: {}
-    },
-    formName: {
-        type: String,
-        default: null
-    },
-    instanceId: {
-        type: String,
-        required: true
-    },
+	data: {
+		default: {},
+		required: true,
+		type: {},
+	},
+	formName: {
+		default: null,
+		type: String,
+	},
+	instanceId: {
+		required: true,
+		type: String,
+	},
 }, { skipVersioning: true });
 
-export interface Data {
-    data: any,
-    formName: string,
-    instanceId: string,
+export interface IData {
+	data: any;
+	formName: string;
+	instanceId: string;
 }
 
-export interface Document extends mongoose.Document, Data { }
+export interface IDocument extends mongoose.Document, IData { }
 
-export var model = mongoose.model<Document>('Data', dataSchema);
+export let model = mongoose.model<IDocument>("Data", dataSchema);

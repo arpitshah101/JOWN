@@ -5,41 +5,40 @@ let Schema = mongoose.Schema;
 
 let formSchema = new Schema({
 
-    workflowId: {
-        type: Number,
-        required: true // Or handled by mongoDB?
-    },
+	editor: {
+		required: true,
+		type: [User],
+	},
 
-    formName: {
-        type: String,
-        required: true
-    },
+	formName: {
+		required: true,
+		type: String,
+	},
 
-    status: {
-        type: String,
-        required: true
-    },
+	savedAt: {
+		default: Date.now, // Assuming "now" is at creation of the instance
+		required: true,
+		type: Date,
+	},
+	status: {
+		required: true,
+		type: String,
+	},
 
-    editor: {
-        type: [User],
-        required: true
-    },
+	workflowId: {
+		required: true, // Or handled by mongoDB?
+		type: Number,
+	},
 
-    savedAt: {
-        type: Date,
-        required: true,
-        default: Date.now // Assuming "now" is at creation of the instance
+}, { skipVersioning: false });
 
-}, { versionKey: false }); // VSC tells me "property assignment expected"
-
-
-export interface Form {
-    formName: String;
-    status: String;
-    edit: [User]; // VSC tells me "cant find name User" but user is imported at top. What gives?
-    savedAt: Date;
+export interface IForm {
+	formName: String;
+	status: String;
+	edit: User.IUser[]; // VSC tells me "cant find name User" but user is imported at top. What gives?
+	savedAt: Date;
 };
 
-export interface Document extends mongoose.Document, Form { };
+export interface IDocument extends mongoose.Document, IForm { };
 
-export let model = mongoose.model<Document>("Form", formSchema);
+export let model = mongoose.model<IDocument>("Form", formSchema);
