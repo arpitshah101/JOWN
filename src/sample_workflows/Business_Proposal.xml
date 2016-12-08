@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<proposal>
+	<workflow name = "BusinessProposal">
+		<form name = "Business Proposal Form" alias="proposalForm">
+			<entity>
+				<key>institution</key>
+				<label>Institution</label>
+			</entity>
+			<entity>
+				<key>groupCode</key>
+				<label>Group Code</label>
+			</entity>
+			<entity>
+				<key>groupName</key>
+				<label>Group Name</label>
+			</entity>
+			<entity>
+				<key>groupSize</key>
+				<label>Group Size</label>
+			</entity>
+			<entity>
+				<key>groupMember1</key>
+				<label>Group Member1:</label>
+			</entity>			
+			<entity>
+				<key>groupMember2</key>
+				<label>Group Member2:</label>
+			</entity>
+			<entity>
+				<key>groupMember3</key>
+				<label>Group Member3:</label>
+			</entity>
+			<entity>
+				<key>groupMember4</key>
+				<label>Group Member4:</label>
+			</entity>
+			<entity>
+				<key>groupMember5</key>
+				<label>Group Member5:</label>
+			</entity>		
+				<key>groupMember1Position</key>
+				<label>Group Member1 Position:</label>
+			</entity>			
+			<entity>
+				<key>groupMember2Position</key>
+				<label>Group Member2 Position</label>
+			</entity>
+			<entity>
+				<key>groupMember3Position</key>
+				<label>Group Member3 position</label>
+			</entity>
+			<entity>
+				<key>groupMember4Position</key>
+				<label>Group Member4 Position</label>
+			</entity>
+			<entity>
+				<key>groupMember5Position</key>
+				<label>Group Member5 Position</label>
+			</entity>
+			<entity>
+				<key>businessIdeaTitle</key>
+				<label>Business Idea Title:</label>
+			</entity>
+			<entity>
+				<key>typeOfBusiness</key>
+				<label>type of Business:</label>
+			</entity>
+			<entity>
+				<key>intendedSuppliers</key>
+				<label>Intended Suppliers</label>
+			</entity>
+			<entity>
+				<key>intendedCustomers</key>
+				<label>Intended Customers</label>
+			</entity>
+			<entity>
+				<key>projectedAmountOfSales</key>
+				<label>Projected Amount of Sales</label>
+			</entity>
+			<entity>
+				<key>projectedAmountOfExpenses</key>
+				<label>Porjected Amount of Expenses</label>
+			</entity>
+			<entity>
+				<key>projectedNetProfit</key>
+				<label>Projected Net Profit</label>
+			</entity>
+			<entity>
+				<key>submittedBy</key>
+				<label>Submitted By:</label>
+			</entity>
+			<entity>
+				<key>date</key>
+				<label>Date</label>
+			</entity>
+			<entity>
+				<key>approvedBy</key>
+				<label>Approved By:</label>
+			</entity>
+
+		</form>
+		
+	</workflow>
+</proposal>
