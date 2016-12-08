@@ -5,9 +5,23 @@ import * as User from "../models/User";
 
 export class UserManager {
 
+	/**
+	 * Creates new User document & saves into the database.
+	 *
+	 * @param {String} name - Name of user
+	 * @param {String} email - User's valid email address
+	 * @param {String} userId - Requested userId for authentication
+	 * @param {String} password - Requested password for authentication
+	 * @param {String[]} roles - Array of permissions for user
+	 * @param {Date} [created] - [Optional] Custom creation date for account
+	 * @returns {Bluebird<boolean>} - Promise resolving to a boolean flag if successful else promise is rejected
+	 *
+	 * @memberOf UserManager
+	 */
 	public createUser(name: String, email: String, userId: String,
 					password: String, roles: String[], created?: Date): Bluebird<boolean> {
 		return new Bluebird<boolean>((resolve, reject) => {
+
 			this.userExists(userId)
 				.then((doc: User.IDocument) => {
 					return (doc !== null && doc !== undefined);
@@ -51,6 +65,14 @@ export class UserManager {
 		});
 	}
 
+	/**
+	 * Deletes an existing user with the provided userId value
+	 *
+	 * @param {String} userId - String userId of target user
+	 * @returns {Bluebird<boolean>} - Promise resolving to a boolean flag if successful else promise is rejected
+	 *
+	 * @memberOf UserManager
+	 */
 	public deleteUser(userId: String): Bluebird<boolean> {
 		return new Bluebird<boolean>((resolve, reject) => {
 			User.model.findOneAndRemove(userId).exec()
@@ -68,6 +90,18 @@ export class UserManager {
 		});
 	}
 
+	/**
+	 * Modifies an existing user matching the provided userId.
+	 * Note: Only email, password, and the roles list can be modified!
+	 *
+	 * @param {String} userId - String userId of target user
+	 * @param {String} email - Valid user email
+	 * @param {String} password - Valid requested user password
+	 * @param {String[]} roles - List of roles for user. ** Empty list indicates no change should be made. **
+	 * @returns {Bluebird<boolean>} - Promise resolving to a boolean flag if successful else promise is rejected
+	 *
+	 * @memberOf UserManager
+	 */
 	public modifyUser(userId: String, email: String, password: String, roles: String[]): Bluebird<boolean> {
 		return new Bluebird<boolean>((resolve, reject) => {
 			let query = {
@@ -92,6 +126,14 @@ export class UserManager {
 		});
 	}
 
+	/**
+	 * Verifies whether the user exists or not with the provided userId
+	 *
+	 * @param {String} userId - UserId string for target user
+	 * @returns {Bluebird<User.IDocument>} - Promise resolving to a User Document if user exists, otherwise null
+	 *
+	 * @memberOf UserManager
+	 */
 	public userExists(userId: String): Bluebird<User.IDocument> {
 		let query = User.model.findOne({ userId }).exec();
 		return query.then((doc: User.IDocument) => {
@@ -99,6 +141,14 @@ export class UserManager {
 		});
 	}
 
+	/**
+	 * Returns a list of the next ten users created after the provided Date/Time
+	 *
+	 * @param {Date} created - Date object representing the lower boundary of user creation values for next ten users
+	 * @returns {Bluebird<User.IUser[]>} - Promise resolving to a list of User Documents for the next ten users
+	 *
+	 * @memberOf UserManager
+	 */
 	public getNextTenUsers(created: Date): Bluebird<User.IUser[]> {
 		return new Bluebird<User.IUser[]>((resolve, reject) => {
 			User.model
@@ -119,6 +169,13 @@ export class UserManager {
 		});
 	}
 
+	/**
+	 * Returns the number of users registered within the overall J.O.W.N. system instance
+	 *
+	 * @returns {Bluebird<number>} - integer number value representing number of users registered
+	 *
+	 * @memberOf UserManager
+	 */
 	public getUserCount(): Bluebird<number> {
 		return new Bluebird<number>((resolve, reject) => {
 			User.model.count({}).exec()
