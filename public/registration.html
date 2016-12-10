@@ -1,0 +1,41 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/paper-dialog/paper-dialog.html">
+
+<dom-module id="registration">
+  <template>
+    <style>
+      :host {
+        display: block;
+
+        padding: 16px;
+      }
+
+    </style>
+    <paper-dialog id="modal" modal alwaysOnTop="true">
+        <p>Could not registers</p>
+        <div class="buttons">
+            <paper-button dialog-confirm autofocus>OK!</paper-button>
+        </div>
+    </paper-dialog>
+
+    <paper-dialog id="dialog">
+        <h2>Error!</h2>
+        <p>Could not register</p>
+    </paper-dialog>
+
+    <h1>register new account</h1>
+    <paper-input label="User name" maxlength="100"></paper-input>
+    <paper-input label="Email" maxlength="100"></paper-input>
+    <paper-input label="Password" type="password" maxlength="100"></paper-input>
+    <paper-button raised onclick="dialog.open()">Register</paper-button>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'registration'
+    });
+  </script>
+</dom-module>
