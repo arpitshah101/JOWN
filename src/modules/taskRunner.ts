@@ -7,17 +7,17 @@ export class TaskRunner {
 
 	public run(command: string) {
 		let cmd: string[] = this.tokenizeCommand(command);
-		let cmdName = cmd[0];
-		let args = cmd.slice(1);
+		let cmdName: string = cmd[0];
+		let args: string[] = cmd.slice(1);
 		if (this.checkIfPreDef(cmdName)) {
 			// pass args arr for execution
 			return Bluebird.resolve(PreDefTasks.prototype[cmdName](args));
 		}
 		let execFunc = Bluebird.promisify(exec);
 		let childProcess = execFunc(command);
-		return childProcess.then((stdout: string) => {
+		return childProcess.then((stdout: string): number => {
 			return 0;
-		}, (error) => {
+		}, (error): number => {
 			return 1;
 		});
 	}
@@ -25,7 +25,7 @@ export class TaskRunner {
 	/**
 	 * Tokenizes commands into an ordered array of strings.
 	 */
-	public tokenizeCommand(command: string) {
+	public tokenizeCommand(command: string): string[] {
 		return command.match(/("(.*?)")|('(.*?)')|([^\s]+)/g);
 	}
 
