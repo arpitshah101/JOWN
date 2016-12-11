@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+	<link href="../bower_components/polymer/polymer.html" rel="import">
+	<link href="../bower_components/paper-input/paper-input.html" rel="import">
+	<link href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html" rel="import">
+	<link href="../bower_components/paper-listbox/paper-listbox.html" rel="import">
+	<link href="../bower_components/paper-item/paper-item.html" rel="import">
+	<link href="../bower_components/paper-button/paper-button.html" rel="import">
+
+</head>
+
+
+<dom-module id="login-page">
+    <template>
+	
+	<style>
+	.container{
+	border-style:solid;
+	border-width:1px;
+	border-color:blue;
+	height:300px;
+	width:400px;
+	position:absolute;
+	top:25%;
+	left:35%;
+	}
+	.dropdownmenu{
+	position:absolute;
+	left:50%;
+	}
+	.title{
+	position:absolute;
+	left:39%;
+	color:green;
+	}
+	.button{
+	position:absolute;
+	top:75%;
+	}
+	</style>
+	<h1 class="title">Welcome to J.O.W.N</h1>
+		<div class="container">
+
+			<paper-input id="username" label="User Name"></paper-input>
+			<paper-input id="password" label="password input" type="password"></paper-input>
+			<paper-dropdown-menu class="dropdownmenu" label="Roles">
+			  <paper-listbox class="dropdown-content">
+				<paper-item>Student</paper-item>
+				<paper-item>Professor</paper-item>
+				<paper-item>Dean</paper-item>
+			  </paper-listbox>
+			</paper-dropdown-menu>
+			<paper-button class="button" raised on-tap="login">Login</paper-button>
+			
+
+	</div>	
+    </template>
+ 
+    <script>
+        Polymer({
+            is: 'login-page',
+	
+		login: function(e){
+		alert("Login Failed");
+		return;
+		}
+        });
+    </script>
+</dom-module>
+
+
+
+
+
+
+
+
