@@ -1,0 +1,46 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="/bower_components/paper-item/paper-item.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="workflow-list">
+  <template>
+
+    <style>
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+    </style>
+
+    <h1>Available workflows</h1>
+
+    <iron-ajax auto 
+        url="http://www.json-generator.com/api/json/get/crkSCFTVvm?indent=2" 
+        handle-as="json" 
+        last-response="{{items}}">
+    </iron-ajax>
+
+    <template is="dom-if" if="{{items}}">
+        <paper-listbox>
+            <template is="dom-repeat" items="[[items]]">
+                <a href="this.openWorkflow([[item._id]])"><paper-item>Workflow: [[item.name]]</b><br>Owner: [[item.owner]]  Created: [[item.created]]<br><br></paper-item></a>
+            </template>
+        </paper-listbox>
+    </template>
+    <paper-button raised>Create Workflow</paper-button>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'workflow-list',
+
+      openWorkflow: function(workflowId) {
+          
+      }
+    });
+  </script>
+</dom-module>

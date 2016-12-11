@@ -1,0 +1,39 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="workflow-view">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        padding: 10px;
+      }
+    </style>
+
+    <iron-ajax auto 
+        url="http://www.json-generator.com/api/json/get/cqBLZQbjCa?indent=2" 
+        handle-as="json" 
+        last-response="{{items}}">
+    </iron-ajax>
+    
+    <template is="dom-if" if="{{items}}">
+        <div class="card">
+            <template is="dom-repeat" items="[[items]]">
+                <h1>[[item.workflowName]]</h1>
+                <p><b>Workflow ID:</b> [[item.workflowId]]</p>
+                <p><b>Owner:</b> [[item.owner]]</p>
+                <p><b>Created:</b> [[item.created]]</p>
+                <p><b>Description:</b></p>
+                <p>[[item.description]]</p>
+            </template>
+        </div>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'workflow-view'
+    });
+  </script>
+</dom-module>
