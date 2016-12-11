@@ -1,11 +1,14 @@
+import * as ExpressionNode from "../models/ExpressionNode";
 import * as mongoose from "mongoose";
 import * as Promise from "bluebird";
-import * as ExpressionNode from "../models/ExpressionNode";
 
 export class ConditionParser {
 
 	/**
-	 * 
+	 * Function that takes a conditional, parses it and returns a tree with all the conditions
+     * @param   condition: String containing a conditional statement
+     * @return  a tree containing the conditions split up by logical operators
+     *          undefined if the conditional is not properly formatted
 	 */
 	public buildEvaluationTree (condition: String) {
 		condition = condition.trim();
@@ -15,19 +18,28 @@ export class ConditionParser {
 			return undefined;
 		}
 
-		for (let i = 0 ; i < parsedCondition.length ; i++) {
-			if (Array.isArray(parsedCondition[i])) {
-// implementation
-			}
-		}
-
+        return this.addArrayToTree(parsedCondition);
 	}
 
 	/**
 	 * 
 	 */
-	public addArrayToTree (arr: [any]) {
-// implementation
+	public addArrayToTree (parsedCondition: any[]) {
+        let retTree: ExpressionNode.ExpressionNode;
+        if (parsedCondition.length === 1) {
+            let conditional = String(parsedCondition.pop);
+            retTree = new ExpressionNode.ExpressionNode(conditional, undefined, undefined);
+            return retTree;
+        }
+        for (let i = 0 ; i < parsedCondition.length ; i++) {
+            if (parsedCondition[i] === "&&" || parsedCondition[i] === "||") {
+                let left = this.addArrayToTree(parsedCondition[i - 1]);
+                let right = this.addArrayToTree(parsedCondition[i + 1]);
+                retTree = new ExpressionNode.ExpressionNode(String(parsedCondition[i]), left, right);
+            }
+		}
+
+        return retTree;
 	}
 
 	/**
@@ -35,7 +47,7 @@ export class ConditionParser {
 	 * string and passes the pieces to parseCondition, if it does not find any it passes the entire string to
 	 * parseCondition.
 	 * @param   condition: String condition the conditional statement
-	 * @return  a tree containing all the different conditions split up by logical operators
+	 * @return  an array containing all the different conditions split up by logical operators and levels
 	 *          undefined if the conditional is not properly formatted
 	 */
 	public deconstructCondition (condition: String) {
@@ -47,33 +59,39 @@ export class ConditionParser {
 		for (let i = 0 ; i < condition.length ; i++) {
 			// From here until the end of the loop, C is the character at index i
 			let c = condition.charAt(i);
-			if (c.match(/[^A-Za-z]+/)) {
+			if (c.match(/[^A-Za-z0-9=<>! ]+/)) {
 				if ((i === 0) && (c === "(")) {
 					ret.push(c);
 				}
 				if ((i !== 0) && (c === "(")) {
 					let recRet = this.deconstructCondition(condition.substr(i));
 					i = i + recRet[recRet.length - 1];
-					console.log(i + " -- " + recRet);
+					// console.log(i + " -- " + recRet);
 					recRet.pop();
-					console.log(recRet + "<<<<");
+					// console.log(recRet + "<<<<");
 					ret.push(recRet);
 				} else if ((i !== 0) && (c === ")")) {
-					ret.push(currCondition);
+                    currCondition = currCondition.trim();
+                    if( currCondition !== "" ) {
+                        ret.push(currCondition);
+                    }
 					ret.push(c);
 					ret.push(i);
 					return ret;
 				} else if (c === "&" || c === "|") {
-					if ((currCondition !== "") && (ret.indexOf(currCondition) === -1)) { 
+					if ((currCondition !== "") && (ret.indexOf(currCondition) === -1)) {
 						// NEEDS TO BE FIXED TO HANDLE DUPLICATES. ONLY CHECK LAST ITEM IN LIST.
-						ret.push(currCondition);
+                        currCondition = currCondition.trim();
+                        if( currCondition !== "" ) {
+                            ret.push(currCondition);
+                        }
 						currCondition = "";
 					}
 					// See if there are any names left in the condition
 					if (!this.hasNextCondition(condition, i)) {
 						return undefined;
 					}
-					if ((c === condition.charAt(i + 1)) && (condition.charAt(i + 2).match(/[A-Za-z ]/))) {
+					if ((c === condition.charAt(i + 1)) && (condition.charAt(i + 2).match(/[A-Za-z0-9 ]/))) {
 						c = c.concat(c);
 						ret.push(c);
 						i++;
@@ -88,10 +106,14 @@ export class ConditionParser {
 			}
 
 			if (i === (condition.length - 1)) {
-				ret.push(currCondition);
+                currCondition = currCondition.trim();
+                if( currCondition !== "" ) {
+				    ret.push(currCondition);
+                }
+
 			}
 		}
-		console.log(ret);
+		// console.log(ret);
 		return ret;
 
 	}
@@ -204,5 +226,4 @@ export class ConditionParser {
 			return index;
 		}
 	}
-
 }
