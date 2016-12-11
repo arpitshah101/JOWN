@@ -7,7 +7,7 @@ mongoose.Promise = require("bluebird");
 
 var DefParser = require("../modules/defParser");
 
-describe.only("DefinitionParser", function () {
+describe("DefinitionParser", function () {
 
 	before(function() {
 		mongoose.connect("mongodb://localhost:27017/jown-test");
