@@ -2,12 +2,12 @@
 <html>
 <head>
 	
-	<link href="../bower_components/polymer/polymer.html" rel="import">
-	<link href="../bower_components/paper-input/paper-input.html" rel="import">
-	<link href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html" rel="import">
-	<link href="../bower_components/paper-listbox/paper-listbox.html" rel="import">
-	<link href="../bower_components/paper-item/paper-item.html" rel="import">
-	<link href="../bower_components/paper-button/paper-button.html" rel="import">
+	<link href="/bower_components/polymer/polymer.html" rel="import">
+	<link href="/bower_components/paper-input/paper-input.html" rel="import">
+	<link href="/bower_components/paper-dropdown-menu/paper-dropdown-menu.html" rel="import">
+	<link href="/bower_components/paper-listbox/paper-listbox.html" rel="import">
+	<link href="/bower_components/paper-item/paper-item.html" rel="import">
+	<link href="/bower_components/paper-button/paper-button.html" rel="import">
 
 </head>
 
@@ -15,44 +15,66 @@
 <dom-module id="login-page">
     <template>
 	
-	<style>
+	<style is="custom-style">
+	
+	:root{
+	--paper-input-container-color: white;
+
+	}
 	.container{
+	color:white;
+	background-color:#FF4081;
 	border-style:solid;
 	border-width:1px;
-	border-color:blue;
+	border-color:#C5CAE9;
 	height:300px;
 	width:400px;
 	position:absolute;
 	top:25%;
 	left:35%;
 	}
+	.username{
+	color:#FF4081;
+	}
+	.password{
+	color:#FF4081;
+	}
 	.dropdownmenu{
+	color:white;
 	position:absolute;
 	left:50%;
 	}
 	.title{
 	position:absolute;
-	left:39%;
-	color:green;
+	left:38%;
+	color:#68EFAD;
 	}
 	.button{
 	position:absolute;
 	top:75%;
 	}
+	.rbutton{
+	position:absolute;
+	top:75%;
+	left:70%;
+	}
+
 	</style>
 	<h1 class="title">Welcome to J.O.W.N</h1>
 		<div class="container">
 
-			<paper-input id="username" label="User Name"></paper-input>
-			<paper-input id="password" label="password input" type="password"></paper-input>
+			<paper-input class="username" label="User Name"></paper-input>
+			<paper-input class="password" label="password input" type="password"></paper-input>
 			<paper-dropdown-menu class="dropdownmenu" label="Roles">
 			  <paper-listbox class="dropdown-content">
-				<paper-item>Student</paper-item>
-				<paper-item>Professor</paper-item>
-				<paper-item>Dean</paper-item>
+				<paper-item class="items">Student</paper-item>
+				<paper-item class="items">Professor</paper-item>
+				<paper-item class="items">Dean</paper-item>
 			  </paper-listbox>
 			</paper-dropdown-menu>
 			<paper-button class="button" raised on-tap="login">Login</paper-button>
+			<paper-button class="rbutton" raised onclick="register(this)">Register</paper-button>
+
 			
 
 	</div>	
@@ -66,14 +88,15 @@
 		alert("Login Failed");
 		return;
 		}
+
         });
+		
+		function register(el) {
+  // Wait for ripple to finish.
+		el.addEventListener('transitionend', function(e) {
+		location.href = 'registration.html';
+  });
+}
+
     </script>
 </dom-module>
-
-
-
-
-
-
-
-
