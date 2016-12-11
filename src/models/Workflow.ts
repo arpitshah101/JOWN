@@ -1,7 +1,4 @@
 import * as mongoose from "mongoose";
-import * as Form from "./Form";
-import * as State from "./State";
-import * as User from "./User";
 
 let Schema = mongoose.Schema;
 
@@ -11,45 +8,29 @@ let workflowSchema = new Schema({
 		required: true,
 		type: Date,
 	},
-
-	formList: {
-		required: true,
+	forms: {
+		default: [],
 		type: [Schema.Types.ObjectId],
 	},
-
-	owner: {
+	groups: {
+		default: ["All"],
 		required: true,
-		type: [User], // Or userIds?
+		type: [String],
 	},
-
-	stateList: {
-		required: true,
-		type: [Schema.Types.ObjectId],
-	},
-
-	workflowId: {
-		required: true,
-		type: Number,
-		unique: true,
-	},
-
-	workflowName: {
+	name: {
 		required: true,
 		type: String,
+		unique: true,
 	},
-
-}, {skipVersioning: false});
-
+}, {skipVersioning: true});
 
 export interface IWorkflow {
-	workflowId: Number;
-	workflowName: String;
-	owner: User.IUser[];
 	created: Date;
-	stateList: State.IState[];
-	formList: Form.IForm[];
+	forms: Object;
+	groups: String[];
+	name: String;
 };
 
 export interface IDocument extends mongoose.Document, IWorkflow { };
 
-let model = mongoose.model<IDocument>("Workflow", workflowSchema);
+export const model = mongoose.model<IDocument>("Workflow", workflowSchema);

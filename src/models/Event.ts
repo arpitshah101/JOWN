@@ -2,15 +2,7 @@ import * as mongoose from "mongoose";
 
 let Schema = mongoose.Schema;
 
-let stateSchema = new Schema({
-	action: {
-		default: "noop",
-		required: true,
-		type: String,
-	},
-	completedAt: {
-		type: Date,
-	},
+let eventSchema = new Schema({
 	condition: {
 		default: "true",
 		required: true,
@@ -20,12 +12,9 @@ let stateSchema = new Schema({
 		required: true,
 		type: String,
 	},
-	stateStatus: {
-		default: 0,
-		type: Number,
-	},
 	transitions: {
 		default: [],
+		required: true,
 		type: [Schema.Types.Mixed],
 	},
 	workflowId: {
@@ -39,22 +28,13 @@ export interface ITransition {
 	dest: string;
 }
 
-export interface IState {
-	action: string;
-	completedAt?: Date;
+export interface IEvent {
 	condition: string;
 	name: string;
-	stateStatus: StateStatus;
 	transitions: ITransition[];
 	workflowId: mongoose.Types.ObjectId;
 }
 
-export enum StateStatus {
-	INACTIVE,
-	PENDING,
-	COMPLETE,
-}
+export interface IDocument extends mongoose.Document, IEvent { };
 
-export interface IDocument extends mongoose.Document, IState { };
-
-export const model = mongoose.model<IDocument>("State", stateSchema);
+export const model = mongoose.model<IDocument>("Event", eventSchema);
