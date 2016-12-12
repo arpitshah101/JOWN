@@ -1,0 +1,132 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/paper-item/paper-item.html">
+<link rel="import" href="/bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+
+<dom-module id="home-page">
+	<template>
+		<style>	
+		
+		paper-button{
+			width:5%;
+		}
+		#title{
+			position:absolute;
+			left:22%;
+		}
+		#item1{
+			position:absolute;
+			left:43%;
+		}
+		#item2{
+			position:absolute;
+			left:65%;
+		}
+		#item3{
+			position:absolute;
+			left:90%;
+		}
+		#card{
+			width:100%;
+		}
+		#icond{
+			position:relative;
+			left:80%;
+		}
+		#icone{
+			position:relative;
+			left:75%;
+
+		}
+
+		</style>
+	
+	<paper-dialog id="deleteDio" modal alwaysOnTop="true">
+        <p>Are you sure you want to delete?</p>
+        <div class="buttons">
+            <paper-button dialog-confirm autofocus on-tap="DELETE">Delete</paper-button>
+			<paper-button dialog-dismiss autofocus>Cancel</paper-button>
+        </div>
+    </paper-dialog>
+
+	<paper-dialog id="editDio" modal alwaysOnTop="true">
+			<paper-input value="[[workflowname]]" label="Workflow Name"></paper-input>
+		<div class="buttons">
+            <paper-button dialog-confirm autofocus on-tap="EDIT">Confirm</paper-button>
+			<paper-button dialog-dismiss autofocus>Cancel</paper-button>
+		</div>
+    </paper-dialog>
+
+	<paper-header-panel class="red">
+		<paper-toolbar>
+        <div class="paper-header">Just Our Workflow Notation</div>
+		<paper-item id="title">Workflows</paper-item>
+		<paper-item id="item1" value={{username}}>{{username}}</paper-item>
+		<paper-item id="item2" value={{userrole}}>{{userrole}}</paper-item>
+		<paper-button id="item3" on-tap="logout">Logout</paper-button>
+		</paper-toolbar>
+    </paper-header-panel>
+    <iron-ajax auto 
+        url="http://www.json-generator.com/api/json/get/crkSCFTVvm?indent=2" 
+        handle-as="json" 
+        last-response="{{items}}">
+    </iron-ajax>
+	<paper-listbox class="dropdown-content">
+		<template is="dom-repeat" items="[[items]]">
+			<paper-card id="card">
+			<paper-item>Workflow: [[item.name]]</b><br>Owner: [[item.owner]] <br> Created: [[item.created]]
+			<paper-icon-button id="icond" src="/image/delete.png" on-tap="deleteWorkflow"></paper-icon-button>
+			<paper-icon-button id="icone" src="/image/edit.png" on-tap="editWorkflow"></paper-icon-button>
+			</paper-item>
+			</paper-card>
+		</template>
+	</paper-listbox>
+	</template>
+
+	<script>
+	 Polymer({
+            is: "home-page",
+			properties: {
+				username: {
+					type: String,
+					value: "A.Borgida"
+				},
+					
+				userrole: {
+					type: String,
+					value: "Professor"
+
+				},
+				workflowname: {
+					type: String,
+					value:function(){return {};}
+				}
+			},
+            logout: function() {
+				alert("logging out " + this.username);
+			},
+			deleteWorkflow: function(){
+				deleteDio.open();
+			},
+			editWorkflow: function(){
+				editDio.open();
+			},
+			DELETE: function(){
+				alert("Deleting");
+				return true;
+			},
+			EDIT: function(){
+				alert("Editing");
+			}
+
+        });
+		
+	</script>
+
+
+</dom-module>
+

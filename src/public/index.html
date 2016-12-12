@@ -10,7 +10,7 @@
     <link rel="import" href="./colors.html">
     <link rel="import" href="./shadows.html">
     <link rel="import" href="./components/login.html">
-
+    <link rel="import" href="./components/homepage.html">
     <style is="custom-style">
         body {
             margin: 0;
@@ -72,11 +72,11 @@
 </head>
 
 <body id="app">
+    
     <paper-header-panel class="red">
         <div class="paper-header">Just Our Workflow Notation</div>
     </paper-header-panel>
     <login-box></login-box>
-
     <script>
         var app = document.querySelector("#app");
         app.login = function() {alert("Loging in!")};
