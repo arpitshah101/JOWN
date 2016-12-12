@@ -23,9 +23,7 @@ function createUser(req: Request, rep: Response, next) {
 			console.log("User could not be created!");
 		}
 	})
-	.catch(next);
-
-	next();
+	.then(next);
 
 }
 
@@ -42,9 +40,7 @@ function deleteUser(req: Request, rep: Response, next) {
 			console.log("User could not be deleted!");
 		}
 	})
-	.catch(next);
-
-	next();
+	.then(next);
 
 }
 
@@ -61,9 +57,7 @@ function getNextTenUsers(req: Request, rep: Response, next) {
 			console.log("Could not get the next 1-10 users!");
 		}
 	})
-	.catch(next);
-
-	next();
+	.then(next);
 
 }
 
@@ -79,9 +73,7 @@ function getUserCount(req: Request, rep: Response, next) {
 			console.log("There are no users!");
 		}
 	})
-	.catch(next);
-
-	next();
+	.then(next);
 
 }
 
@@ -101,9 +93,7 @@ function modifyUser(req: Request, rep: Response, next) {
 			console.log("User could not be modified!");
 		}
 	})
-	.catch(next);
-
-	next();
+	.then(next);
 
 }
 
@@ -120,8 +110,6 @@ function userExists(req: Request, rep: Response, next) {
 			console.log("User does not exist!");
 		}
 	})
-	.catch(next);
-
-	next();
+	.then(next);
 
 }
