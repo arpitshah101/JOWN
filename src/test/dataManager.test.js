@@ -3,12 +3,21 @@ var assert = require("chai").assert;
 var mongoose = require("mongoose");
 mongoose.Promise = require("bluebird");
 
-mongoose.connect("mongodb://localhost:27017/jown-test");
+// mongoose.connect("mongodb://localhost:27017/jown-test");
 
 var DataManager = require("../modules/dataManager").DataManager.prototype;
 var Data = require("../models/Data").model;
 
 describe("DataManager", function () {
+
+
+	before(function() {
+		mongoose.connect("mongodb://localhost:27017/jown-test");
+	});
+
+	after(function() {
+		mongoose.disconnect();
+	});
 
 	var testData = {
 		data: {

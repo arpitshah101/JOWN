@@ -33,7 +33,7 @@ let userSchema = new Schema({
 	workflowInstances: {
 		type: [Number],
 	},
-}, { skipVersioning: false });
+}, { skipVersioning: true });
 
 export interface IUser {
 	userName: String;

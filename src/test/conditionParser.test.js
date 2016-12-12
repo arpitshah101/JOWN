@@ -10,7 +10,8 @@ describe("ConditionParser", function() {
 			{arg: " this && isa || test     ", expected: ["this", "&&", "isa", "||", "test"]},
 			{arg: "  tis && teh || test ||", expected: undefined},
 			{arg: " another && (test || to) || test", expected: ["another", "&&", ["(", "test", "||", "to", ")"], "||", "test"]},
-			{arg: " testing &&&& to || getundefined", expected: undefined}
+			{arg: " testing &&&& to ||| getundefined &&& and |||| makeitwork", expected: undefined},
+            {arg: " test == 2 && (banana != boat) || hi == hello", expected: ["test == 2", "&&", ["(", "banana != boat", ")"], "||", "hi == hello"]}
 		];
 
 		tests.forEach(function(test) {

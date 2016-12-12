@@ -1,44 +1,53 @@
 import * as mongoose from "mongoose";
-import * as User from "./User";
-
 let Schema = mongoose.Schema;
 
 let formSchema = new Schema({
-
-	editor: {
-		required: true,
-		type: [User],
-	},
-
-	formName: {
+	alias: {
 		required: true,
 		type: String,
 	},
-
-	savedAt: {
-		default: Date.now, // Assuming "now" is at creation of the instance
-		required: true,
-		type: Date,
+	entities: {
+		type: [{
+			key: Schema.Types.String,
+			type: Schema.Types.String,
+		}],
 	},
-	status: {
+	fileName: {
+		default: "404.html",
 		required: true,
 		type: String,
 	},
-
+	groups: {
+		default: ["All"],
+		required: false,
+		type: [String],
+	},
+	name: {
+		required: true,
+		type: String,
+	},
 	workflowId: {
-		required: true, // Or handled by mongoDB?
-		type: Number,
+		required: true,
+		type: Schema.Types.ObjectId,
 	},
 
-}, { skipVersioning: false });
+}, { skipVersioning: true });
+
+export interface IEntity {
+	key: string;
+	type: string;
+	label?: string;
+}
 
 export interface IForm {
-	formName: String;
-	status: String;
-	edit: User.IUser[]; // VSC tells me "cant find name User" but user is imported at top. What gives?
-	savedAt: Date;
+	alias: string;
+	entities?: IEntity[];
+	fileName: string;
+	groups?: string[];
+	name: string;
+	workflowId: mongoose.Types.ObjectId;
 };
 
 export interface IDocument extends mongoose.Document, IForm { };
 
-export let model = mongoose.model<IDocument>("Form", formSchema);
+export const model = mongoose.model<IDocument>("Form", formSchema);

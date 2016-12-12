@@ -1,88 +1,113 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jown>
 	<workflow name="SPN Workflow">
+		<groups>
+			<group>Student</group>
+			<group>Professor</group>
+			<group>DCS Grad Secretary</group>
+			<group>Graduate School Dean</group>
+		</groups>
 		<form name="Student SPN Request Form" alias="studentForm">
 			<entity>
 				<key>lastName</key>
 				<label>Last Name</label>
+				<type>String</type>
 			</entity>
 			<entity>
 				<key>firstName</key>
 				<label>firstName</label>
+				<type>String</type>
 			</entity>
 			<entity>
 				<key>midInit</key>
 				<label>Middle Initial</label>
+				<type>String</type>
 			</entity>
 			<entity>
 				<key>ruid</key>
 				<label>RUID</label>
+				<type>String</type>
 			</entity>
 			<entity>
 				<key>email</key>
 				<label>Official Rutgers Email Only</label>
+				<type>String</type>
 			</entity>
 			<entity>
 				<key>gradDate</key>
 				<label>Declared Graduation Date (month/year)</label>
+				<type>String</type>
 			</entity>
 			<entity>
 				<key>gpa</key>
 				<label>Cumulative GPA</label>
+				<type>number</type>
 			</entity>
 			<entity>
 				<key>isSasHonors</key>
 				<label>Are you a member of the School of Arts and Sciences Honors Program?</label>
+				<type>boolean</type>
 			</entity>
 			<entity>
 				<key>semYear</key>
 				<label>Semester and Year</label>
+				<type>String</type>
 			</entity>
 			<entity>
 				<key>course1</key>
 				<label>Course 1 (School # | Subject # | Course # | Section # | Index # | Credits | Title)</label>
+				<type>String</type>
 			</entity>
 			<entity>
 				<key>course2</key>
 				<label>Course 2 (School # | Subject # | Course # | Section # | Index # | Credits | Title)</label>
+				<type>String</type>
 			</entity>
 			<entity>
 				<key>profEmail</key>
 				<label>Email of Rutgers Graduate Course Professor</label>
+				<type>String</type>
 			</entity>
 		</form>
 		<form name="Graduate Professor Form" alias="profForm">
 			<entity>
 				<key>isApproved</key>
 				<label>Recommend Approval?</label>
+				<type>boolean</type>
 			</entity>
 			<entity>
 				<key>signature</key>
 				<label>Professor's Name</label>
+				<type>String</type>
 			</entity>
 			<entity>
 				<key>date</key>
 				<label>Date</label>
+				<type>Date</type>
 			</entity>
 		</form>
 		<form name="DCS Graduate Secretary Form" alias="dcsGradSecForm">
 			<entity>
 				<key>spn</key>
 				<label>SPN #</label>
+				<type>String</type>
 			</entity>
 		</form>
 		<form name="Graduate School Form" alias="gradSchForm">
 			<entity>
 				<key>isApproved</key>
 				<label>Approved?</label>
+				<type>boolean</type>
 			</entity>
 			<entity>
 				<key>signature</key>
 				<label>Graduate School Faculty Name</label>
+				<type>String</type>
 			</entity>
 			<entity>
 				<key>date</key>
 				<label>Date</label>
+				<type>Date</type>
 			</entity>
 		</form>
 
@@ -131,6 +156,10 @@
 		<state id="2.SAVE_REQUEST_FORM">
 			<condition>true</condition>
 			<action>save studentForm+profForm</action>
+			<transition>
+				<condition>true</condition>
+				<dest>2.ASSIGN_SPN</dest>
+			</transition>
 		</state>
 		<state id="2.ASSIGN_SPN">
 			<condition>true</condition>
@@ -158,33 +187,13 @@
 			<transitions>
 				<transition>
 					<condition>true</condition>
-					<dest>3</dest>
+					<dest>3.SEND_TO_GRAD_SCH</dest>
 				</transition>
 			</transitions>
 		</event>
-		<state stateNum="3">
+		<state id="3.SEND_TO_GRAD_SCH">
 			<condition>true</condition>
 			<action>assign form gradSchForm to USERS.gradSchRep</action>
-		</state>
-
-
-
-
-		<state stateNum="1">
-			<condition></condition>
-			<action></action>
-		</state>
-		<state stateNum="1">
-			<condition></condition>
-			<action></action>
-		</state>
-		<state stateNum="1">
-			<condition></condition>
-			<action></action>
-		</state>
-		<state stateNum="1">
-			<condition></condition>
-			<action></action>
 		</state>
 		
 	</workflow>

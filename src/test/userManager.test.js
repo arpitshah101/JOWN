@@ -4,12 +4,18 @@ var mongoose = require("mongoose");
 mongoose.Promise = require("bluebird");
 var bluebird = require("bluebird");
 
-mongoose.createConnection("mongodb://localhost:27017/jown-test");
-
 var UserManager = require("../modules/userManager").UserManager.prototype;
 var User = require("../models/User").model;
 
 describe("#UserManager", function () {
+
+	before(function() {
+		mongoose.connect("mongodb://localhost:27017/jown-test");
+	});
+
+	after(function() {
+		mongoose.disconnect();
+	});
 
 	var testUser = {
 		created: new Date(Date.now()),
