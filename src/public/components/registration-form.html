@@ -1,0 +1,75 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="/index.html">
+
+<dom-module id="registration-form">
+  <template>
+    <style>
+      :host {
+				display: block;
+			}
+
+			paper-card {
+				min-width: 500px;
+			}
+
+			paper-card ::content .title-text {
+				text-align: center;
+			}
+
+			paper-card .card-actions {
+				text-align: right;
+			}
+    </style>
+    <paper-dialog id="modal" modal alwaysOnTop="true">
+        <p>Could not registers</p>
+        <div class="buttons">
+            <paper-button dialog-confirm autofocus>OK!</paper-button>
+        </div>
+    </paper-dialog>
+
+    <paper-dialog id="dialog">
+        <h2>Error!</h2>
+        <p>Could not register</p>
+    </paper-dialog>
+
+    <paper-card id="login-form" heading="Register New Account">
+    <div class="card-content">
+
+
+
+    <paper-input label="Username" maxlength="100" value={{username}}></paper-input>
+    <paper-input label="Email" maxlength="100" value={{email}}></paper-input>
+    <paper-input label="Password" type="password" maxlength="100" value={{password}}></paper-input>
+    <paper-dropdown-menu class="dropdownmenu" label="Role">
+      <paper-listbox class="dropdown-content">
+        <template is="dom-repeat" items="[[rolesList]]">
+          <paper-item class="items">{{item}}</paper-item>
+        </template>
+      </paper-listbox>
+    </paper-dropdown-menu>
+    <div class="card-actions">
+      <paper-button flat on-tap="registerUser">Register</paper-button>
+    </div>
+
+
+
+    </div>
+    </paper-card>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'registration-form',
+      
+      registerUser: function() {
+				// alert("registering");
+				// el.addEventListener('transitionend', function(e) {
+					location.href = "/index.html";
+				// });
+			},
+    });
+  </script>
+</dom-module>

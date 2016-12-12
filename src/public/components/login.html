@@ -7,6 +7,7 @@
 <link rel="import" href="/bower_components/paper-item/paper-item.html">
 <link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="/bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../registration-page.html">
 
 <dom-module id="login-box">
     <template>
@@ -51,7 +52,7 @@
 			</div>
 			<div class="card-actions">
 				<paper-button class="button" flat on-tap="login">Login</paper-button>
-				<paper-button class="button" flat on-tap="register">Register</paper-button>
+				<paper-button class="button" flat on-tap="loadRegistration">Register</paper-button>
 			</div>
 		</paper-card>        
     </template>
@@ -62,13 +63,14 @@
 				username: String,
 				password: String
 			},
-            login: function() {
+			login: function() {
 				alert("logging in " + this.username);
 				this.$.verifyAjax.body = {"userId": this.username, "password": this.password, "role": "Admin"};
 				this.$.verifyAjax.generateRequest();
 			},
-			register: function() {
-				alert("registering");
+			loadRegistration: function() {
+				//alert("registering");
+				location.href = "/registration-page.html";
 			},
 			handleAuthResponse: function(request) {
 				console.log(request.detail.response);
