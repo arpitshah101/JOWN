@@ -1,11 +1,12 @@
 import * as express from "express";
 let bodyParser = require("body-parser");
 import * as User from "./models/User";
+import * as Path from "path";
 
 let app = express();
 
 app.use(bodyParser());
-app.use(express.static("/public"));
+app.use(express.static(Path.join(__dirname, "public")));
 app.use("bower_components", express.static("/bower_components"));
 
 app.get("/", (req: express.Request, res: express.Response) => {
