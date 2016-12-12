@@ -31,6 +31,14 @@ export class DefParser {
 			.then((doc: Workflow.IDocument) => {
 				workflow = doc;
 			})
+			.catch((reason: mongoose.NativeError) => {
+				if (reason.name === "MongoError" && reason.message.match("insertDocument.+duplicate\\skey\\serror.*").length > 0) {
+					reject(`A workflow already exists with the name '${workflow.name}'`);
+				}
+				else {
+					reject(reason);
+				}
+			})
 			.then(() => {
 				let promises: Array<Bluebird<any>> = [];
 				for (let child of workflowNode.children) {
@@ -83,7 +91,7 @@ export class DefParser {
 				}
 			})
 			.catch((reason) => {
-				console.log(reason);
+				// console.log(reason);
 				reject(reason);
 			});
 		});
@@ -269,12 +277,12 @@ export class DefParser {
 		return new Bluebird<mongoose.Types.ObjectId>((resolve, reject) => {
 			let formDoc = new Form.model(form);
 			formDoc.save()
-			.then((doc: Form.IDocument) => {
-				resolve(doc._id);
-			})
-			.catch((reason) => {
-				reject(reason);
-			});
+				.then((doc: Form.IDocument) => {
+					resolve(doc._id);
+				})
+				.catch((reason) => {
+					reject(reason);
+				});
 		});
 	}
 
@@ -304,5 +312,4 @@ export class DefParser {
 				});
 		});
 	}
-
 }
