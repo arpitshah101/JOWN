@@ -1,9 +1,9 @@
 // promise-bluebird.d.ts
 import * as Bluebird from "bluebird";
 
-declare module "mongoose" {
-	type Promise<T> = Bluebird<T>;
-}
+// declare module "mongoose" {
+// 	type Promise<T> = Bluebird<T>;
+// }
 import * as Data from "../models/Data";
 
 import * as mongoose from "mongoose";
