@@ -1,14 +1,14 @@
-import * as ExpressionNode from "../models/ExpressionNode";
-import * as mongoose from "mongoose";
 import * as Promise from "bluebird";
+import * as mongoose from "mongoose";
+import * as ExpressionNode from "../models/ExpressionNode";
 
 export class ConditionParser {
 
 	/**
 	 * Function that takes a conditional, parses it and returns a tree with all the conditions
-     * @param   condition: String containing a conditional statement
-     * @return  a tree containing the conditions split up by logical operators
-     *          undefined if the conditional is not properly formatted
+	 * @param   condition: String containing a conditional statement
+	 * @return  a tree containing the conditions split up by logical operators
+	 *          undefined if the conditional is not properly formatted
 	 */
 	public buildEvaluationTree (condition: String) {
 		condition = condition.trim();
@@ -17,29 +17,28 @@ export class ConditionParser {
 		if (parsedCondition === undefined) {
 			return undefined;
 		}
-
-        return this.addArrayToTree(parsedCondition);
+		return this.addArrayToTree(parsedCondition);
 	}
 
 	/**
 	 * 
 	 */
 	public addArrayToTree (parsedCondition: any[]) {
-        let retTree: ExpressionNode.ExpressionNode;
-        if (parsedCondition.length === 1) {
-            let conditional = String(parsedCondition.pop);
-            retTree = new ExpressionNode.ExpressionNode(conditional, undefined, undefined);
-            return retTree;
-        }
-        for (let i = 0 ; i < parsedCondition.length ; i++) {
-            if (parsedCondition[i] === "&&" || parsedCondition[i] === "||") {
-                let left = this.addArrayToTree(parsedCondition[i - 1]);
-                let right = this.addArrayToTree(parsedCondition[i + 1]);
-                retTree = new ExpressionNode.ExpressionNode(String(parsedCondition[i]), left, right);
-            }
+		let retTree: ExpressionNode.ExpressionNode;
+		if (parsedCondition.length === 1) {
+			let conditional = String(parsedCondition.pop);
+			retTree = new ExpressionNode.ExpressionNode(conditional, undefined, undefined);
+			return retTree;
+		}
+		for (let i = 0 ; i < parsedCondition.length ; i++) {
+			if (parsedCondition[i] === "&&" || parsedCondition[i] === "||") {
+				let left = this.addArrayToTree(parsedCondition[i - 1]);
+				let right = this.addArrayToTree(parsedCondition[i + 1]);
+				retTree = new ExpressionNode.ExpressionNode(String(parsedCondition[i]), left, right);
+			}
 		}
 
-        return retTree;
+		return retTree;
 	}
 
 	/**
@@ -71,20 +70,20 @@ export class ConditionParser {
 					// console.log(recRet + "<<<<");
 					ret.push(recRet);
 				} else if ((i !== 0) && (c === ")")) {
-                    currCondition = currCondition.trim();
-                    if( currCondition !== "" ) {
-                        ret.push(currCondition);
-                    }
+					currCondition = currCondition.trim();
+					if (currCondition !== "") {
+						ret.push(currCondition);
+					}
 					ret.push(c);
 					ret.push(i);
 					return ret;
 				} else if (c === "&" || c === "|") {
 					if ((currCondition !== "") && (ret.indexOf(currCondition) === -1)) {
 						// NEEDS TO BE FIXED TO HANDLE DUPLICATES. ONLY CHECK LAST ITEM IN LIST.
-                        currCondition = currCondition.trim();
-                        if( currCondition !== "" ) {
-                            ret.push(currCondition);
-                        }
+						currCondition = currCondition.trim();
+						if (currCondition !== "") {
+							ret.push(currCondition);
+						}
 						currCondition = "";
 					}
 					// See if there are any names left in the condition
@@ -106,10 +105,10 @@ export class ConditionParser {
 			}
 
 			if (i === (condition.length - 1)) {
-                currCondition = currCondition.trim();
-                if( currCondition !== "" ) {
-				    ret.push(currCondition);
-                }
+				currCondition = currCondition.trim();
+				if (currCondition !== "") {
+					ret.push(currCondition);
+				}
 
 			}
 		}
@@ -178,26 +177,31 @@ export class ConditionParser {
 	 */
 	public isCondition (condition: String) {
 		let i = -1;
-		if ((i = condition.indexOf("==")) !== -1 ) {
+		if (condition.indexOf("==") !== -1 ) {
+			i = condition.indexOf("==");
 			return this.plusOffsetIsEdge(i, condition.length, 2);
-		} else if ((i = condition.indexOf("!=")) !== -1 ) {
+		} else if (condition.indexOf("!=") !== -1 ) {
+			i = condition.indexOf("!=");
 			return this.plusOffsetIsEdge(i, condition.length, 2);
-		} else if ((i = condition.indexOf(">=")) !== -1 ) {
+		} else if ( condition.indexOf(">=") !== -1 ) {
+			i = condition.indexOf(">=");
 			return this.plusOffsetIsEdge(i, condition.length, 2);
-		} else if ((i = condition.indexOf("<=")) !== -1 ) {
+		} else if (condition.indexOf("<=") !== -1 ) {
+			i = condition.indexOf("<=");
 			return this.plusOffsetIsEdge(i, condition.length, 2);
-		} else if ((i = condition.indexOf(">")) !== -1 ) {
+		} else if (condition.indexOf(">") !== -1 ) {
+			i = condition.indexOf(">");
 			let ret = this.plusOffsetIsEdge(i, condition.length, 1);
-			if ( ret === undefined ) {
+			if (ret === undefined) {
 				return ret;
 			}
 			else {
 				return -ret;
 			}
-
-		} else if ((i = condition.indexOf("<")) !== -1 ) {
+		} else if (condition.indexOf("<") !== -1 ) {
+			i = condition.indexOf("<");
 			let ret = this.plusOffsetIsEdge(i, condition.length, 1);
-			if ( ret === undefined ) {
+			if (ret === undefined) {
 				return ret;
 			}
 			else {
