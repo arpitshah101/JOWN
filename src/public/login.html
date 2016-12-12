@@ -2,12 +2,12 @@
 <html>
 <head>
 	
-	<link href="/bower_components/polymer/polymer.html" rel="import">
-	<link href="/bower_components/paper-input/paper-input.html" rel="import">
-	<link href="/bower_components/paper-dropdown-menu/paper-dropdown-menu.html" rel="import">
-	<link href="/bower_components/paper-listbox/paper-listbox.html" rel="import">
-	<link href="/bower_components/paper-item/paper-item.html" rel="import">
-	<link href="/bower_components/paper-button/paper-button.html" rel="import">
+	<link rel="import" href="../../bower_components/polymer/polymer.html">
+	<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+	<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+	<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+	<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+	<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
 </head>
 
@@ -84,19 +84,19 @@
         Polymer({
             is: 'login-page',
 	
-		login: function(e){
-		alert("Login Failed");
-		return;
-		}
+            login: function(e){
+            alert("Login Failed");
+            return;
+            }
 
-        });
-		
-		function register(el) {
-  // Wait for ripple to finish.
-		el.addEventListener('transitionend', function(e) {
-		location.href = "src/public/registration.html";
-  });
-}
+            });
+            
+            function register(el) {
+            // Wait for ripple to finish.
+            el.addEventListener('transitionend', function(e) {
+                location.href = "registration.html";
+            });
+        }
 
     </script>
 </dom-module>
