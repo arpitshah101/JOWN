@@ -20,7 +20,7 @@ let groupSchema = new Schema({
 
 export interface IGroup {
 	members: mongoose.Types.ObjectId[];
-	name: String;
+	name: string;
 	public: boolean;
 };
 
