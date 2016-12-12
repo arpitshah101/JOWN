@@ -78,7 +78,7 @@ gulp.task("tslint", () => {
 		}));
 });
 
-gulp.task("build:watch", ["compile-ts"], function() {
+gulp.task("build:watch", ["clean-dest", "compile-ts"], function() {
 	cleanFolder(basePaths.dest + "public");
 	gulp.run("copy-public");
 	gulp.watch("src/public/**", function(event) {

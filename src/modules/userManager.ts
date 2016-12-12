@@ -1,6 +1,7 @@
 import * as Bluebird from "bluebird";
 
 import * as mongoose from "mongoose";
+import * as Group from "../models/Group";
 import * as User from "../models/User";
 
 export class UserManager {
@@ -18,13 +19,12 @@ export class UserManager {
 	 *
 	 * @memberOf UserManager
 	 */
-	public static createUser(name: String, email: String, userId: String,
-					password: String, roles: String[], created?: Date): Bluebird<boolean> {
+	public static createUser(name: string, email: string, userId: string,
+					password: string, roles: string[], created?: Date): Bluebird<boolean> {
 		return new Bluebird<boolean>((resolve, reject) => {
-			console.log(`trying to create a new user...`);
+			let newUser: User.IDocument;
 			this.userExists(userId)
 				.then((doc: User.IDocument) => {
-					console.log(`User ${userId} was checked`);
 					return (doc !== null && doc !== undefined);
 				})
 				.then((successFlag) => {
@@ -32,7 +32,7 @@ export class UserManager {
 						reject("An account already exists with the provided credentials.");
 					}
 					else {
-						let newUser = new User.model({
+						newUser = new User.model({
 							password,
 							roles,
 							userEmail: email,
@@ -52,6 +52,30 @@ export class UserManager {
 					}
 				})
 				.then((doc) => {
+					newUser = doc;
+					let groupPromises: Array<Bluebird<Group.IDocument>> = [];
+					for (let group of doc.roles) {
+						groupPromises.push(Group.model.findOne({name: group}).exec());
+					}
+					return Bluebird.all(groupPromises);
+				})
+				.then((groups: Group.IDocument[]) => {
+					groups = groups.filter((doc: Group.IDocument) => {
+						if (doc) {
+							doc.members.push(newUser._id);
+							return true;
+						}
+						return false;
+					});
+					return Bluebird.all(groups.map((doc: Group.IDocument) => doc.save()));
+				})
+				.then((groups: Group.IDocument[]) => {
+					let missingGroups: string[] = newUser.roles.filter((role: string) => {
+						return !groups.some((group: Group.IDocument) => group.name === role);
+					});
+					return Bluebird.all(this.addNewGroups(missingGroups, newUser._id));
+				})
+				.then((newGroups: Group.IDocument[]) => {
 					resolve(true);
 				})
 				.catch((reason: mongoose.NativeError) => {
@@ -95,15 +119,15 @@ export class UserManager {
 	 * Modifies an existing user matching the provided userId.
 	 * Note: Only email, password, and the roles list can be modified!
 	 *
-	 * @param {String} userId - String userId of target user
-	 * @param {String} email - Valid user email
-	 * @param {String} password - Valid requested user password
-	 * @param {String[]} roles - List of roles for user. ** Empty list indicates no change should be made. **
+	 * @param {string} userId - String userId of target user
+	 * @param {string} email - Valid user email
+	 * @param {string} password - Valid requested user password
+	 * @param {string[]} roles - List of roles for user. ** Empty list indicates no change should be made. **
 	 * @returns {Bluebird<boolean>} - Promise resolving to a boolean flag if successful else promise is rejected
 	 *
 	 * @memberOf UserManager
 	 */
-	public static modifyUser(userId: String, email: String, password: String, roles: String[]): Bluebird<boolean> {
+	public static modifyUser(userId: string, email: string, password: string, roles: string[]): Bluebird<boolean> {
 		return new Bluebird<boolean>((resolve, reject) => {
 			let query = {
 				userId,
@@ -147,7 +171,6 @@ export class UserManager {
 			query
 				.exec()
 				.then((doc: User.IDocument) => {
-					console.log(doc);
 					resolve(doc);
 				});
 		});
@@ -198,5 +221,19 @@ export class UserManager {
 					reject(reason);
 				});
 		});
+	}
+
+
+	private static addNewGroups(groups: string[], userDocId: mongoose.Types.ObjectId): Array<Bluebird<Group.IDocument>> {
+		let newGroups: Array<Bluebird<Group.IDocument>> = [];
+		groups.forEach((value: string) => {
+			let g = new Group.model(<Group.IGroup> {
+				members: [userDocId],
+				name: value,
+				public: false,
+			});
+			newGroups.push(g.save());
+		});
+		return newGroups;
 	}
 }

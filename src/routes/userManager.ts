@@ -1,6 +1,7 @@
 import { Request, Response, Router } from "express";
 import * as mongoose from "mongoose";
 
+import * as Group from "../models/Group";
 import * as User from "../models/User";
 import { UserManager } from "../modules/userManager";
 
@@ -43,7 +44,20 @@ router.post("/verifyUser", (req: Request, res: Response, next) => {
 	let password: string = req.body.password;
 	let role: string = req.body.role;
 
-	if (!(userId && password && role)) {
+	let missingFields: string[] = [];
+
+	if (!userId) {
+		missingFields.push("userId");
+	}
+	if (!password) {
+		missingFields.push("password");
+	}
+	if (!role) {
+		missingFields.push("role");
+	}
+
+	if (missingFields.length > 0) {
+		console.log(missingFields);
 		res.json({result: false, message: `Insufficient information provided. Try again.`});
 		next();
 		return;
@@ -64,10 +78,18 @@ router.post("/verifyUser", (req: Request, res: Response, next) => {
 		.then(next);
 });
 
+router.get("/allRoles", (req: Request, res: Response, next) => {
+	Group.model.find()
+		.then((groups: Group.IDocument[]) => {
+			res.json(groups);
+			next();
+		});
+});
+
 function deleteUser(req: Request, rep: Response, next) {
 	let userId = req.params("userId");
 
-	let result = UserManager.prototype.deleteUser(userId);
+	let result = UserManager.deleteUser(userId);
 
 	result.then( (response) => {
 		if (response === true) {
@@ -100,7 +122,7 @@ function getNextTenUsers(req: Request, rep: Response, next) {
 
 function getUserCount(req: Request, rep: Response, next) {
 
-	let result = UserManager.prototype.getUserCount();
+	let result = UserManager.getUserCount();
 
 	result.then( (response) => {
 		if (response > 0) {
@@ -120,7 +142,7 @@ function modifyUser(req: Request, rep: Response, next) {
 	let password = req.params("password");
 	let roles = req.params("roles");
 
-	let result = UserManager.prototype.modifyUser(userId, email, password, roles);
+	let result = UserManager.modifyUser(userId, email, password, roles);
 
 	result.then( (response) => {
 		if (response === true) {

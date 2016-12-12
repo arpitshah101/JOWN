@@ -27,7 +27,7 @@ app.use("/node_modules", express.static(__dirname.substr(0, __dirname.lastIndexO
 // 	res.send("Hello World");
 // });
 
-app.use("/user", routes.userRoutes);
+app.use("/users", routes.userRoutes);
 
 app.listen(3000, () => {
 	console.log("Application running on port 3000");

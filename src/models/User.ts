@@ -36,11 +36,11 @@ let userSchema = new Schema({
 }, { skipVersioning: true });
 
 export interface IUser {
-	userName: String;
-	userEmail: String;
-	userId: String;
-	password: String;
-	roles: String[];
+	userName: string;
+	userEmail: string;
+	userId: string;
+	password: string;
+	roles: string[];
 	created: Date;
 	workflowInstances: [Object];
 };

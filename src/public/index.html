@@ -7,15 +7,9 @@
     <link rel="import" href="/bower_components/polymer/polymer.html">
     <link rel="import" href="/bower_components/iron-flex-layout/iron-flex-layout.html">
     <link rel="import" href="/bower_components/paper-header-panel/paper-header-panel.html">
-    <link rel="import" href="/bower_components/paper-card/paper-card.html">
-    <link rel="import" href="/bower_components/paper-button/paper-button.html">
-    <link rel="import" href="/bower_components/paper-input/paper-input.html">
-    <link rel="import" href="/bower_components/paper-item/paper-item.html">
-    <link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
-    <link rel="import" href="/bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
     <link rel="import" href="./colors.html">
     <link rel="import" href="./shadows.html">
-    <!--<link rel="import" href="login.html">-->
+    <link rel="import" href="./components/login.html">
 
     <style is="custom-style">
         body {
@@ -68,33 +62,26 @@
         paper-card#login-form .card-actions {
             text-align: right;
         }
+
+        login-box {
+            margin: 0 auto;
+            display: table;
+            margin-top: 25px;
+        }
     </style>
 </head>
 
-<body>
-    <!--<login-page></login-page>-->
+<body id="app">
     <paper-header-panel class="red">
         <div class="paper-header">Just Our Workflow Notation</div>
     </paper-header-panel>
+    <login-box></login-box>
 
-    <paper-card id="login-form" heading="Please Log In">
-        <div class="card-content">
-            <paper-input class="username" label="Username"></paper-input>
-            <paper-input class="password" label="Password" type="password"></paper-input>
-            <paper-dropdown-menu class="dropdownmenu" label="Role">
-                <paper-listbox class="dropdown-content">
-                    <paper-item class="items">Student</paper-item>
-                    <paper-item class="items">Professor</paper-item>
-                    <paper-item class="items">Dean</paper-item>
-                    <paper-item class="items">Admin</paper-item>
-                </paper-listbox>
-            </paper-dropdown-menu>
-        </div>
-        <div class="card-actions">
-			<paper-button class="button" flat on-tap="login">Login</paper-button>
-			<paper-button class="button" flat onclick="register(this)">Register</paper-button>
-        </div>
-    </paper-card>
+    <script>
+        var app = document.querySelector("#app");
+        app.login = function() {alert("Loging in!")};
+        app.register = function() {alert("Registering!")};
+    </script>
 
 </body>
 

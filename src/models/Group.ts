@@ -10,9 +10,10 @@ let groupSchema = new Schema({
 	name: {
 		required: true,
 		type: Schema.Types.String,
+		unique: true,
 	},
 	public: {
-		default: true,
+		default: false,
 		type: Schema.Types.Boolean,
 	},
 }, { skipVersioning: true });
