@@ -1,3 +1,5 @@
+import * as path from "path";
+
 import * as bodyParser from "body-parser";
 import * as express from "express";
 
@@ -17,12 +19,13 @@ mongoose.connect("mongodb://localhost:27017/jown-test");
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.use(bodyParser.json());
-app.use(express.static("/public"));
-app.use("bower_components", express.static("/bower_components"));
+app.use(express.static(__dirname + "/public"));
+app.use("/bower_components", express.static(__dirname.substr(0, __dirname.lastIndexOf("/")) + "/bower_components"));
+app.use("/node_modules", express.static(__dirname.substr(0, __dirname.lastIndexOf("/")) + "/node_modules"));
 
-app.get("/", (req: express.Request, res: express.Response) => {
-	res.send("Hello World");
-});
+// app.get("/", (req: express.Request, res: express.Response) => {
+// 	res.send("Hello World");
+// });
 
 app.use("/user", routes.userRoutes);
 
