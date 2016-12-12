@@ -9,30 +9,28 @@ let router = Router();
 
 router.post("/createUser", (req: Request, res: Response, next) => {
 	console.log("Received a create user request");
-	let name: string = req.body.name;
-	let email: string = req.body.email;
-	let userId: string = req.body.userId;
-	let password: string = req.body.password;
-	let roles: string[] = req.body.roles;
 
-	if (!(name && email && userId && password && roles) || roles.length < 1) {
-		res.json({result: false, message: `Insufficient information provided. Try again.`});
-		next();
-		return;
-	}
+	let userObj: any = req.body.userObj;
+	let name: string = userObj.name;
+	let email: string = userObj.email;
+	let userId: string = userObj.userId;
+	let password: string = userObj.password;
+	let roles: string[] = userObj.roles;
+	let fields: string[] = ["name", "email", "userId", "password", "roles"];
+	let missingFields: string[] = verifyFields(fields, userObj);
 
 	UserManager.createUser(name, email, userId, password, roles)
-		.then((result) => {
-			if (result === true) {
-				res.json({result: true, message: `An account with the username ${userId} was created successfully!`});
+		.then( (response) => {
+			if (response === true) {
+				res.json({success: true, message: `An account with the username ${userId} was created successfully!`});
 			}
 			else {
-				res.json({result: false, message: `User could not be created!`});
+				res.json({success: false, message: `User could not be created!`});
 			}
 		})
 		.catch((reason) => {
 			console.log(reason);
-			res.json({result: false, message: "User couldn't be created"});
+			res.json({success: false, message: "User could not be created!"});
 		})
 		.then(() => {
 			next();
@@ -40,25 +38,18 @@ router.post("/createUser", (req: Request, res: Response, next) => {
 });
 
 router.post("/verifyUser", (req: Request, res: Response, next) => {
-	let userId: string = req.body.userId;
-	let password: string = req.body.password;
-	let role: string = req.body.role;
+	console.log("Received a verify user request");
 
-	let missingFields: string[] = [];
-
-	if (!userId) {
-		missingFields.push("userId");
-	}
-	if (!password) {
-		missingFields.push("password");
-	}
-	if (!role) {
-		missingFields.push("role");
-	}
+	let userObj: any = req.body.userObj;
+	let userId: string = userObj.userId;
+	let password: string = userObj.password;
+	let role: string = userObj.role;
+	let fields: string[] = ["userId", "password", "role"];
+	let missingFields: string[] = verifyFields(fields, userObj);
 
 	if (missingFields.length > 0) {
 		console.log(missingFields);
-		res.json({result: false, message: `Insufficient information provided. Try again.`});
+		res.json({success: false, message: `Insufficient/incorrect information provided. Try again.`});
 		next();
 		return;
 	}
@@ -67,41 +58,72 @@ router.post("/verifyUser", (req: Request, res: Response, next) => {
 		.then((doc: User.IDocument) => {
 			if (doc) {
 				console.log(`User ${userId} exists!`);
-				res.json({result: true});
+				res.json({success: true});
 			}
 			else {
 				console.log(`User ${userId} DOES NOT exist.`);
-				res.json({result: false});
+				res.json({success: false});
 			}
 		})
-		.catch(next)
-		.then(next);
+		.catch((reason) => {
+			console.log(reason);
+			res.json({success: false, message: "User DOES NOT exist!"});
+		})
+		.then(() => {
+			next();
+		});
 });
 
 router.get("/allRoles", (req: Request, res: Response, next) => {
 	Group.model.find()
 		.then((groups: Group.IDocument[]) => {
-			res.json(groups);
+			let results: string[] = [];
+			for (let group of groups) {
+				results.push(group.name);
+			}
+			res.json(results);
+		})
+		.catch((reason) => {
+			console.log(reason);
+			res.json({success: false, message: "Could not retrieve list of roles!"});
+		})
+		.then(() => {
 			next();
 		});
 });
 
-function deleteUser(req: Request, rep: Response, next) {
-	let userId = req.params("userId");
+router.post("/deleteUser", (req: Request, res: Response, next) => {
+	console.log("Received a delete user request");
 
-	let result = UserManager.deleteUser(userId);
+	let userObj: any = req.body.userObj;
+	let userId = userObj.userId;
+	let fields: string[] = ["userId"];
+	let missingFields: string[] = verifyFields(fields, userObj);
 
-	result.then( (response) => {
-		if (response === true) {
-			console.log("User " + userId + " deleted successfully!");
-		}
-		else {
-			console.log("User could not be deleted!");
-		}
-	})
-	.then(next);
+	if (missingFields.length > 0) {
+		console.log(missingFields);
+		res.json({success: false, message: `Insufficient/incorrect information provided. Try again.`});
+		next();
+		return;
+	}
 
-}
+	UserManager.deleteUser(userId)
+		.then( (response) => {
+			if (response === true) {
+				res.json({success: true, message: `User ${userId} was deleted successfully!`});
+			}
+			else {
+				res.json({success: false, message: `User ${userId} could not be deleted!`});
+			}
+		})
+		.catch((reason) => {
+			console.log(reason);
+			res.json({success: false, message: "User could not be deleted!"});
+		})
+		.then(() => {
+			next();
+		});
+});
 
 function getNextTenUsers(req: Request, rep: Response, next) {
 	let created = req.params("created");
@@ -120,40 +142,65 @@ function getNextTenUsers(req: Request, rep: Response, next) {
 
 }
 
-function getUserCount(req: Request, rep: Response, next) {
+router.get("/getUserCount", (req: Request, res: Response, next) => {
+	UserManager.getUserCount()
+		.then( (response) => {
+			res.json({success: true, count: response});
+		})
+		.catch((reason) => {
+			console.log(reason);
+			res.json({success: false, message: "Could not get user count!"});
+		})
+		.then(() => {
+			next();
+		});
+});
 
-	let result = UserManager.getUserCount();
+router.post("/modifyUser", (req: Request, res: Response, next) => {
+	console.log("Received a delete user request");
 
-	result.then( (response) => {
-		if (response > 0) {
-			console.log("There are 1 or more users!");
+	let userObj: any = req.body.userObj;
+	let userId = userObj.userId;
+	let email = userObj.email;
+	let password = userObj.password;
+	let roles = userObj.roles;
+	let fields: string[] = ["userId"];
+	let missingFields: string[] = verifyFields(fields, userObj);
+
+	if (missingFields.length > 0) {
+		console.log(missingFields);
+		res.json({success: false, message: `Insufficient/incorrect information provided. Try again.`});
+		next();
+		return;
+	}
+
+	UserManager.modifyUser(userId, email, password, roles)
+		.then( (response) => {
+			if (response === true) {
+				res.json({success: true, message: `User ${userId} successfully modified!`});
+			}
+			else {
+				res.json({success: false, message: `Unable to modify user ${userId}!`});
+			}
+		})
+		.catch((reason) => {
+			console.log(reason);
+			res.json({success: false, message: "Unable to modify user!"});
+		})
+		.then(() => {
+			next();
+		});
+
+});
+
+function verifyFields(fields: string[], obj: any): string[] {
+	let missingFields: string[] = [];
+	for (let field of fields) {
+		if (!obj[field]) {
+			missingFields.push(field);
 		}
-		else {
-			console.log("There are no users!");
-		}
-	})
-	.then(next);
-
-}
-
-function modifyUser(req: Request, rep: Response, next) {
-	let email = req.params("email");
-	let userId = req.params("userId");
-	let password = req.params("password");
-	let roles = req.params("roles");
-
-	let result = UserManager.modifyUser(userId, email, password, roles);
-
-	result.then( (response) => {
-		if (response === true) {
-			console.log("User " + userId + " successfully modified!");
-		}
-		else {
-			console.log("User could not be modified!");
-		}
-	})
-	.then(next);
-
+	}
+	return missingFields;
 }
 
 export const userRoutes = router;

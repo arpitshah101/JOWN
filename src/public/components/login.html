@@ -44,7 +44,7 @@
 				<paper-dropdown-menu class="dropdownmenu" label="Role" value="{{role}}">
 					<paper-listbox class="dropdown-content">
 						<template is="dom-repeat" items="[[rolesList]]">
-							<paper-item class="items">{{item.name}}</paper-item>
+							<paper-item class="items">{{item}}</paper-item>
 						</template>
 					</paper-listbox>
 				</paper-dropdown-menu>
@@ -64,7 +64,8 @@
 				role: String
 			},
             login: function() {
-				this.$.verifyAjax.body = {"userId": this.username, "password": this.password, "role": this.role};
+				//this.$.verifyAjax.body = {"userId": this.username, "password": this.password, "role": this.role};
+				this.$.verifyAjax.body = {"userObj": {"userId": this.username, "password": this.password, "role": this.role}};
 				this.$.verifyAjax.generateRequest();
 			},
 			register: function() {

@@ -127,17 +127,23 @@ export class UserManager {
 	 *
 	 * @memberOf UserManager
 	 */
-	public static modifyUser(userId: string, email: string, password: string, roles: string[]): Bluebird<boolean> {
+	public static modifyUser(userId: string, email?: string, password?: string, roles?: string[]): Bluebird<boolean> {
 		return new Bluebird<boolean>((resolve, reject) => {
 			let query = {
 				userId,
 			};
 
-			let update = {
-				userEmail: email,
-				password,
-				roles,
-			};
+			let update: any = { };
+			if (email) {
+				update.userEmail = email;
+			}
+			if (password) {
+				update.password = password;
+			}
+			if (roles) {
+				update.roles = roles;
+			}
+
 
 			User.model.findOneAndUpdate(query, update, { new: true }).exec()
 				.then((doc: User.IDocument) => {
