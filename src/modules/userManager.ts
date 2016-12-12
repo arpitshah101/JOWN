@@ -18,12 +18,13 @@ export class UserManager {
 	 *
 	 * @memberOf UserManager
 	 */
-	public createUser(name: String, email: String, userId: String,
+	public static createUser(name: String, email: String, userId: String,
 					password: String, roles: String[], created?: Date): Bluebird<boolean> {
 		return new Bluebird<boolean>((resolve, reject) => {
-
+			console.log(`trying to create a new user...`);
 			this.userExists(userId)
 				.then((doc: User.IDocument) => {
+					console.log(`User ${userId} was checked`);
 					return (doc !== null && doc !== undefined);
 				})
 				.then((successFlag) => {
@@ -73,7 +74,7 @@ export class UserManager {
 	 *
 	 * @memberOf UserManager
 	 */
-	public deleteUser(userId: String): Bluebird<boolean> {
+	public static deleteUser(userId: String): Bluebird<boolean> {
 		return new Bluebird<boolean>((resolve, reject) => {
 			User.model.findOneAndRemove(userId).exec()
 				.then((doc: User.IDocument) => {
@@ -102,7 +103,7 @@ export class UserManager {
 	 *
 	 * @memberOf UserManager
 	 */
-	public modifyUser(userId: String, email: String, password: String, roles: String[]): Bluebird<boolean> {
+	public static modifyUser(userId: String, email: String, password: String, roles: String[]): Bluebird<boolean> {
 		return new Bluebird<boolean>((resolve, reject) => {
 			let query = {
 				userId,
@@ -134,10 +135,21 @@ export class UserManager {
 	 *
 	 * @memberOf UserManager
 	 */
-	public userExists(userId: String): Bluebird<User.IDocument> {
-		let query = User.model.findOne({ userId }).exec();
-		return query.then((doc: User.IDocument) => {
-			return Bluebird.resolve(doc);
+	public static userExists(userId: string, password?: string, role?: string): Bluebird<User.IDocument> {
+		return new Bluebird<User.IDocument>((resolve, reject) => {
+			let query: mongoose.DocumentQuery<User.IDocument, User.IDocument>;
+			if (password && role) {
+				query = User.model.findOne({ userId, password, roles: role});
+			}
+			else {
+				query = User.model.findOne({ userId });
+			}
+			query
+				.exec()
+				.then((doc: User.IDocument) => {
+					console.log(doc);
+					resolve(doc);
+				});
 		});
 	}
 
@@ -149,7 +161,7 @@ export class UserManager {
 	 *
 	 * @memberOf UserManager
 	 */
-	public getNextTenUsers(created: Date): Bluebird<User.IUser[]> {
+	public static getNextTenUsers(created: Date): Bluebird<User.IUser[]> {
 		return new Bluebird<User.IUser[]>((resolve, reject) => {
 			User.model
 				.find({})
@@ -176,7 +188,7 @@ export class UserManager {
 	 *
 	 * @memberOf UserManager
 	 */
-	public getUserCount(): Bluebird<number> {
+	public static getUserCount(): Bluebird<number> {
 		return new Bluebird<number>((resolve, reject) => {
 			User.model.count({}).exec()
 				.then((response) => {

@@ -4,7 +4,7 @@ var mongoose = require("mongoose");
 mongoose.Promise = require("bluebird");
 var bluebird = require("bluebird");
 
-var UserManager = require("../modules/userManager").UserManager.prototype;
+var UserManager = require("../modules/userManager").UserManager;
 var User = require("../models/User").model;
 
 describe("#UserManager", function () {
