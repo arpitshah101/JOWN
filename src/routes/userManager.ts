@@ -63,7 +63,7 @@ router.post("/verifyUser", (req: Request, res: Response, next) => {
 		return;
 	}
 
-	UserManager.userExists(userId)
+	UserManager.userExists(userId, password, role)
 		.then((doc: User.IDocument) => {
 			if (doc) {
 				console.log(`User ${userId} exists!`);

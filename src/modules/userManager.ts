@@ -23,7 +23,7 @@ export class UserManager {
 					password: string, roles: string[], created?: Date): Bluebird<boolean> {
 		return new Bluebird<boolean>((resolve, reject) => {
 			let newUser: User.IDocument;
-			this.userExists(userId)
+			User.model.findOne({ userId })
 				.then((doc: User.IDocument) => {
 					return (doc !== null && doc !== undefined);
 				})
@@ -159,16 +159,10 @@ export class UserManager {
 	 *
 	 * @memberOf UserManager
 	 */
-	public static userExists(userId: string, password?: string, role?: string): Bluebird<User.IDocument> {
+	public static userExists(userId: string, password: string, role: string): Bluebird<User.IDocument> {
 		return new Bluebird<User.IDocument>((resolve, reject) => {
-			let query: mongoose.DocumentQuery<User.IDocument, User.IDocument>;
-			if (password && role) {
-				query = User.model.findOne({ userId, password, roles: role});
-			}
-			else {
-				query = User.model.findOne({ userId });
-			}
-			query
+			console.log(`UserId: ${userId}, Password: ${password}, Role: ${role}`);
+			User.model.findOne({ userId, password, roles: role})
 				.exec()
 				.then((doc: User.IDocument) => {
 					resolve(doc);
