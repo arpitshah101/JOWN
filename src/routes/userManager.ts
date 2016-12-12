@@ -25,6 +25,8 @@ function createUser(req: Request, rep: Response, next) {
 	})
 	.catch(next);
 
+	next();
+
 }
 
 function deleteUser(req: Request, rep: Response, next) {
@@ -41,6 +43,8 @@ function deleteUser(req: Request, rep: Response, next) {
 		}
 	})
 	.catch(next);
+
+	next();
 
 }
 
@@ -59,6 +63,8 @@ function getNextTenUsers(req: Request, rep: Response, next) {
 	})
 	.catch(next);
 
+	next();
+
 }
 
 function getUserCount(req: Request, rep: Response, next) {
@@ -74,6 +80,8 @@ function getUserCount(req: Request, rep: Response, next) {
 		}
 	})
 	.catch(next);
+
+	next();
 
 }
 
@@ -95,6 +103,8 @@ function modifyUser(req: Request, rep: Response, next) {
 	})
 	.catch(next);
 
+	next();
+
 }
 
 function userExists(req: Request, rep: Response, next) {
@@ -111,5 +121,7 @@ function userExists(req: Request, rep: Response, next) {
 		}
 	})
 	.catch(next);
+
+	next();
 
 }
