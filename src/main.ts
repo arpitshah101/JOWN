@@ -23,12 +23,15 @@ app.use(express.static(__dirname + "/public"));
 app.use("/bower_components", express.static(__dirname.substr(0, __dirname.lastIndexOf("/")) + "/bower_components"));
 app.use("/node_modules", express.static(__dirname.substr(0, __dirname.lastIndexOf("/")) + "/node_modules"));
 
-// app.get("/", (req: express.Request, res: express.Response) => {
-// 	res.send("Hello World");
-// });
-
 app.use("/users", routes.userRoutes);
+app.use("/instances", routes.instanceRoutes);
+
+function checkEventListeners() {
+	//
+}
+
 
 app.listen(3000, () => {
+	setInterval(checkEventListeners, 10000);
 	console.log("Application running on port 3000");
 });

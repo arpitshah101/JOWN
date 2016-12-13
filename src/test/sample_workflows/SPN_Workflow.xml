@@ -130,7 +130,7 @@
 
 		<!-- When student form is submitted -->
 		<event id="1.START">
-			<condition>studentForm._$.FORM_STATUS == "submitted"</condition>
+			<condition>studentForm._$.status == "submitted"</condition>
 			<transitions>
 				<transition>
 					<condition>true</condition>
@@ -145,7 +145,7 @@
 
 		<!-- When professor form is submitted -->
 		<event id="2.START">
-			<condition>profForm._$.FORM_STATUS == "submitted"</condition>
+			<condition>profForm._$.status == "submitted"</condition>
 			<transitions>
 				<transition>
 					<condition>true</condition>
@@ -167,11 +167,11 @@
 		</state>
 
 		<event id="2.RECEIVE_SIGNED_FORM">
-			<condition>gradSchForm._$.FORM_STATUS == "submitted"</condition>
+			<condition>gradSchForm._$.status == "submitted"</condition>
 			<transitions>
 				<transition>
 					<condition>true</condition>
-					<dest>2.</dest>
+					<dest>2.SAVE_FORM</dest>
 				</transition>
 			</transitions>
 		</event>
@@ -183,7 +183,7 @@
 
 		<!-- When DCS Grad Sec form is submitted -->
 		<event id="3.START">
-			<condition>dcsGradSecForm._$.FORM_STATUS == "submitted"</condition>
+			<condition>dcsGradSecForm._$.status == "submitted"</condition>
 			<transitions>
 				<transition>
 					<condition>true</condition>

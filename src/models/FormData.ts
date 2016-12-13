@@ -25,6 +25,11 @@ export interface IFormData {
 	status: string;
 }
 
+export enum FormStatus {
+	INCOMPLETE,
+	COMPLETE,
+}
+
 export interface IDocument extends mongoose.Document, IFormData { };
 
 export const model = mongoose.model<IDocument>("FormData", formDataSchema);

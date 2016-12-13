@@ -58,7 +58,7 @@ export class ConditionParser {
 		for (let i = 0 ; i < condition.length ; i++) {
 			// From here until the end of the loop, C is the character at index i
 			let c = condition.charAt(i);
-			if (c.match(/[^A-Za-z0-9=<>! ]+/)) {
+			if (c.match(/[^A-Za-z0-9=<>!" ]+/)) {
 				if ((i === 0) && (c === "(")) {
 					ret.push(c);
 				}
@@ -90,7 +90,7 @@ export class ConditionParser {
 					if (!this.hasNextCondition(condition, i)) {
 						return undefined;
 					}
-					if ((c === condition.charAt(i + 1)) && (condition.charAt(i + 2).match(/[A-Za-z0-9 ]/))) {
+					if ((c === condition.charAt(i + 1)) && (condition.charAt(i + 2).match(/[A-Za-z0-9" ]/))) {
 						c = c.concat(c);
 						ret.push(c);
 						i++;
@@ -126,7 +126,7 @@ export class ConditionParser {
 	public hasNextCondition (condition: String, index: number) {
 		for (let j = index ; j < condition.length ; j++) {
 			let c = condition.charAt(j);
-			if (c.match(/[A-Za-z]/)) {
+			if (c.match(/[A-Za-z0-9"]/)) {
 				return true;
 			}
 		}
@@ -250,11 +250,15 @@ export class ConditionParser {
 		}
 
 		if (expression.length === 3) {
-			if (typeof(expression[0]) === 'string' || expression[0] instanceof String) {
+			if (typeof(expression[0]) === "string" || expression[0] instanceof String) {
 				expressionArray = expression[0].split(".");
 			}
 
 			//
 		}
+	}
+
+	public evaluate() {
+		let condArr = this.deconstructCondition("");
 	}
 }

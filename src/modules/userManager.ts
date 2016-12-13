@@ -223,7 +223,6 @@ export class UserManager {
 		});
 	}
 
-
 	private static addNewGroups(groups: string[], userDocId: mongoose.Types.ObjectId): Array<Bluebird<Group.IDocument>> {
 		let newGroups: Array<Bluebird<Group.IDocument>> = [];
 		groups.forEach((value: string) => {
