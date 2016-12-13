@@ -1,0 +1,96 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/paper-item/paper-item.html">
+<link rel="import" href="/bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+
+<dom-module id="workflow-form">
+	<template>
+		<style>	
+		
+		paper-button{
+			width:5%;
+		}
+		#title{
+			position:absolute;
+			left:22%;
+		}
+		#item1{
+			position:absolute;
+			left:43%;
+		}
+		#item2{
+			position:absolute;
+			left:65%;
+		}
+		#item3{
+			position:absolute;
+			left:90%;
+		}
+		#card{
+			width:100%;
+		}
+		#icond{
+			position:relative;
+			left:80%;
+		}
+		#icone{
+			position:relative;
+			left:75%;
+
+		}
+
+		</style>
+	<paper-header-panel class="red">
+		<paper-toolbar>
+        <div class="paper-header">Just Our Workflow Notation</div>
+		<paper-item id="title">Workflows</paper-item>
+		<paper-item id="item1" value={{username}}>{{username}}</paper-item>
+		<paper-item id="item2" value={{userrole}}>{{userrole}}</paper-item>
+		<paper-button id="item3" on-tap="logout">Logout</paper-button>
+		</paper-toolbar>
+    </paper-header-panel>
+
+    <paper-card id="login-form" heading="Register New Account">
+      <div class="card-content">
+        <paper-input label="First name" maxlength="50" value={{firstName}}></paper-input>
+        <paper-input label="Last name" maxlength="50" value={{lastName}}></paper-input>
+        <paper-input label="Middle initials" maxlength="50" value={{middleInitials}}></paper-input>
+        <paper-input label="RUID" maxlength="50" value={{ruid}}></paper-input>
+        <!--<paper-dropdown-menu class="dropdownmenu" label="Role">
+          <paper-listbox class="dropdown-content">
+            <template is="dom-repeat" items="[[rolesList]]">
+              <paper-item class="items">{{item}}</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>-->
+        <div class="card-actions">
+          <paper-button flat on-tap="submitForm">Register</paper-button>
+        </div>
+      </div>
+    </paper-card>
+  </template>
+	</template>
+
+	<script>
+	 Polymer({
+            is: "workflow-form",
+			properties: {
+				firstName: String,
+                lastName: String,
+				middleInitials: String,
+                ruid: String
+			},
+            logout: function() {
+				alert("logging out " + this.username);
+			},
+            submitForm: function() {
+                alert("Submitting form");
+            }
+        });
+		
+	</script>
+</dom-module>
