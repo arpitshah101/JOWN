@@ -12,7 +12,7 @@ let formDataSchema = new Schema({
 	},
 	lastEdit: Date,
 	name: String,
-	status: String,
+	status: Schema.Types.Number,
 }, { skipVersioning : true });
 
 export interface IFormData {
@@ -22,7 +22,7 @@ export interface IFormData {
 	instanceId: mongoose.Types.ObjectId;
 	lastEdited: Date;
 	name: string;
-	status: string;
+	status: number;
 }
 
 export enum FormStatus {
