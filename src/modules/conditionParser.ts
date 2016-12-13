@@ -230,4 +230,31 @@ export class ConditionParser {
 			return index;
 		}
 	}
+
+	public evaluateExpression(expression: any[]) {
+		let expressionArray = [];
+		if (expression === undefined) {
+			return undefined;
+		}
+
+		if (expression.length === 1) {
+			// check for keywords?
+			if (expression[0] === "true") {
+				return true;
+			} else if (expression[0] === "false") {
+				return false;
+			}
+
+			// return expression[0]; for testing
+			return expression[0];
+		}
+
+		if (expression.length === 3) {
+			if (typeof(expression[0]) === 'string' || expression[0] instanceof String) {
+				expressionArray = expression[0].split(".");
+			}
+
+			//
+		}
+	}
 }
