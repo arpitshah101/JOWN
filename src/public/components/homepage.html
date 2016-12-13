@@ -76,12 +76,12 @@
         handle-as="json" 
         last-response="{{items}}">
     </iron-ajax>
-	<paper-listbox class="dropdown-content">
+	<paper-listbox id="mylistbox"class="dropdown-content">
 		<template is="dom-repeat" items="[[items]]">
 			<paper-card id="card">
-			<paper-item>Workflow: [[item.name]]</b><br>Owner: [[item.owner]] <br> Created: [[item.created]]
-			<paper-icon-button id="icond" src="/image/delete.png" on-tap="deleteWorkflow"></paper-icon-button>
-			<paper-icon-button id="icone" src="/image/edit.png" on-tap="editWorkflow"></paper-icon-button>
+			<paper-item id="instance" value="[[item.id]]" on-tap="deleteWorkflow">Workflow: [[item.name]]</b><br>Owner: [[item.owner]] <br> Created: [[item.created]]
+			<!--<paper-icon-button id="icond" value="[[item]]" src="/image/delete.png" on-tap="deleteWorkflow"></paper-icon-button>
+			<paper-icon-button id="icone" src="/image/edit.png" on-tap="editWorkflow"></paper-icon-button>-->
 			</paper-item>
 			</paper-card>
 		</template>
@@ -89,6 +89,7 @@
 	</template>
 
 	<script>
+
 	 Polymer({
             is: "home-page",
 			properties: {
@@ -111,9 +112,12 @@
 				alert("logging out " + this.username);
 				location.href = "index.html";
 			},
-			deleteWorkflow: function(){
-				deleteDio.open();
-			},
+			deleteWorkflow: function(e){
+				var model = e.model;
+
+			 	alert(model.item._id);
+				
+			 },
 			editWorkflow: function(){
 				editDio.open();
 			},
@@ -126,7 +130,7 @@
 			}
 
         });
-		
+
 	</script>
 
 
