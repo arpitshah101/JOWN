@@ -5,10 +5,10 @@ import * as express from "express";
 
 import * as Bluebird from "bluebird";
 
+import * as mongoose from "mongoose";
 declare module "mongoose" {
 	type Promise<T> = Bluebird<T>;
 }
-import * as mongoose from "mongoose";
 (<any> mongoose).Promise = Bluebird;
 import * as routes from "./routes/";
 
