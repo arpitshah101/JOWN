@@ -36,7 +36,15 @@
 			method="POST"
 			handle-as="json"
 			content-type="application/json"
-			on-response="handleAuthResponse"></iron-ajax>
+			on-response="handleAuthResponse">
+		</iron-ajax>
+
+		<paper-dialog id="modal" modal alwaysOnTop="true">
+			<p>Could not sign in</p>
+			<div class="buttons">
+				<paper-button dialog-confirm autofocus>OK!</paper-button>
+			</div>
+		</paper-dialog>
 
 		<paper-card id="login-form" heading="Please Log In">
 			<div class="card-content">
@@ -51,7 +59,7 @@
 				</paper-dropdown-menu>
 			</div>
 			<div class="card-actions">
-				<paper-button class="button" flat on-tap="login">Login</paper-button>
+				<paper-button class="button" flat on-tap="login">Log in</paper-button>
 				<paper-button class="button" flat on-tap="loadRegistration">Register</paper-button>
 			</div>
 		</paper-card>        
@@ -65,9 +73,18 @@
 				role: String
 			},
             login: function() {
-				//this.$.verifyAjax.body = {"userId": this.username, "password": this.password, "role": this.role};
-				this.$.verifyAjax.body = {"userObj": {"userId": this.username, "password": this.password, "role": this.role}};
-				this.$.verifyAjax.generateRequest();
+				if (this.username === "" || this.username.trim() === "") {
+					console.log("Missing username");
+					modal.open();
+				} else if (this.password === "" || this.password.trim() === "") {
+		          	console.log("Missing password");
+					modal.open();
+				}
+				else {
+					this.$.verifyAjax.body = {"userObj": {"userId": this.username, "password": this.password, "role": this.role}};
+					this.$.verifyAjax.generateRequest();
+				}
+
 			},
 			loadRegistration: function() {
 				//alert("registering");
@@ -76,6 +93,12 @@
 			handleAuthResponse: function(request) {
 				console.log(request.detail.response);
 				console.log(this.$.verifyAjax.lastResponse);
+				if(request.detail.response.success === true) {
+					location.href ="/home.html";
+				}
+				else {
+					modal.open();
+				}
 			}
         });
     </script>
