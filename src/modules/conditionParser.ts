@@ -13,7 +13,8 @@ export class ConditionParser {
 	public buildEvaluationTree (condition: String) {
 		condition = condition.trim();
 
-		let parsedCondition = this.deconstructCondition(condition);
+		// "" temporary
+		let parsedCondition = this.deconstructCondition(condition, "");
 		if (parsedCondition === undefined) {
 			return undefined;
 		}
@@ -52,7 +53,7 @@ export class ConditionParser {
 	public deconstructCondition (condition: String) {
 		condition = condition.trim();
 
-		let ret = []; // TRY SORT OUT [String]
+		let ret = [];
 		let currCondition = "";
 
 		for (let i = 0 ; i < condition.length ; i++) {
@@ -231,7 +232,20 @@ export class ConditionParser {
 		}
 	}
 
-	public evaluateExpression(expression: any[]) {
+	/**
+	 * Call this from the outside
+	 */
+	public parseAndEvaluate(expression: String, instanceId: String ) {
+		let expressionArray = this.deconstructCondition(expression);
+		let res: boolean;
+
+		res = this.evaluateExpression(expressionArray, instanceId);
+	}
+
+	/**
+	 * Evaluate expression in array and return boolean
+	 */
+	public evaluateExpression(expression: any[], instanceId: String) {
 		let expressionArray = [];
 		if (expression === undefined) {
 			return undefined;

@@ -48,28 +48,22 @@
     </paper-dialog>
 
     <paper-card id="login-form" heading="Register New Account">
-    <div class="card-content">
-
-
-
-    <paper-input label="Username" maxlength="50" value={{username}}></paper-input>
-    <paper-input label="UserID" maxlength="50" value={{userId}}></paper-input>
-    <paper-input label="Email" maxlength="50" type="email" auto-validate="true" value={{email}}></paper-input>
-    <paper-input label="Password" type="password" maxlength="50" value={{password}}></paper-input>
-    <paper-dropdown-menu class="dropdownmenu" label="Role">
-      <paper-listbox class="dropdown-content">
-        <template is="dom-repeat" items="[[rolesList]]">
-          <paper-item class="items">{{item}}</paper-item>
-        </template>
-      </paper-listbox>
-    </paper-dropdown-menu>
-    <div class="card-actions">
-      <paper-button flat on-tap="registerUser">Register</paper-button>
-    </div>
-
-
-
-    </div>
+      <div class="card-content">
+        <paper-input label="Username" maxlength="50" value={{username}}></paper-input>
+        <paper-input label="UserID" maxlength="50" value={{userId}}></paper-input>
+        <paper-input label="Email" maxlength="50" type="email" auto-validate="true" value={{email}}></paper-input>
+        <paper-input label="Password" type="password" maxlength="50" value={{password}}></paper-input>
+        <paper-dropdown-menu class="dropdownmenu" label="Role">
+          <paper-listbox class="dropdown-content">
+            <template is="dom-repeat" items="[[rolesList]]">
+              <paper-item class="items">{{item}}</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+        <div class="card-actions">
+          <paper-button flat on-tap="registerUser">Register</paper-button>
+        </div>
+      </div>
     </paper-card>
   </template>
 
