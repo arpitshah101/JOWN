@@ -114,9 +114,10 @@
 			},
 			deleteWorkflow: function(e){
 				var model = e.model;
-
-			 	alert(model.item._id);
 				
+				localStorage.setItem("id",model.item._id);
+				localStorage.setItem("name",model.item.name);
+				alert(localStorage.getItem("id"));
 			 },
 			editWorkflow: function(){
 				editDio.open();
