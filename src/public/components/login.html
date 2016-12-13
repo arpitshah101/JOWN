@@ -76,6 +76,9 @@
 			handleAuthResponse: function(request) {
 				console.log(request.detail.response);
 				console.log(this.$.verifyAjax.lastResponse);
+				// NEED TO FIGURE OUT HOW TO CHECK THE RESPONSE
+				alert("logging in " + this.username);
+				location.href ="/home.html";
 			}
         });
     </script>

@@ -23,6 +23,16 @@
 				text-align: right;
 			}
     </style>
+
+    <iron-ajax auto url="/users/allRoles" handle-as="json" debounce-duration="300" last-response="{{rolesList}}"></iron-ajax>
+
+		<iron-ajax id="createUserAjax"
+			url="/users/createUser"
+			method="POST"
+			handle-as="json"
+			content-type="application/json"
+			on-response="handleCreateUserResponse"></iron-ajax>
+
     <paper-dialog id="modal" modal alwaysOnTop="true">
         <p>Could not registers</p>
         <div class="buttons">
@@ -41,6 +51,7 @@
 
 
     <paper-input label="Username" maxlength="100" value={{username}}></paper-input>
+    <paper-input label="UserID" maxlength="100" value={{userId}}></paper-input>
     <paper-input label="Email" maxlength="100" value={{email}}></paper-input>
     <paper-input label="Password" type="password" maxlength="100" value={{password}}></paper-input>
     <paper-dropdown-menu class="dropdownmenu" label="Role">
@@ -63,13 +74,38 @@
   <script>
     Polymer({
       is: 'registration-form',
-      
-      registerUser: function() {
-				// alert("registering");
-				// el.addEventListener('transitionend', function(e) {
-					location.href = "/index.html";
-				// });
+
+      properties: {
+				username: String,
+        userId: String,
+        email: String,
+				password: String,
+				roles: Array
 			},
+
+      registerUser: function() {
+        if (this.role === "username") {
+          console.log("HI HELLO! NO ROLE!");
+        }
+        else {
+          // alert("registering");"name", "email", "userId", "password", "roles"
+          this.$.createUserAjax.body = {"userObj": {"name": this.username, "email": this.email, "userId": this.userId, "password": this.password,  "roles": "stoodent"}};
+          this.$.createUserAjax.generateRequest();
+        }
+			},
+
+      handleCreateUserResponse: function(request) {
+				console.log(request.detail.response);
+				console.log(this.$.createUserAjax.lastResponse);
+        if(request.detail.response.success === "true") {
+          console.log("LOGGING IN!");
+        }
+        else {
+          console.log("LOG IN FAILED!");
+        }
+        alert("" + this.username);
+        location.href = "/index.html";
+			}
     });
   </script>
 </dom-module>
