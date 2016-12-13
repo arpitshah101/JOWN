@@ -13,8 +13,7 @@ export class ConditionParser {
 	public buildEvaluationTree (condition: String) {
 		condition = condition.trim();
 
-		// "" temporary
-		let parsedCondition = this.deconstructCondition(condition, "");
+		let parsedCondition = this.deconstructCondition(condition);
 		if (parsedCondition === undefined) {
 			return undefined;
 		}
@@ -267,8 +266,14 @@ export class ConditionParser {
 			if (typeof(expression[0]) === "string" || expression[0] instanceof String) {
 				expressionArray = expression[0].split(".");
 			}
-
-			//
+			else {
+				return undefined
+			}
+			//PSEUDO-ish
+			/*formObject = datamanager.getform(expressionArray[0], instanceID);
+			let fieldValue = eval("formObject." + expressionArray[expressionArray.length - 1]);
+			let concatExpression = "" + fieldValue + expression[1] + expression[2];
+			let evaluated = eval(concatExpression);*/
 		}
 	}
 
