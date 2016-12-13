@@ -31,10 +31,12 @@
 			method="POST"
 			handle-as="json"
 			content-type="application/json"
-			on-response="handleCreateUserResponse"></iron-ajax>
+			on-response="handleCreateUserResponse">
+    </iron-ajax>
 
     <paper-dialog id="modal" modal alwaysOnTop="true">
-        <p>Could not registers</p>
+        <p>Could not register user</p>
+        <p>[[this.errorMessage]]</p>
         <div class="buttons">
             <paper-button dialog-confirm autofocus>OK!</paper-button>
         </div>
@@ -50,10 +52,10 @@
 
 
 
-    <paper-input label="Username" maxlength="100" value={{username}}></paper-input>
-    <paper-input label="UserID" maxlength="100" value={{userId}}></paper-input>
-    <paper-input label="Email" maxlength="100" value={{email}}></paper-input>
-    <paper-input label="Password" type="password" maxlength="100" value={{password}}></paper-input>
+    <paper-input label="Username" maxlength="50" value={{username}}></paper-input>
+    <paper-input label="UserID" maxlength="50" value={{userId}}></paper-input>
+    <paper-input label="Email" maxlength="50" type="email" auto-validate="true" value={{email}}></paper-input>
+    <paper-input label="Password" type="password" maxlength="50" value={{password}}></paper-input>
     <paper-dropdown-menu class="dropdownmenu" label="Role">
       <paper-listbox class="dropdown-content">
         <template is="dom-repeat" items="[[rolesList]]">
@@ -76,19 +78,29 @@
       is: 'registration-form',
 
       properties: {
-				username: String,
+        errorMessage: String,
+        username: String,
         userId: String,
         email: String,
-				password: String,
-				roles: Array
-			},
+        password: String,
+        roles: Array
+      },
 
       registerUser: function() {
-        if (this.role === "username") {
-          console.log("HI HELLO! NO ROLE!");
+        if (this.username === "" || this.username.trim() === "") {
+          console.log("Missing username");
+          modal.open();
+        } else if (this.userId === "" || this.userId.trim() === "") {
+          console.log("Missing userid");
+          modal.open();
+        } else if (this.email === "" || this.email.trim() === "") {
+          console.log("Missing email");
+          modal.open();
+        }  else if (this.password === "" || this.password.trim() === "") {
+          console.log("Missing password");
+          modal.open();
         }
         else {
-          // alert("registering");"name", "email", "userId", "password", "roles"
           this.$.createUserAjax.body = {"userObj": {"name": this.username, "email": this.email, "userId": this.userId, "password": this.password,  "roles": "stoodent"}};
           this.$.createUserAjax.generateRequest();
         }
@@ -97,14 +109,15 @@
       handleCreateUserResponse: function(request) {
 				console.log(request.detail.response);
 				console.log(this.$.createUserAjax.lastResponse);
-        if(request.detail.response.success === "true") {
+        if(request.detail.response.success === true) {
           console.log("LOGGING IN!");
+          alert("Successfully created user with name " + this.username);
+          location.href = "/index.html";
         }
         else {
           console.log("LOG IN FAILED!");
+          alert("Could not create user with name: " + this.username);
         }
-        alert("" + this.username);
-        location.href = "/index.html";
 			}
     });
   </script>
