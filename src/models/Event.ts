@@ -8,6 +8,10 @@ let eventSchema = new Schema({
 		required: true,
 		type: String,
 	},
+	instanceId: {
+		default: null,
+		type: Schema.Types.ObjectId,
+	},
 	name: {
 		required: true,
 		type: String,
@@ -30,6 +34,7 @@ export interface ITransition {
 
 export interface IEvent {
 	condition: string;
+	instanceId: mongoose.Types.ObjectId;
 	name: string;
 	transitions: ITransition[];
 	workflowId: mongoose.Types.ObjectId;

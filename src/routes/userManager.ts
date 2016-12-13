@@ -106,7 +106,7 @@ function deleteUser(req: Request, rep: Response, next) {
 function getNextTenUsers(req: Request, rep: Response, next) {
 	let created = req.params("created");
 
-	let result = UserManager.prototype.getNextTenUsers(created);
+	let result = UserManager.getNextTenUsers(created);
 
 	result.then( (response) => {
 		if (response !== null) {

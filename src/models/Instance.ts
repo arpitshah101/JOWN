@@ -3,12 +3,27 @@ import * as mongoose from "mongoose";
 let Schema = mongoose.Schema;
 
 let instanceSchema = new Schema({
-	activeStates: [Schema.Types.ObjectId],
-	created: Date,
+	activeStates: {
+		default: [],
+		types: [Schema.Types.ObjectId],
+	},
+	created: {
+		default: Date.now(),
+		type: Date,
+	},
 	creator: Schema.Types.ObjectId,
-	events: [Schema.Types.ObjectId],
-	members: [Schema.Types.ObjectId],
-	status: String,
+	events: {
+		default: [],
+		types: [Schema.Types.ObjectId],
+	},
+	members: {
+		default: [],
+		types: [Schema.Types.Mixed],
+	},
+	status: {
+		default: "active",
+		type: String,
+	},
 	workflowId: Schema.Types.ObjectId,
 }, { skipVersioning: true });
 
@@ -17,7 +32,7 @@ export interface IInstance {
 	created: Date;
 	creator: mongoose.Types.ObjectId;
 	events: mongoose.Types.ObjectId[];
-	members: mongoose.Types.ObjectId[];
+	members: Array<{user: mongoose.Types.ObjectId, role: string}>;
 	status: string;
 	workflowId: mongoose.Types.ObjectId;
 }
