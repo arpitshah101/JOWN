@@ -5,39 +5,48 @@ import { DataManager } from "../modules/dataManager";
 
 let router = Router();
 
-// this function will be used for both saveToFile and saveFormData
-function saveData(req: Request, res: Response) {
-	let data = (<any>req).body;
-	let saveFlag = DataManager.prototype.saveData(null, null, data);
-
-	if (saveFlag === false) {
-		console.log("Fail to save file");
-	} else {
-		console.log("successfully saved file");
-	}
-}
-
-
 // retrive list of form data based on instance id
 function getData(req: Request, res: Response) {
     /*
       Implementation
     */
 	let instanceId = req.params["instanceId"];
-	let result = DataManager.prototype.getData(instanceId);
+	let result = DataManager.getData(instanceId);
 	res.json(result);
 }
 
 // retrive form based on instance id
-function getForm(req: Request, res: Response) {
+// function getForm(req: Request, res: Response) {
     /*
       Implementation
     */
-	let instanceID = req.params["instanceID"];
-}
+	/*let instanceID = req.params["instanceID"];
+}*/
 
+router.post ("/saveData", (req: Request, res: Response, next) => {
+	console.log("Received a save data request");
 
-router.post("/savefile", saveData);
-router.post("/saveform", saveData);
-router.get("/getdata/:instanceId", getData);
-router.get("/getForm/:instanceId", getForm);
+	let dataObj: any = req.body.dataObj;
+	let instanceId: string = req.body.instanceId;
+	let formName: string = req.body.formName;
+
+	DataManager.saveData(instanceId, formName, dataObj)
+		.then( (response) => {
+			if (response === true) {
+				res.json({success: true, message: `Successfully saved data to ${formName} with instanceId ${instanceId}!`});
+			}
+			else {
+				res.json({success: false, message: `Data could not be saved!`});
+			}
+		})
+		.catch((reason) => {
+			console.log(reason);
+			res.json({success: false, message: `Data could not be saved!`});
+
+		})
+		.then(() => {
+			next();
+		});
+});
+
+export const dataRoutes = router;

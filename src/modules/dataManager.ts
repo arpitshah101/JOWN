@@ -7,7 +7,7 @@ import * as mongoose from "mongoose";
 
 export class DataManager {
 
-	public getData(instanceId: String, formName?: String): Bluebird<Data.IDocument> {
+	public static getData(instanceId: String, formName?: String): Bluebird<Data.IDocument> {
 		return new Bluebird<Data.IDocument>((resolve, reject) => {
 			Data.model.findOne({instanceId, formName}).exec().
 				then((doc: Data.IDocument) => {
@@ -24,7 +24,7 @@ export class DataManager {
 		});
 	}
 
-	public saveData(instanceId: string, formName: string, dataObj: Object): Bluebird<boolean> {
+	public static saveData(instanceId: string, formName: string, dataObj: Object): Bluebird<boolean> {
 		// if so, update & save
 		//      return true
 		// else save new doc
@@ -37,8 +37,13 @@ export class DataManager {
 					if (doc) {
 						doc.data = dataObj;
 						doc.save().then(
-							(docmt: Data.IDocument) => resolve(true),
-							(reason: any) => resolve(false),
+							(docmt: Data.IDocument) => {
+								resolve(true);
+							},
+							(reason: any) => {
+								console.log(reason);
+								resolve(false);
+							},
 						);
 					}
 					else {
@@ -48,8 +53,13 @@ export class DataManager {
 							instanceId,
 						});
 						newData.save().then(
-							(docmt: Data.IDocument) => resolve(true),
-							(reason: any) => resolve(false),
+							(docmt: Data.IDocument) => {
+								resolve(true);
+							},
+							(reason: any) => {
+								console.log(reason);
+								resolve(false);
+							},
 						);
 					}
 				});
