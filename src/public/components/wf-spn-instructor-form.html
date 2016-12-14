@@ -7,7 +7,7 @@
 <link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 
-<dom-module id="workflow-student-form">
+<dom-module id="workflow-spn-instructor-form">
 	<template>
 		<style>	
 
@@ -46,6 +46,7 @@
 		<paper-header-panel class="red">
 			<paper-toolbar>
 				<div class="paper-header">Just Our Workflow Notation</div>
+				<!-- title here should be the .workflowName of the workflow instance -->
 				<paper-item id="title">Workflows</paper-item>
 				<paper-item id="item1" value={{username}}>{{username}}</paper-item>
 				<paper-item id="item2" value={{userrole}}>{{userrole}}</paper-item>
@@ -54,7 +55,7 @@
 		</paper-header-panel>
 
 		<!-- ADD NEW FIELDS AND CHANGE PARAMETERS FOR FORMS BELOW -->
-		<paper-card id="login-form" heading="Register New Account">
+		<paper-card id="instructor-form" heading="Register New Account">
 			<div class="card-content">
                 <!-- Student -->
 				<paper-input label="First name" maxlength="50" disabled value={{firstName}}></paper-input>
@@ -89,7 +90,7 @@
 
 	<script>
 		Polymer({
-		is: "workflow-student-form",
+		is: "workflow-spn-instructor-form",
 			properties: {
 				firstName: String,
 				lastName: String,
