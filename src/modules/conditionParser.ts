@@ -78,7 +78,8 @@ export class ConditionParser {
 					ret.push(i);
 					return ret;
 				} else if (c === "&" || c === "|") {
-					if ((currCondition !== "") && (ret[ret.length - 1] !== currCondition)) {
+					if ((currCondition !== "") && (ret.indexOf(currCondition) === -1)) {
+						// NEEDS TO BE FIXED TO HANDLE DUPLICATES. ONLY CHECK LAST ITEM IN LIST.
 						currCondition = currCondition.trim();
 						if (currCondition !== "") {
 							ret.push(currCondition);
