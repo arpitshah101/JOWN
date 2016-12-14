@@ -7,9 +7,9 @@ import { DataManager } from "../modules/dataManager";
 
 let router = Router();
 
-router.post("/getFormData", (req: Request, res: Response, next: Function) => {
+router.get("/getFormData", (req: Request, res: Response, next: Function) => {
 	let instanceId: mongoose.Types.ObjectId = mongoose.Types.ObjectId(req.params("instanceId"));
-	let formName: string = req.params.formName;
+	let formAlias: string = req.params.formAlias;
 
 	if (!req.params.instanceId || !req.params.formName) {
 		res.json({
@@ -20,7 +20,7 @@ router.post("/getFormData", (req: Request, res: Response, next: Function) => {
 		return;
 	}
 
-	DataManager.getFormData(instanceId, formName)
+	DataManager.getFormData(instanceId, formAlias)
 		.then((formDataDoc: FormData.IDocument) => {
 			res.json(formDataDoc);
 		})
