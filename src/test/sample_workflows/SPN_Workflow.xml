@@ -7,7 +7,7 @@
 			<group>DCS Grad Secretary</group>
 			<group>Graduate School Dean</group>
 		</groups>
-		<form name="Student SPN Request Form" alias="studentForm">
+		<form name="Student SPN Request Form" alias="studentForm" fileName="wf-spn-student-form.html">
 			<entity>
 				<key>lastName</key>
 				<label>Last Name</label>
@@ -69,7 +69,7 @@
 				<type>String</type>
 			</entity>
 		</form>
-		<form name="Graduate Professor Form" alias="profForm">
+		<form name="Graduate Professor Form" alias="profForm" fileName="wf-spn-instructor-form.html">
 			<entity>
 				<key>isApproved</key>
 				<label>Recommend Approval?</label>
@@ -93,7 +93,7 @@
 				<type>String</type>
 			</entity>
 		</form>
-		<form name="Graduate School Form" alias="gradSchForm">
+		<form name="Graduate School Form" alias="gradSchForm" fileName="wf-spn-director-form.html">
 			<entity>
 				<key>isApproved</key>
 				<label>Approved?</label>
