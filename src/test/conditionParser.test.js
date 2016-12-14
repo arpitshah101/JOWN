@@ -9,9 +9,9 @@ describe("ConditionParser", function() {
 			{arg: "testin && testenin", expected: ["testin", "&&", "testenin"]},
 			{arg: " this && isa || test     ", expected: ["this", "&&", "isa", "||", "test"]},
 			{arg: "  tis && teh || test ||", expected: undefined},
-			{arg: " another && (test || to) || test", expected: ["another", "&&", ["(", "test", "||", "to", ")"], "||", "test"]},
+			{arg: " another && (test || to) || test", expected: ["another", "&&", ["test", "||", "to"], "||", "test"]},
 			{arg: " testing &&&& to ||| getundefined &&& and |||| makeitwork", expected: undefined},
-            {arg: " test == 2 && (banana != boat) || hi == hello", expected: ["test == 2", "&&", ["(", "banana != boat", ")"], "||", "hi == hello"]}
+            {arg: " test == 2 && (banana != boat) || hi == hello", expected: ["test == 2", "&&", ["banana != boat"], "||", "hi == hello"]}
 		];
 
 		tests.forEach(function(test) {
