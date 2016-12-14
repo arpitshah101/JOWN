@@ -110,6 +110,7 @@
 			},
             logout: function() {
 				alert("logging out " + this.username);
+				localStorage.clear();
 				location.href = "index.html";
 			},
 			deleteWorkflow: function(e){

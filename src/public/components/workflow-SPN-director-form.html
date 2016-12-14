@@ -1,0 +1,138 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/paper-item/paper-item.html">
+<link rel="import" href="/bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+
+<dom-module id="workflow-student-form">
+	<template>
+		<style>	
+
+		paper-button{
+			width:5%;
+		}
+		#title{
+			position:absolute;
+			left:22%;
+		}
+		#item1{
+			position:absolute;
+			left:43%;
+		}
+		#item2{
+			position:absolute;
+			left:65%;
+		}
+		#item3{
+			position:absolute;
+			left:90%;
+		}
+		#card{
+			width:100%;
+		}
+		#icond{
+			position:relative;
+			left:80%;
+		}
+		#icone{
+			position:relative;
+			left:75%;
+		}
+
+		</style>
+		<paper-header-panel class="red">
+			<paper-toolbar>
+				<div class="paper-header">Just Our Workflow Notation</div>
+				<paper-item id="title">Workflows</paper-item>
+				<paper-item id="item1" value={{username}}>{{username}}</paper-item>
+				<paper-item id="item2" value={{userrole}}>{{userrole}}</paper-item>
+				<paper-button id="item3" on-tap="logout">Logout</paper-button>
+			</paper-toolbar>
+		</paper-header-panel>
+
+		<!-- ADD NEW FIELDS AND CHANGE PARAMETERS FOR FORMS BELOW -->
+		<paper-card id="login-form" heading="Register New Account">
+			<div class="card-content">
+                <!-- Student -->
+				<paper-input label="First name" maxlength="50" disabled value={{firstName}}></paper-input>
+				<paper-input label="Last name" maxlength="50" disabled value={{lastName}}></paper-input>
+				<paper-input label="Middle initials" maxlength="50" disabled value={{middleInitials}}></paper-input>
+				<paper-input label="RUID" maxlength="50" disabled value={{ruid}}></paper-input>
+				<paper-input label="Official Rutgers Email" maxlength="50" disabled value={{officialRutgersEmail}}></paper-input>
+				<paper-input label="Declared Graduation Date" maxlength="50" disabled value={{declaredGraduationDate}}></paper-input>
+				<paper-input label="Cumulative GPA" maxlength="50" disabled value={{cumulativeGpa}}></paper-input>
+				<paper-input label="Member of the Honors Program?" maxlength="50" disabled value={{honorsSchool}}></paper-input>
+				<paper-input label="Semester and Year" maxlength="50" disabled value={{semesterAndYear}}></paper-input>
+				<paper-input label="School #" maxlength="50" disabled value={{schoolNumber}}></paper-input>
+				<paper-input label="Subject #" maxlength="50" disabled value={{subjectNumber}}></paper-input>
+				<paper-input label="Course #" maxlength="50" disabled value={{courseNumber}}></paper-input>
+				<paper-input label="Section #" maxlength="50" disabled value={{sectionNumber}}></paper-input>
+				<paper-input label="Index #" maxlength="50" disabled value={{indexNumber}}></paper-input>
+				<paper-input label="Number of Credits" maxlength="50" disabled value={{numberOfCredits}}></paper-input>
+				<paper-input label="Course Title #" maxlength="50" disabled value={{title}}></paper-input>
+				<paper-input label="Reasons for taking the course:" maxlength="50" disabled value={{reasonsForTakingCourse}}></paper-input>
+                <!--  Instructor -->
+                <paper-input label="Approved by Instructor" maxlength="50" disabled value={{instructorApproval}}></paper-input>
+                <paper-input label="Approval Date" maxlength="50" disabled value={{instructorApprovalDate}}></paper-input>
+                <!-- Director -->
+                <paper-input label="Approved by Director" maxlength="50" disabled value={{directorApproval}}></paper-input>
+                <paper-input label="Approval Date" maxlength="50" disabled value={{directorApprovalDate}}></paper-input>
+                <paper-input label="Special Permission #" maxlength="50" disabled value={{spn}}></paper-input>
+
+				<div class="card-actions">
+					<paper-button flat on-tap="submitForm">Submit Form</paper-button>
+				</div>
+			</div>
+		</paper-card>
+		<!-- ADD NEW FIELDS AND CHANGE PARAMETERS FOR FORMS ABOVE -->
+	</template>
+	</template>
+
+	<script>
+		Polymer({
+		is: "workflow-student-form",
+			properties: {
+				firstName: String,
+				lastName: String,
+				middleInitials: String,
+				ruid: String,
+				officialRutgersEmail: String,
+				declaredGraduationDate: String,
+				cumulativeGpa: String,
+				honorsSchool: String,
+				semesterAndYear: String,
+				schoolNumber: String,
+				subjectNumber: String,
+				courseNumber: String,
+				sectionNumber: String,
+				indexNumber: String,
+				numberOfCredits: String,
+				title: String,
+				reasonsForTakingCourse: String,
+
+                instructorApproval: String,
+                instructorName: String,
+                instructorApprovalDate: String,
+
+                directorApproval: String,
+                directorName: {
+                    type: String,
+                    // Needs to be changed to username
+                    value: function() {return localStorage.getItem("userId");}
+                },
+                directorApprovalDate: String,
+                spn: String
+			},
+			logout: function() {
+				alert("logging out " + this.username);
+			},
+			submitForm: function() {
+				alert("Submitting form");
+			}
+		});
+
+	</script>
+</dom-module>

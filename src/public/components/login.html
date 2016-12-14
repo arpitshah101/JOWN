@@ -94,6 +94,7 @@
 				console.log(request.detail.response);
 				console.log(this.$.verifyAjax.lastResponse);
 				if(request.detail.response.success === true) {
+					localStorage.setItem("userId", this.username);
 					location.href ="/home.html";
 				}
 				else {
