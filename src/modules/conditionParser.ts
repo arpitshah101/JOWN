@@ -1,6 +1,8 @@
-import * as Promise from "bluebird";
+import * as Bluebird from "bluebird";
 import * as mongoose from "mongoose";
+
 import * as ExpressionNode from "../models/ExpressionNode";
+import * as DataManager from "./dataManager";
 
 export class ConditionParser {
 
@@ -49,8 +51,10 @@ export class ConditionParser {
 	 * @return  an array containing all the different conditions split up by logical operators and levels
 	 *          undefined if the conditional is not properly formatted
 	 */
-	public deconstructCondition (condition: String) {
+	public deconstructCondition (condition: String): any[] {
+		console.log("deconstructCondition @ trim#1: " + condition);
 		condition = condition.trim();
+		console.log("deconstructCondition @ trim#1");
 
 		let ret = [];
 		let currCondition = "";
@@ -58,7 +62,7 @@ export class ConditionParser {
 		for (let i = 0 ; i < condition.length ; i++) {
 			// From here until the end of the loop, C is the character at index i
 			let c = condition.charAt(i);
-			if (c.match(/[^A-Za-z0-9=<>!" ]+/)) {
+			if (c.match(/[^A-Za-z0-9=<>!"._ ]+/)) {
 				/*if ((i === 0) && (c === "(")) {
 					ret.push(c);
 				}*/
@@ -70,7 +74,9 @@ export class ConditionParser {
 					// console.log(recRet + "<<<<");
 					ret.push(recRet);
 				} else if ((i !== 0) && (c === ")")) {
+					console.log("deconstructCondition @ trim#2");
 					currCondition = currCondition.trim();
+					console.log("deconstructCondition @ trim#2");
 					if (currCondition !== "") {
 						ret.push(currCondition);
 					}
@@ -79,7 +85,9 @@ export class ConditionParser {
 					return ret;
 				} else if (c === "&" || c === "|") {
 					if ((currCondition !== "") && (ret[ret.length - 1] !== currCondition)) {
+						console.log("deconstructCondition @ trim#3");
 						currCondition = currCondition.trim();
+						console.log("deconstructCondition @ trim#3");
 						if (currCondition !== "") {
 							ret.push(currCondition);
 						}
@@ -104,7 +112,9 @@ export class ConditionParser {
 			}
 
 			if (i === (condition.length - 1)) {
+				console.log("deconstructCondition @ trim#4");
 				currCondition = currCondition.trim();
+				console.log("deconstructCondition @ trim#4");
 				if (currCondition !== "") {
 					ret.push(currCondition);
 				}
@@ -122,10 +132,10 @@ export class ConditionParser {
 	 *          index which is the index of where to start checking
 	 * @return  returns true if there is a trailing condition, false otherwise
 	 */
-	public hasNextCondition (condition: String, index: number) {
+	public hasNextCondition (condition: String, index: number): boolean {
 		for (let j = index ; j < condition.length ; j++) {
 			let c = condition.charAt(j);
-			if (c.match(/[A-Za-z0-9"]/)) {
+			if (c.match(/[A-Za-z0-9"_.]/)) {
 				return true;
 			}
 		}
@@ -141,13 +151,12 @@ export class ConditionParser {
 	 *          index 2: the right side of the condition
 	 * 			or if operators cannot be found, the original string to allow for situations where the string is "true"
 	 */
-	public parseCondtion (condition: String) {
+	public parseCondtion (condition: String): String[] {
 
 		condition = condition.trim();
-
 		let result = [];
-
 		let splitIndex = this.isCondition(condition);
+
 		if (splitIndex === undefined) {
 			result.push(condition);
 			return result; // not a java conditional statement
@@ -176,7 +185,7 @@ export class ConditionParser {
 	 *          the negative value of the index -1 if the test passes by finding a single character operator
 	 *          -1 to not end up in a situation where the index = 1 and becomes -1 which is the test fail code
 	 */
-	public isCondition (condition: String) {
+	public isCondition (condition: String): number {
 		let i = -1;
 		if (condition.indexOf("==") !== -1 ) {
 			i = condition.indexOf("==");
@@ -238,22 +247,30 @@ export class ConditionParser {
 	 * 			instanceId: the id of the instance the string "expression" belongs to
 	 * @returns	the result of the evaluation of the condition
 	 */
-	public parseAndEvaluate(expression: String, instanceId: String ) {
-		let expressionArray = this.deconstructCondition(expression);
+	public parseAndEvaluate(expression: String, instanceId: String ): boolean {
 		let res: boolean;
 		let conditionArray: any[];
-		let evaluationString: String;
+		let evaluationString: String = "";
 
-		for (let i = 0 ; i < expressionArray.length ; i++) {
-			if (expressionArray[i] !== "&&" || expressionArray[i] !== "||") {
-				conditionArray = this.parseCondtion(expressionArray[i]);
-				evaluationString = evaluationString + this.evaluateExpression(conditionArray, instanceId);
+		console.log("expression @ parseAndEval: " + expression);
+		let expressionArray = this.deconstructCondition(expression);
+
+		// DEBUGGING
+		console.log("EXPRESSIONARRAY: " + expressionArray);
+
+		// CHANGE BELOW TO ACCOUNT FOR EVALUATE EXPRESSION RETURNING UNDEFINED
+		for (let exp of expressionArray) {
+			if (exp !== "&&" || exp !== "||") {
+				conditionArray = this.parseCondtion(exp);
+				evaluationString = evaluationString + " " + this.evaluateExpression(conditionArray, instanceId);
 			}
 			else {
-				evaluationString = evaluationString + expressionArray[i];
+				evaluationString = evaluationString + exp;
 			}
 		}
 
+		console.log("evaluationString @ EVAL: " + evaluationString);
+		// tslint:disable-next-line:no-eval
 		res = eval("" + evaluationString);
 		return res;
 	}
@@ -265,7 +282,7 @@ export class ConditionParser {
 	 * 			instanceId: the id of the instance the expression to be evaluated belongs to
 	 * @returns	the result of the evaluation
 	 */
-	public evaluateExpression(expression: any[], instanceId: String) {
+	public evaluateExpression(expression: any[], instanceId: String): boolean {
 		let expressionArray = [];
 		if (expression === undefined) {
 			return undefined;
@@ -288,18 +305,20 @@ export class ConditionParser {
 				expressionArray = expression[0].split(".");
 			}
 			else {
-				return undefined
+				return undefined;
 			}
-			//PSEUDO-ish
+			// PSEUDO-ish
 			/*formObject = datamanager.getform(expressionArray[0], instanceID);
-			let fieldValue = eval("formObject." + expressionArray[expressionArray.length - 1]);
+			let fieldValue = eval("formObject.data." + expressionArray[expressionArray.length - 1]);*/
+			// For testing
+			let fieldValue = "\"submitted\"";
+			console.log("before concatExpression: " + fieldValue + " " + expression[1] + " " + expression[2]);
 			let concatExpression = "" + fieldValue + expression[1] + expression[2];
+			console.log("after concatExpression: >>>" + concatExpression + "<<<");
+			// tslint:disable-next-line:no-eval
 			let evaluated = eval(concatExpression);
-			return evaluated*/
+			console.log("evaluated: " + evaluated);
+			return evaluated;
 		}
-	}
-
-	public evaluate() {
-		let condArr = this.deconstructCondition("");
 	}
 }
