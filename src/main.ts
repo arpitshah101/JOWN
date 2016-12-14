@@ -25,11 +25,11 @@ app.use("/node_modules", express.static(__dirname.substr(0, __dirname.lastIndexO
 
 app.use("/users", routes.userRoutes);
 app.use("/instances", routes.instanceRoutes);
+app.use("/data", routes.dataRoutes);
 
 function checkEventListeners() {
 	//
 }
-
 
 app.listen(3000, () => {
 	setInterval(checkEventListeners, 10000);

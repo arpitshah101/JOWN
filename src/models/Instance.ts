@@ -39,4 +39,4 @@ export interface IInstance {
 
 export interface IDocument extends mongoose.Document, IInstance { };
 
-export const model = mongoose.model<IDocument>("Form", instanceSchema);
+export const model = mongoose.model<IDocument>("Instance", instanceSchema);

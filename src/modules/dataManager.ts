@@ -1,57 +1,73 @@
-// promise-bluebird.d.ts
 import * as Bluebird from "bluebird";
-
-import * as Data from "../models/Data";
-
 import * as mongoose from "mongoose";
+
+import * as FormData from "../models/FormData";
+import * as Instance from "../models/Instance";
 
 export class DataManager {
 
-	public getData(instanceId: String, formName?: String): Bluebird<Data.IDocument> {
-		return new Bluebird<Data.IDocument>((resolve, reject) => {
-			Data.model.findOne({instanceId, formName}).exec().
-				then((doc: Data.IDocument) => {
-					if (doc) {
-						resolve(doc);
+	public static getFormData(instanceId: mongoose.Types.ObjectId, formAlias: string): Bluebird<FormData.IDocument> {
+		return new Bluebird<FormData.IDocument>((resolve, reject) => {
+			FormData.model.findOne({instanceId, alias: formAlias}).exec()
+				.then((formDataDoc: FormData.IDocument) => {
+					if (formDataDoc) {
+						return formDataDoc.execPopulate();
 					}
 					else {
-						resolve(null);
+						reject("No form data found with the provided instanceId & form alias.");
 					}
 				})
-				.catch((reason: any) => {
+				.then((formDataDoc: FormData.IDocument) => {
+					resolve(formDataDoc);
+				})
+				.catch((reason) => {
+					console.error(reason);
 					reject(reason);
 				});
 		});
 	}
 
-	public saveData(instanceId: string, formName: string, dataObj: Object): Bluebird<boolean> {
-		// if so, update & save
-		//      return true
-		// else save new doc
-		//      return true
-
-		// query to check if doc exists for <instanceId, formName?>
+	public static saveFormData(instanceId: mongoose.Types.ObjectId, formAlias: string, dataObj: any): Bluebird<boolean> {
 		return new Bluebird<boolean>((resolve, reject) => {
-			this.getData(instanceId, formName).
-				then((doc: Data.IDocument) => {
-					if (doc) {
-						doc.data = dataObj;
-						doc.save().then(
-							(docmt: Data.IDocument) => resolve(true),
-							(reason: any) => resolve(false),
-						);
+			FormData.model.findOne({instanceId, alias: formAlias}).exec()
+				.then((formDataDoc: FormData.IDocument) => {
+					if (formDataDoc) {
+						formDataDoc.data = dataObj;
+						formDataDoc.lastEdited = new Date(Date.now());
+						formDataDoc.status = FormData.FormStatus.COMPLETE;
+						return formDataDoc.save();
 					}
 					else {
-						let newData = new Data.model({
-							data: dataObj,
-							formName,
-							instanceId,
-						});
-						newData.save().then(
-							(docmt: Data.IDocument) => resolve(true),
-							(reason: any) => resolve(false),
-						);
+						reject(`No form data found for the provided instanceId & form alias.`);
 					}
+				})
+				.then((formDataDoc) => {
+					resolve(true);
+				})
+				.catch((reason) => {
+					console.error(reason);
+					reject(reason);
+				});
+		});
+	}
+
+	public static getInstanceData(instanceId: mongoose.Types.ObjectId): Bluebird<Instance.IDocument> {
+		return new Bluebird<Instance.IDocument>((resolve, reject) => {
+			Instance.model.findOne({_id: instanceId}).exec()
+				.then((instanceDoc: Instance.IDocument) => {
+					if (instanceDoc) {
+						return instanceDoc.execPopulate();
+					}
+					else {
+						reject(`No workflow instance found with the provided instanceId: ${instanceId.toString()}`);
+					}
+				})
+				.then((instanceDoc: Instance.IDocument) => {
+					resolve(instanceDoc);
+				})
+				.catch((reason) => {
+					console.error(reason);
+					reject(`An error occurred while searching for a workflow instance with the instanceId: ${instanceId.toString()}`);
 				});
 		});
 	}

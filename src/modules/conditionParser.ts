@@ -52,16 +52,16 @@ export class ConditionParser {
 	public deconstructCondition (condition: String) {
 		condition = condition.trim();
 
-		let ret = []; // TRY SORT OUT [String]
+		let ret = [];
 		let currCondition = "";
 
 		for (let i = 0 ; i < condition.length ; i++) {
 			// From here until the end of the loop, C is the character at index i
 			let c = condition.charAt(i);
 			if (c.match(/[^A-Za-z0-9=<>!" ]+/)) {
-				if ((i === 0) && (c === "(")) {
+				/*if ((i === 0) && (c === "(")) {
 					ret.push(c);
-				}
+				}*/
 				if ((i !== 0) && (c === "(")) {
 					let recRet = this.deconstructCondition(condition.substr(i));
 					i = i + recRet[recRet.length - 1];
@@ -74,12 +74,11 @@ export class ConditionParser {
 					if (currCondition !== "") {
 						ret.push(currCondition);
 					}
-					ret.push(c);
+					/*ret.push(c);*/
 					ret.push(i);
 					return ret;
 				} else if (c === "&" || c === "|") {
-					if ((currCondition !== "") && (ret.indexOf(currCondition) === -1)) {
-						// NEEDS TO BE FIXED TO HANDLE DUPLICATES. ONLY CHECK LAST ITEM IN LIST.
+					if ((currCondition !== "") && (ret[ret.length - 1] !== currCondition)) {
 						currCondition = currCondition.trim();
 						if (currCondition !== "") {
 							ret.push(currCondition);
@@ -140,6 +139,7 @@ export class ConditionParser {
 	 *          index 0: left side of the condition
 	 *          index 1: the operator
 	 *          index 2: the right side of the condition
+	 * 			or if operators cannot be found, the original string to allow for situations where the string is "true"
 	 */
 	public parseCondtion (condition: String) {
 
@@ -148,8 +148,9 @@ export class ConditionParser {
 		let result = [];
 
 		let splitIndex = this.isCondition(condition);
-		if ( splitIndex === undefined) {
-			return undefined; // error, not a java conditional statement
+		if (splitIndex === undefined) {
+			result.push(condition);
+			return result; // not a java conditional statement
 		}
 
 		result.push(condition.substr(0, splitIndex).trim());
@@ -231,7 +232,40 @@ export class ConditionParser {
 		}
 	}
 
-	public evaluateExpression(expression: any[]) {
+	/**
+	 * The function to call from the outside when a condition needs to be parsedCondition
+	 * @param	expression: the string with conditions
+	 * 			instanceId: the id of the instance the string "expression" belongs to
+	 * @returns	the result of the evaluation of the condition
+	 */
+	public parseAndEvaluate(expression: String, instanceId: String ) {
+		let expressionArray = this.deconstructCondition(expression);
+		let res: boolean;
+		let conditionArray: any[];
+		let evaluationString: String;
+
+		for (let i = 0 ; i < expressionArray.length ; i++) {
+			if (expressionArray[i] !== "&&" || expressionArray[i] !== "||") {
+				conditionArray = this.parseCondtion(expressionArray[i]);
+				evaluationString = evaluationString + this.evaluateExpression(conditionArray, instanceId);
+			}
+			else {
+				evaluationString = evaluationString + expressionArray[i];
+			}
+		}
+
+		res = eval("" + evaluationString);
+		return res;
+	}
+
+	/**
+	 * Evaluate expression in array and return boolean
+	 * @param	expression: an array with either one statement such as "true" or a conditional expression that needs
+	 * 			to be evaluated, in the format that deconstructCondition returns
+	 * 			instanceId: the id of the instance the expression to be evaluated belongs to
+	 * @returns	the result of the evaluation
+	 */
+	public evaluateExpression(expression: any[], instanceId: String) {
 		let expressionArray = [];
 		if (expression === undefined) {
 			return undefined;
@@ -253,8 +287,15 @@ export class ConditionParser {
 			if (typeof(expression[0]) === "string" || expression[0] instanceof String) {
 				expressionArray = expression[0].split(".");
 			}
-
-			//
+			else {
+				return undefined
+			}
+			//PSEUDO-ish
+			/*formObject = datamanager.getform(expressionArray[0], instanceID);
+			let fieldValue = eval("formObject." + expressionArray[expressionArray.length - 1]);
+			let concatExpression = "" + fieldValue + expression[1] + expression[2];
+			let evaluated = eval(concatExpression);
+			return evaluated*/
 		}
 	}
 
