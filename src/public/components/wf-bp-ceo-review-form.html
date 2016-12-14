@@ -1,0 +1,132 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/paper-item/paper-item.html">
+<link rel="import" href="/bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+
+<dom-module id="workflow-bp-ceo-review-form">
+	<template>
+		<style>	
+
+		paper-button{
+			width:5%;
+		}
+		#title{
+			position:absolute;
+			left:22%;
+		}
+		#item1{
+			position:absolute;
+			left:43%;
+		}
+		#item2{
+			position:absolute;
+			left:65%;
+		}
+		#item3{
+			position:absolute;
+			left:90%;
+		}
+		#card{
+			width:100%;
+		}
+		#icond{
+			position:relative;
+			left:80%;
+		}
+		#icone{
+			position:relative;
+			left:75%;
+		}
+
+		</style>
+		<paper-header-panel class="red">
+			<paper-toolbar>
+				<div class="paper-header">Just Our Workflow Notation</div>
+                <!-- title here should be the .workflowName of the workflow instance -->
+				<paper-item id="title">Workflows</paper-item>
+				<paper-item id="item1" value={{username}}>{{username}}</paper-item>
+				<paper-item id="item2" value={{userrole}}>{{userrole}}</paper-item>
+				<paper-button id="item3" on-tap="logout">Logout</paper-button>
+			</paper-toolbar>
+		</paper-header-panel>
+
+		<!-- ADD NEW FIELDS AND CHANGE PARAMETERS FOR FORMS BELOW -->
+		<paper-card id="ceo-review-form" heading="Register New Account">
+			<div class="card-content">
+				<!-- Proposal form -->
+				<paper-input label="Department Name" maxlength="50" disabled value={{department}}></paper-input>
+				<!--<paper-input label="proposalSubmissionDate" maxlength="50" disable value={{date}}></paper-input>-->
+				<paper-input label="Proposal ID" maxlength="50" disable value={{proposalId}}></paper-input>
+				<paper-input label="Group Code" maxlength="50" disable value={{groupCode}}></paper-input>
+				<paper-input label="Group Name" maxlength="50" disable value={{groupName}}></paper-input>
+				<paper-input label="Contact Person" maxlength="50" disable value={{contactPerson}}></paper-input>
+                <paper-input label="Contact Person Email" maxlength="50" disable value={{contactPersonEmail}}></paper-input>
+				<paper-input label="Proposal Title" maxlength="100" disable value={{proposalTitle}}></paper-input>
+				<paper-input label="Proposal Description" maxlength="10000" disable value={{proposalDescription}}></paper-input>
+                <paper-input label="Group Size" maxlength="50" disable value={{groupSize}}></paper-input>
+				<paper-input label="Proposal Budget" maxlength="50" disable value={{proposalBudget}}></paper-input>
+				<paper-input label="Proposal Length (Time)" maxlength="50" disable value={{proposalLength}}></paper-input>
+                <!-- Financial review form -->
+				<paper-input label="CFO Proposal Review Comments" maxlength="1000" disable value={{cfoReviewComments}}></paper-input>
+				<paper-input label="CFO Proposal Review Recommendation" maxlength="50" disable value={{cfoReviewRecommendation}}></paper-input>
+                <!-- Operations review form -->
+				<paper-input label="COO Proposal Review Comments" maxlength="1000" disable value={{cooReviewComments}}></paper-input>
+				<paper-input label="COO Proposal Review Recommendation" maxlength="50" disable value={{cooReviewRecommendation}}></paper-input>
+                <!-- Executive review form -->
+				<paper-input label="CEO Proposal Review Comments" maxlength="1000" value={{ceoReviewComments}}></paper-input>
+				<paper-input label="CEO Proposal Review Recommendation" maxlength="50" value={{ceoApproval}}></paper-input>
+				<div class="card-actions">
+					<paper-button flat on-tap="submitForm">Submit Form</paper-button>
+				</div>
+			</div>
+		</paper-card>
+		<!-- ADD NEW FIELDS AND CHANGE PARAMETERS FOR FORMS ABOVE -->
+	</template>
+	</template>
+
+	<script>
+		Polymer({
+		is: "workflow-bp-ceo-review-form",
+			properties: {
+				department: String,
+                proposalSubmissionDate: String,
+				proposalId: String,
+				groupCode: String,
+				groupName: String,
+				groupSize: String,
+				contactPerson: String,
+				contactPersonEmail: String,
+				proposalTitle: String,
+				proposalDescription: String,
+                proposalBudget: String,
+                proposalLength: String,
+
+				cfoReviewDate: String,
+                cfoReviewComments: String,
+                cfoReviewRecommendation: String,
+
+                cooReviewDate: String,
+                cooReviewComments: String,
+                cooReviewRecommendation: String,
+
+                ceoReviewDate: String,
+                ceoReviewComments: String,
+                ceoApproval: String,                
+			},
+			logout: function() {
+				alert("logging out " + this.username);
+				localStorage.clear();
+				location.href = "index.html";
+			},
+			submitForm: function() {
+                this.ceoReviewDate = Date.now();
+				alert("Submitting form");
+			}
+		});
+
+	</script>
+</dom-module>
