@@ -118,6 +118,8 @@
 			},
 			logout: function() {
 				alert("logging out " + this.username);
+                localStorage.clear();
+				location.href = "index.html";
 			},
 			submitForm: function() {
 				alert("Submitting form");
