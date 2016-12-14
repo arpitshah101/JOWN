@@ -4,6 +4,7 @@
 <link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="/bower_components/paper-button/paper-button.html">
 <link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
 <link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 
@@ -30,9 +31,7 @@
 			position:absolute;
 			left:90%;
 		}
-		#card{
-			width:100%;
-		}
+
 		#icond{
 			position:relative;
 			left:80%;
@@ -41,21 +40,30 @@
 			position:relative;
 			left:75%;
 		}
+		#student-form{
+			width:50%;
+			position:absolute;
+			left:25%;
+		}
+		paper-card ::content .title-text {
+			text-align: center;
+		}
+
+		paper-card .card-actions {
+			text-align: right;
+		}
 
 		</style>
 		<paper-header-panel class="red">
 			<paper-toolbar>
 				<div class="paper-header">Just Our Workflow Notation</div>
 				<!-- title here should be the .workflowName of the workflow instance -->
-				<paper-item id="title">Workflows</paper-item>
-				<paper-item id="item1" value={{username}}>{{username}}</paper-item>
-				<paper-item id="item2" value={{userrole}}>{{userrole}}</paper-item>
 				<paper-button id="item3" on-tap="logout">Logout</paper-button>
 			</paper-toolbar>
 		</paper-header-panel>
 
 		<!-- ADD NEW FIELDS AND CHANGE PARAMETERS FOR FORMS BELOW -->
-		<paper-card id="student-form" heading="Register New Account">
+		<paper-card id="student-form" heading="Student-Form">
 			<div class="card-content">
 				<!-- Student -->
 				<paper-input label="First name" maxlength="50" value={{firstName}}></paper-input>

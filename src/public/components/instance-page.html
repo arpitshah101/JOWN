@@ -5,6 +5,7 @@
 <link rel="import" href="/bower_components/paper-button/paper-button.html">
 <link rel="import" href="/bower_components/paper-card/paper-card.html">
 <link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../index.html">
 
@@ -45,33 +46,16 @@
 		}
 
 		</style>
-	
-	<paper-dialog id="deleteDio" modal alwaysOnTop="true">
-        <p>Are you sure you want to delete?</p>
-        <div class="buttons">
-            <paper-button dialog-confirm autofocus on-tap="DELETE">Delete</paper-button>
-			<paper-button dialog-dismiss autofocus>Cancel</paper-button>
-        </div>
-    </paper-dialog>
 
-	<paper-dialog id="editDio" modal alwaysOnTop="true">
-			<paper-input value="[[workflowname]]" label="Workflow Name"></paper-input>
-		<div class="buttons">
-            <paper-button dialog-confirm autofocus on-tap="EDIT">Confirm</paper-button>
-			<paper-button dialog-dismiss autofocus>Cancel</paper-button>
-		</div>
-    </paper-dialog>
-
-	<paper-header-panel class="red">
+		<paper-header-panel class="red">
 		<paper-toolbar>
         <div class="paper-header">Just Our Workflow Notation</div>
-		<paper-item id="title">Workflows</paper-item>
-		<paper-item id="item1" value={{username}}>{{username}}</paper-item>
-		<paper-item id="item2" value={{userrole}}>{{userrole}}</paper-item>
+		<paper-tabs>Active Instances</paper-tabs>
+		<paper-tabs>Completed Instances</paper-tabs>
 		<paper-button id="item3" on-tap="logout">Logout</paper-button>
 		</paper-toolbar>
-    </paper-header-panel>
-    <iron-ajax auto 
+
+		<iron-ajax auto 
         url="http://www.json-generator.com/api/json/get/crkSCFTVvm?indent=2" 
         handle-as="json" 
         last-response="{{items}}">
@@ -86,60 +70,13 @@
 			</paper-card>
 		</template>
 	</paper-listbox>
+	
+    </paper-header-panel>
 	</template>
 
+
 	<script>
-
-	 Polymer({
-            is: "home-page",
-			properties: {
-				username: {
-					type: String,
-					value: function(){return localStorage.getItem("userId");},
-				},
-					
-				userrole: {
-					type: String,
-					value: function(){return localStorage.getItem("userRole");},
-
-				},
-				workflowname: {
-					type: String,
-					value:function(){return {};}
-				}
-			},
-            logout: function() {
-				alert("logging out " + this.username);
-				localStorage.clear();
-				location.href = "index.html";
-			},
-			naviForm: function(){
-				var role=localStorage.getItem("userRole");
-				if(role=="stoodent"){
-					location.href = "/wf-spn-stu-page.html";
-				}
-			},
-			deleteWorkflow: function(e){
-				var model = e.model;		
-				localStorage.setItem("id",model.item._id);
-				localStorage.setItem("name",model.item.name);
-				alert(localStorage.getItem("id"));
-			 },
-			editWorkflow: function(){
-				editDio.open();
-			},
-			DELETE: function(){
-				alert("Deleting");
-				return true;
-			},
-			EDIT: function(){
-				alert("Editing");
-			}
-
-        });
-
 	</script>
-
-
 </dom-module>
+
 
