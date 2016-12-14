@@ -19,6 +19,13 @@ router.post("/createUser", (req: Request, res: Response, next) => {
 	let fields: string[] = ["name", "email", "userId", "password", "roles"];
 	let missingFields: string[] = verifyFields(fields, userObj);
 
+	if (missingFields.length > 0) {
+		console.log(missingFields);
+		res.json({success: false, message: `Insufficient information provided. Try again.`});
+		next();
+		return;
+	}
+
 	UserManager.createUser(name, email, userId, password, roles)
 		.then( (response) => {
 			if (response === true) {
@@ -49,7 +56,7 @@ router.post("/verifyUser", (req: Request, res: Response, next) => {
 
 	if (missingFields.length > 0) {
 		console.log(missingFields);
-		res.json({success: false, message: `Insufficient/incorrect information provided. Try again.`});
+		res.json({success: false, message: `Insufficient information provided. Try again.`});
 		next();
 		return;
 	}
@@ -102,7 +109,7 @@ router.post("/deleteUser", (req: Request, res: Response, next) => {
 
 	if (missingFields.length > 0) {
 		console.log(missingFields);
-		res.json({success: false, message: `Insufficient/incorrect information provided. Try again.`});
+		res.json({success: false, message: `Insufficient information provided. Try again.`});
 		next();
 		return;
 	}
@@ -169,7 +176,7 @@ router.post("/modifyUser", (req: Request, res: Response, next) => {
 
 	if (missingFields.length > 0) {
 		console.log(missingFields);
-		res.json({success: false, message: `Insufficient/incorrect information provided. Try again.`});
+		res.json({success: false, message: `Insufficient information provided. Try again.`});
 		next();
 		return;
 	}
