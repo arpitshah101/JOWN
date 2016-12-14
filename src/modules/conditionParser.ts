@@ -241,12 +241,20 @@ export class ConditionParser {
 	public parseAndEvaluate(expression: String, instanceId: String ) {
 		let expressionArray = this.deconstructCondition(expression);
 		let res: boolean;
+		let conditionArray: any[];
+		let evaluationString: String;
 
 		for (let i = 0 ; i < expressionArray.length ; i++) {
-
+			if (expressionArray[i] !== "&&" || expressionArray[i] !== "||") {
+				conditionArray = this.parseCondtion(expressionArray[i]);
+				evaluationString = evaluationString + this.evaluateExpression(conditionArray, instanceId);
+			}
+			else {
+				evaluationString = evaluationString + expressionArray[i];
+			}
 		}
 
-		res = this.evaluateExpression(expressionArray, instanceId);
+		res = eval("" + evaluationString);
 		return res;
 	}
 
@@ -286,7 +294,8 @@ export class ConditionParser {
 			/*formObject = datamanager.getform(expressionArray[0], instanceID);
 			let fieldValue = eval("formObject." + expressionArray[expressionArray.length - 1]);
 			let concatExpression = "" + fieldValue + expression[1] + expression[2];
-			let evaluated = eval(concatExpression);*/
+			let evaluated = eval(concatExpression);
+			return evaluated*/
 		}
 	}
 
