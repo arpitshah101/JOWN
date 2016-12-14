@@ -6,10 +6,11 @@
 <link rel="import" href="/bower_components/paper-card/paper-card.html">
 <link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="/bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="/bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../index.html">
 
-<dom-module id="home-page">
+<dom-module is="dom-bind" id="instance-page">
 	<template>
 		<style>	
 		
@@ -29,8 +30,8 @@
 			left:65%;
 		}
 		#item3{
-			position:absolute;
-			left:90%;
+			position:relative;
+			left:15%;
 		}
 		#card{
 			width:100%;
@@ -42,40 +43,78 @@
 		#icone{
 			position:relative;
 			left:75%;
+		}
+		#paper-tabs{
+			width:85%;
 
 		}
 
 		</style>
 
-		<paper-header-panel class="red">
+	<paper-header-panel class="red">
 		<paper-toolbar>
-        <div class="paper-header">Just Our Workflow Notation</div>
-		<paper-tabs>Active Instances</paper-tabs>
-		<paper-tabs>Completed Instances</paper-tabs>
+		<paper-icon-button src="/image/back.png" on-tap="back"></paper-icon-button>
+		<paper-tabs id="paper-tabs" selected="{{selected}}" >
+			<paper-tab on-tap="tab1">Active Instances</paper-tab>
+			<paper-tab on-tap="tab2">Completed Instances</paper-tab>
+		<paper-tabs>
 		<paper-button id="item3" on-tap="logout">Logout</paper-button>
 		</paper-toolbar>
+	 </paper-header-panel>
 
-		<iron-ajax auto 
+	<iron-ajax auto 
         url="http://www.json-generator.com/api/json/get/crkSCFTVvm?indent=2" 
         handle-as="json" 
         last-response="{{items}}">
     </iron-ajax>
+	<iron-pages id="iron-pages" selected="{{selected}}">
+	<div>
 	<paper-listbox id="mylistbox"class="dropdown-content">
 		<template is="dom-repeat" items="[[items]]">
 			<paper-card id="card">
 			<paper-item id="instance" value="[[item.id]]" on-tap="naviForm">Workflow: [[item.name]]</b><br>Owner: [[item.owner]] <br> Created: [[item.created]]
-			<!--<paper-icon-button id="icond" value="[[item]]" src="/image/delete.png" on-tap="deleteWorkflow"></paper-icon-button>
-			<paper-icon-button id="icone" src="/image/edit.png" on-tap="editWorkflow"></paper-icon-button>-->
 			</paper-item>
 			</paper-card>
 		</template>
 	</paper-listbox>
-	
-    </paper-header-panel>
+	</div>
+
+	<div>page2</div>
+
+	</iron-pages>
 	</template>
-
-
 	<script>
+	Polymer({
+		is: "instance-page",
+
+		properties:{
+			selected:{
+				type:Number,
+				value: 0,
+			},
+		},
+		back:function(){
+			location.href= "/home.html";
+		},		
+		tab1: function(){
+			selected=0;
+		},
+		tab2:function(){
+			selected=1;
+		}
+  	});
+
+
+
+
+
+	//  var pages = document.querySelector('iron-pages');
+    //  var tabs = document.querySelector("paper-tabs");
+
+    //  tabs.addEventListener('iron-select', function() { 
+    //      pages.selected = tabs.selected;
+    //  });
+
 	</script>
 </dom-module>
 
