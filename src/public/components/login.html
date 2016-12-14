@@ -48,7 +48,7 @@
 
 		<paper-card id="login-form" heading="Please Log In">
 			<div class="card-content">
-				<paper-input class="username" label="Username" value="{{username}}"></paper-input>
+				<paper-input class="username" label="User Id" value="{{userId}}"></paper-input>
 				<paper-input class="password" label="Password" type="password" value="{{password}}"></paper-input>
 				<paper-dropdown-menu class="dropdownmenu" label="Role" value="{{role}}">
 					<paper-listbox class="dropdown-content">
@@ -70,18 +70,19 @@
 			properties: {
 				username: String,
 				password: String,
-				role: String
+				role: String,
+				userId: String
 			},
             login: function() {
-				if (this.username === "" || this.username.trim() === "") {
-					console.log("Missing username");
+				if (this.userId === "" || this.userId.trim() === "") {
+					console.log("Missing user Id");
 					modal.open();
 				} else if (this.password === "" || this.password.trim() === "") {
 		          	console.log("Missing password");
 					modal.open();
 				}
 				else {
-					this.$.verifyAjax.body = {"userObj": {"userId": this.username, "password": this.password, "role": this.role}};
+					this.$.verifyAjax.body = {"userObj": {"userId": this.userId, "password": this.password, "role": this.role}};
 					this.$.verifyAjax.generateRequest();
 				}
 
@@ -94,7 +95,8 @@
 				console.log(request.detail.response);
 				console.log(this.$.verifyAjax.lastResponse);
 				if(request.detail.response.success === true) {
-					localStorage.setItem("userId", this.username);
+					localStorage.setItem("userId", this.userId);
+					localStorage.setItem("userRole", this.role);
 					location.href ="/home.html";
 				}
 				else {
