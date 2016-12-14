@@ -1,52 +1,112 @@
 import { Request, Response, Router } from "express";
 import * as mongoose from "mongoose";
 
+import * as FormData from "../models/FormData";
+import * as Instance from "../models/Instance";
 import { DataManager } from "../modules/dataManager";
 
 let router = Router();
 
-// retrive list of form data based on instance id
-function getData(req: Request, res: Response) {
-    /*
-      Implementation
-    */
-	let instanceId = req.params["instanceId"];
-	let result = DataManager.getData(instanceId);
-	res.json(result);
-}
+router.post("/getFormData", (req: Request, res: Response, next: Function) => {
+	let instanceId: mongoose.Types.ObjectId = mongoose.Types.ObjectId(req.params("instanceId"));
+	let formName: string = req.params.formName;
 
-// retrive form based on instance id
-// function getForm(req: Request, res: Response) {
-    /*
-      Implementation
-    */
-	/*let instanceID = req.params["instanceID"];
-}*/
+	if (!req.params.instanceId || !req.params.formName) {
+		res.json({
+			message: "Insufficient information provided.",
+			success: false,
+		});
+		next();
+		return;
+	}
 
-router.post ("/saveData", (req: Request, res: Response, next) => {
-	console.log("Received a save data request");
-
-	let dataObj: any = req.body.dataObj;
-	let instanceId: string = req.body.instanceId;
-	let formName: string = req.body.formName;
-
-	DataManager.saveData(instanceId, formName, dataObj)
-		.then( (response) => {
-			if (response === true) {
-				res.json({success: true, message: `Successfully saved data to ${formName} with instanceId ${instanceId}!`});
-			}
-			else {
-				res.json({success: false, message: `Data could not be saved!`});
-			}
+	DataManager.getFormData(instanceId, formName)
+		.then((formDataDoc: FormData.IDocument) => {
+			res.json(formDataDoc);
 		})
 		.catch((reason) => {
-			console.log(reason);
-			res.json({success: false, message: `Data could not be saved!`});
-
+			res.json({
+				errStack: reason,
+				message: "Failed to find any form data corresponding to the provided information.",
+				success: false,
+			});
 		})
 		.then(() => {
 			next();
 		});
 });
+
+router.post("/saveFormData", (req: Request, res: Response, next: Function) => {
+	let instanceId: mongoose.Types.ObjectId = mongoose.Types.ObjectId(req.body.instanceId);
+	let formName: string = req.body.formName;
+	let data: any = req.body.data;
+
+	let missingFields: string[] = verifyFields(["instanceId", "formName", "data"], {instanceId, formName, data});
+	if (missingFields.length > 0) {
+		res.json({
+			message: `Insufficient information provided. Missing the following information: ${missingFields}`,
+			success: false,
+		});
+		next();
+		return;
+	}
+
+	DataManager.saveFormData(instanceId, formName, data)
+		.then((success: boolean) => {
+			res.json({
+				message: "Successfully saved the form data.",
+				success: true,
+			});
+		})
+		.catch((reason) => {
+			res.json({
+				errStack: reason,
+				message: "Failed to save the form data corresponding to the provided information.",
+				success: false,
+			});
+		})
+		.then(() => {
+			next();
+		});
+});
+
+router.get("/getInstanceData", (req: Request, res: Response, next: Function) => {
+	let instanceIdStr: string = req.params.instanceId;
+	if (!instanceIdStr) {
+		res.json({
+			message: "Insufficient information provided.",
+			success: false,
+		});
+		next();
+		return;
+	}
+
+	let instanceId: mongoose.Types.ObjectId = mongoose.Types.ObjectId(req.params.instanceId);
+
+	DataManager.getInstanceData(instanceId)
+		.then((instanceDoc: Instance.IDocument) => {
+			res.json(instanceDoc);
+		})
+		.catch((reason) => {
+			res.json({
+				errStack: reason,
+				message: "Failed to find any workflow instance corresponding to the provided instanceId.",
+				success: false,
+			});
+		})
+		.then(() => {
+			next();
+		});
+});
+
+function verifyFields(fields: string[], obj: any): string[] {
+	let missingFields: string[] = [];
+	for (let field of fields) {
+		if (!obj[field]) {
+			missingFields.push(field);
+		}
+	}
+	return missingFields;
+}
 
 export const dataRoutes = router;
