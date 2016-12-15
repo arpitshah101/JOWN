@@ -38,13 +38,14 @@ router.get("/getInstances", (req: Request, res: Response, next) => {
 });
 
 router.get("/getWorkflows", (req: Request, res: Response, next) => {
-	let role = req.query.role;
-
-	if (role === "" || typeof(role) !== "string") {
+	let userRole = req.query.role;
+	console.log("userRole @ before CHECK: " + userRole);
+	if (userRole === "" || typeof(userRole) !== "string") {
 		return [];
 	}
+	console.log("userRole @ after CHECK: " + userRole);
 
-	Workflow.model.find({role}).exec()
+	InstanceManager.getWorkflows(userRole)
 		.then((workflows: Workflow.IDocument[]) => {
 			if (workflows) {
 				return workflows;
@@ -52,6 +53,13 @@ router.get("/getWorkflows", (req: Request, res: Response, next) => {
 			else {
 				return [];
 			}
+		})
+		.catch((reason) => {
+			console.log(reason);
+			res.json({success: false, message: "Could not get all workflows!"});
+		})
+		.then(() => {
+			next();
 		});
 });
 

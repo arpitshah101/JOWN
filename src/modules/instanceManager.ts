@@ -147,7 +147,9 @@ export class InstanceManager {
 	 * Function to retrieve the available workflows for a role
 	 */
 	public static getWorkflows(role: string): Bluebird<Workflow.IDocument[]> {
+		console.log("getWorkflows @@@@ :" + role);
 		return new Bluebird<Workflow.IDocument[]>((resolve, reject) => {
+			console.log("getWorkflows @@ :" + role);
 			Workflow.model.find({groups: role}).exec()
 			.then((workflow: Workflow.IDocument[]) => {
 				if(!workflow) {
