@@ -32,9 +32,14 @@ export interface IInstance {
 	created: Date;
 	creator: mongoose.Types.ObjectId;
 	events: mongoose.Types.ObjectId[];
-	members: Array<{user: mongoose.Types.ObjectId, role: string}>;
+	members: IMember[];
 	status: string;
 	workflowId: mongoose.Types.ObjectId;
+}
+
+export interface IMember {
+	user: mongoose.Types.ObjectId;
+	role: string;
 }
 
 export interface IDocument extends mongoose.Document, IInstance { };

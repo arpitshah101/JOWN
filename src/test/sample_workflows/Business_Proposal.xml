@@ -14,6 +14,12 @@
 		<state id="0.CREATE_PROPOSAL_FORM">
 			<condition>true</condition>
 			<action>assign form proposalForm to INSTANCE.CREATOR</action>
+			<transitions>
+				<transition>
+					<condition>true</condition>
+					<dest>1.REVIEW_FORM</dest>
+				</transition>
+			</transitions>
 		</state>
 
 		<form name = "Business Proposal Form" alias="proposalForm">
@@ -71,20 +77,25 @@
 			</entity>
 		</form>
 
-		<event id="1.START">
+		<state id="1.REVIEW_FORM">
 			<condition>proposalForm._$.FORM_STATUS == "submitted"</condition>
+			<action>assign form operationsReview to operationsTeamID</action>
+            <action>assign form marketingReview to marketingTeamID</action>
+            <action>assign form accountingReview to accountingTeamID</action>
 			<transitions>
 				<transition>
 					<condition>true</condition>
-					<dest>1.REVIEW_FORM</dest>
+					<dest>2.SAVE_OPERATIONS_PROPOSAL_REVIEW</dest>
+				</transition>
+				<transition>
+					<condition>true</condition>
+					<dest>3.SAVE_MARKETING_PROPOSAL_REVIEW</dest>
+				</transition>
+				<transition>
+					<condition>true</condition>
+					<dest>4.SAVE_ACCOUNTING_PROPOSAL_REVIEW</dest>
 				</transition>
 			</transitions>
-		</event>
-		<state id="1.REVIEW_FORM">
-			<condition>true</condition>
-			<action>assign form operationsReview to operationsTeamID</action> <!-- NOT SURE WHO TO SEND TO HERE, SHOULD GO TO 3 RECEIVERS -->
-            <!--<action>assign form marketingTeam to marketingTeamID</action> -->
-            <!--<action>assign form accountingReview to accountingTeamID</action> -->
 		</state>
 
 		<form name = "Operations Team Review" alias="operationsReview">
@@ -118,18 +129,15 @@
 			</entity>
 		</form>	
 
-		<event id="2.START">
+		<state id="2.SAVE_OPERATIONS_PROPOSAL_REVIEW">
 			<condition>operationsReview._$.FORM_STATUS == "submitted"</condition>
+			<action>save proposalForm+operationsReview</action>
 			<transitions>
 				<transition>
 					<condition>true</condition>
-					<dest>2.SAVE_PROPOSAL_REVIEW</dest>
+					<dest>5.SAVE_GROUP_PROPOSAL_REVIEW</dest>
 				</transition>
 			</transitions>
-		</event>
-		<state id="2.SAVE_PROPOSAL_REVIEW">
-			<condition>true</condition>
-			<action>save proposalForm+operationsReview</action>
 		</state>
 
 		<form name = "Marketing Team" alias="marketingTeam">
@@ -155,18 +163,15 @@
 			</entity>
 		</form>
 
-		<event id="3.START">
-			<condition>marketingTeam._$.FORM_STATUS == "submitted"</condition>
+		<state id="3.SAVE_MARKETING_PROPOSAL_REVIEW">
+			<condition>marketingReview._$.FORM_STATUS == "submitted"</condition>
+			<action>save proposalForm+operationsReview+marketingReview</action>
 			<transitions>
 				<transition>
 					<condition>true</condition>
-					<dest>3.SAVE_PROPOSAL_REVIEW</dest>
+					<dest>5.SAVE_GROUP_PROPOSAL_REVIEW</dest>
 				</transition>
 			</transitions>
-		</event>
-		<state id="3.SAVE_PROPOSAL_REVIEW">
-			<condition>true</condition>
-			<action>save proposalForm+operationsReview+marketingTeam</action>
 		</state>
 
 		<form name= "Accounting Team Review" alias="accountingReview">
@@ -204,18 +209,15 @@
 			</entity>
 		</form>
 
-		<event id="4.START">
+		<state id="4.SAVE_ACCOUNTING_PROPOSAL_REVIEW">
 			<condition>accountingReview._$.FORM_STATUS == "submitted"</condition>
+			<action>save proposalForm+operationsReview+marketingTeam+accountingReview</action>
 			<transitions>
 				<transition>
 					<condition>true</condition>
-					<dest>4.SAVE_PROPOSAL_REVIEW</dest>
+					<dest>5.SAVE_GROUP_PROPOSAL_REVIEW</dest>
 				</transition>
 			</transitions>
-		</event>
-		<state id="4.SAVE_PROPOSAL_REVIEW">
-			<condition>true</condition>
-			<action>save proposalForm+operationsReview+marketingTeam+accountingReview</action>
 		</state>
 
 		<form name= "Group Review" alias="groupReview">
@@ -245,18 +247,23 @@
 			</entity>
 		</form>
 
-		<event id="5.START">
+		<state id="5.SAVE_GROUP_PROPOSAL_REVIEW">
 			<condition>groupReview._$.FORM_STATUS == "submitted"</condition>
+			<action>save proposalForm+operationsReview+marketingTeam+accountingReview+groupReview</action>
 			<transitions>
 				<transition>
 					<condition>true</condition>
-					<dest>5.SAVE_PROPOSAL_REVIEW</dest>
+					<dest>6.SAVE_CFO_PROPOSAL_REVIEW</dest>
+				</transition>
+				<transition>
+					<condition>true</condition>
+					<dest>7.SAVE_CSO_PROPOSAL_REVIEW</dest>
+				</transition>
+				<transition>
+					<condition>true</condition>
+					<dest>8.SAVE_CTO_PROPOSAL_REVIEW</dest>
 				</transition>
 			</transitions>
-		</event>
-		<state id="5.SAVE_PROPOSAL_REVIEW">
-			<condition>true</condition>
-			<action>save proposalForm+operationsReview+marketingTeam+accountingReview+groupReview</action>
 		</state>
 
 		<form name ="CFO Review Form" alias="CFOReviewForm">
@@ -302,18 +309,15 @@
 			</entity>
 		</form>
 
-        <event id="6.START">
+		<state id="6.SAVE_CFO_PROPOSAL_REVIEW">
 			<condition>CFOReviewForm._$.FORM_STATUS == "submitted"</condition>
+			<action>save proposalForm+operationsReview+marketingTeam+accountingReview+groupReview+CFOReviewForm</action>
 			<transitions>
 				<transition>
 					<condition>true</condition>
-					<dest>6.SAVE_PROPOSAL_REVIEW</dest>
+					<dest>9.SAVE_CEO_PROPOSAL_REVIEW</dest>
 				</transition>
 			</transitions>
-		</event>
-		<state id="6.SAVE_PROPOSAL_REVIEW">
-			<condition>true</condition>
-			<action>save proposalForm+operationsReview+marketingTeam+accountingReview+groupReview+CFOReviewForm</action>
 		</state>
             
 		<form name ="CSO Review Form" alias="CSOReviewForm">
@@ -359,18 +363,15 @@
 			</entity>
 		</form>
 
-        <event id="7.START">
+		<state id="7.SAVE_CSO_PROPOSAL_REVIEW">
 			<condition>CSOReviewForm._$.FORM_STATUS == "submitted"</condition>
+			<action>save proposalForm+operationsReview+marketingTeam+accountingReview+groupReview+CFOReviewForm+CSOReviewForm</action>
 			<transitions>
 				<transition>
 					<condition>true</condition>
-					<dest>7.SAVE_PROPOSAL_REVIEW</dest>
+					<dest>9.SAVE_CEO_PROPOSAL_REVIEW</dest>
 				</transition>
 			</transitions>
-		</event>
-		<state id="7.SAVE_PROPOSAL_REVIEW">
-			<condition>true</condition>
-			<action>save proposalForm+operationsReview+marketingTeam+accountingReview+groupReview+CFOReviewForm+CSOReviewForm</action>
 		</state>
 
 		<form name ="CTO Review Form" alias="CTOReviewForm">
@@ -416,18 +417,15 @@
 			</entity>
 		</form>
 
-        <event id="8.START">
+		<state id="8.SAVE_CTO_PROPOSAL_REVIEW">
 			<condition>CTOReviewForm._$.FORM_STATUS == "submitted"</condition>
+			<action>save proposalForm+operationsReview+marketingTeam+accountingReview+groupReview+CFOReviewForm+CSOReviewForm+CTOReviewForm</action>
 			<transitions>
 				<transition>
 					<condition>true</condition>
-					<dest>8.SAVE_PROPOSAL_REVIEW</dest>
+					<dest>9.SAVE_CEO_PROPOSAL_REVIEW</dest>
 				</transition>
 			</transitions>
-		</event>
-		<state id="8.SAVE_PROPOSAL_REVIEW">
-			<condition>true</condition>
-			<action>save proposalForm+operationsReview+marketingTeam+accountingReview+groupReview+CFOReviewForm+CSOReviewForm+CTOReviewForm</action>
 		</state>
 
 		<form name = "CEO Review Form" alias="CEOReviewForm">
@@ -477,17 +475,8 @@
 			</entity>
 		</form>
 
-        <event id="8.START">
+		<state id="9.SAVE_CEO_PROPOSAL_REVIEW">
 			<condition>CEOReviewForm._$.FORM_STATUS == "submitted"</condition>
-			<transitions>
-				<transition>
-					<condition>true</condition>
-					<dest>8.SAVE_PROPOSAL_REVIEW</dest>
-				</transition>
-			</transitions>
-		</event>
-		<state id="8.SAVE_PROPOSAL_REVIEW">
-			<condition>true</condition>
 			<action>save proposalForm+operationsReview+marketingTeam+accountingReview+groupReview+CFOReviewForm+CSOReviewForm+CTOReviewForm+CEOReviewForm</action>
             <action>assign form CEOReviewForm to USERS.whoeverFilesThisSomewhere</action> <!-- who to send to? -->
 		</state>
