@@ -3,6 +3,7 @@ import * as mongoose from "mongoose";
 
 import * as Instance from "../models/Instance";
 import * as User from "../models/User";
+import * as Workflow from "../models/Workflow";
 import { InstanceManager } from "../modules/instanceManager";
 import { UserManager } from "../modules/userManager";
 
@@ -33,6 +34,24 @@ router.get("/getInstances", (req: Request, res: Response, next) => {
 		.then((instances: Instance.IDocument[]) => {
 			res.json(instances);
 			next();
+		});
+});
+
+router.get("/getWorkflows", (req: Request, res: Response, next) => {
+	let role = req.query.role;
+
+	if (role === "" || typeof(role) === "string") {
+		return [];
+	}
+
+	Workflow.model.find({role}).exec()
+		.then((workflows: Workflow.IDocument[]) => {
+			if (workflows) {
+				return workflows;
+			}
+			else {
+				return [];
+			}
 		});
 });
 
