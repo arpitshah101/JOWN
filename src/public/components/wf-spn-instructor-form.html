@@ -1,9 +1,11 @@
 <link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="/bower_components/paper-item/paper-item.html">
 <link rel="import" href="/bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="/bower_components/paper-button/paper-button.html">
 <link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
 <link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 
@@ -43,6 +45,15 @@
 		}
 
 		</style>
+
+		<iron-ajax id="getPrevFormAjax"
+			url="/data/getFormData"
+			method="POST"
+			handle-as="json"
+			content-type="application/json"
+			on-response="handlePrevFormResponse">
+		</iron-ajax>
+
 		<paper-header-panel class="red">
 			<paper-toolbar>
 				<div class="paper-header">Just Our Workflow Notation</div>
@@ -92,6 +103,12 @@
 		Polymer({
 		is: "workflow-spn-instructor-form",
 			properties: {
+				userId: String,
+				instanceId: String,
+				formAlias: String,
+
+				/* PROPERTIES FOR FORMS BELOW */
+				/* Student form */
 				firstName: String,
 				lastName: String,
 				middleInitials: String,
@@ -109,6 +126,7 @@
 				numberOfCredits: String,
 				title: String,
 				reasonsForTakingCourse: String,
+				/* Instructor form */
                 instructorApproval: String,
                 instructorName: {
                     type: String,
@@ -117,6 +135,11 @@
                 },
                 instructorApprovalDate: String,
 			},
+			ready: function() {
+				this.instanceId = localStorage.getItem("instanceId");
+				this.formAlias = "instructorForm";
+				this.$.getPrevFormAjax.body = {"instanceId": this.instanceId, "formAlias": this.formAlias};
+			},
 			logout: function() {
 				alert("logging out " + this.username);
                 localStorage.clear();
@@ -124,6 +147,16 @@
 			},
 			submitForm: function() {
 				alert("Submitting form");
+			},
+			handlePrevFormResponse: function(request) {
+				console.log(request.detail.response);
+				console.log(this.$.getPrevFormAjax.lastResponse);
+				if(request.detail.response.success === true) {
+
+				}
+				else {
+					modal.open();
+				}
 			}
 		});
 
