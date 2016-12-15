@@ -151,6 +151,29 @@ router.get("/getAllUsers", (req: Request, res: Response, next) => {
 		});
 });
 
+router.get("/getUsersWithRole", (req: Request, res: Response, next) => {
+	let role: string = req.query.role;
+
+	UserManager.getUsersWithRole(role)
+		.then((users: User.IDocument[]) => {
+			if (users) {
+				res.json(users);
+			}
+			else {
+				res.json([]);
+			}
+			next();
+		})
+		.catch((reason) => {
+			res.json({
+				message: "Failed to find users with the given role.",
+				stack: reason,
+				success: false,
+			});
+			next();
+		});
+});
+
 function getNextTenUsers(req: Request, rep: Response, next) {
 	let created = req.params("created");
 
