@@ -5,10 +5,10 @@ mongoose.Promise = require("bluebird");
 
 // mongoose.connect("mongodb://localhost:27017/jown-test");
 
-var DataManager = require("../modules/dataManager").DataManager.prototype;
+var DataManager = require("../modules/dataManager").DataManager;
 var Data = require("../models/Data").model;
 
-describe("DataManager", function () {
+describe.skip("DataManager", function () {
 
 
 	before(function() {
@@ -50,7 +50,7 @@ describe("DataManager", function () {
 		});
 	});
 
-	describe("#getData", function () {
+	describe("#getFormData", function () {
 		it("correctly gets test form data", function (done) {
 			DataManager.getData(testData.instanceId, testData.formName)
 				.then(function (response, reject) {

@@ -11,7 +11,7 @@ export class TaskRunner {
 		let args: string[] = cmd.slice(1);
 		if (this.checkIfPreDef(cmdName)) {
 			// pass args arr for execution
-			return Bluebird.resolve(PreDefTasks.prototype[cmdName](args));
+			return Bluebird.resolve(PreDefTasks[cmdName](args));
 		}
 		let execFunc = Bluebird.promisify(exec);
 		let childProcess = execFunc(command);
