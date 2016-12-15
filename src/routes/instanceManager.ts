@@ -48,10 +48,10 @@ router.get("/getWorkflows", (req: Request, res: Response, next) => {
 	InstanceManager.getWorkflows(userRole)
 		.then((workflows: Workflow.IDocument[]) => {
 			if (workflows) {
-				return workflows;
+				res.json(workflows);
 			}
 			else {
-				return [];
+				res.json([]);
 			}
 		})
 		.catch((reason) => {
