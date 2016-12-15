@@ -253,8 +253,12 @@ export class UserManager {
 	 * 
 	 * @memberOf UserManager
 	 */
-	public static getUser(queryObj): Bluebird<User.IDocument> {
+	public static getUser(queryObj: any): Bluebird<User.IDocument> {
 		return User.model.findOne(queryObj).exec();
+	}
+
+	public static getUsersWithRole(role: string): Bluebird<User.IDocument[]> {
+		return User.model.find({roles: role}).exec();
 	}
 
 	private static addNewGroups(groups: string[], userDocId: mongoose.Types.ObjectId): Array<Bluebird<Group.IDocument>> {
