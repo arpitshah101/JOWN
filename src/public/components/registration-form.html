@@ -53,7 +53,7 @@
         <paper-input label="UserID" maxlength="50" value={{userId}}></paper-input>
         <paper-input label="Email" maxlength="50" type="email" auto-validate="true" value={{email}}></paper-input>
         <paper-input label="Password" type="password" maxlength="50" value={{password}}></paper-input>
-        <paper-dropdown-menu class="dropdownmenu" label="Role">
+        <paper-dropdown-menu class="dropdownmenu" label="Role" value="{{role}}">
           <paper-listbox class="dropdown-content">
             <template is="dom-repeat" items="[[rolesList]]">
               <paper-item class="items">{{item}}</paper-item>
@@ -77,7 +77,7 @@
         userId: String,
         email: String,
         password: String,
-        roles: Array
+        role: String
       },
 
       registerUser: function() {
@@ -95,7 +95,7 @@
           modal.open();
         }
         else {
-          this.$.createUserAjax.body = {"userObj": {"name": this.username, "email": this.email, "userId": this.userId, "password": this.password,  "roles": this.roles}};
+          this.$.createUserAjax.body = {"userObj": {"name": this.username, "email": this.email, "userId": this.userId, "password": this.password,  "roles": this.role}};
           this.$.createUserAjax.generateRequest();
         }
 			},
