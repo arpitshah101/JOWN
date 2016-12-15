@@ -1,0 +1,117 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="/index.html">
+
+<dom-module id="admin-regis">
+  <template>
+    <style>
+      :host {
+				display: block;
+			}
+
+			paper-card {
+				min-width: 500px;
+			}
+
+			paper-card ::content .title-text {
+				text-align: center;
+			}
+
+			paper-card .card-actions {
+				text-align: right;
+			}
+    </style>
+
+    <iron-ajax auto url="/users/allRoles" handle-as="json" debounce-duration="300" last-response="{{rolesList}}"></iron-ajax>
+
+		<iron-ajax id="createUserAjax"
+			url="/users/createUser"
+			method="POST"
+			handle-as="json"
+			content-type="application/json"
+			on-response="handleCreateUserResponse">
+    </iron-ajax>
+
+    <paper-dialog id="modal" modal alwaysOnTop="true">
+        <p>Could not register user</p>
+        <p>[[this.errorMessage]]</p>
+        <div class="buttons">
+            <paper-button dialog-confirm autofocus>OK!</paper-button>
+        </div>
+    </paper-dialog>
+
+    <paper-dialog id="dialog">
+        <h2>Error!</h2>
+        <p>Could not register</p>
+    </paper-dialog>
+
+    <paper-card id="login-form" heading="Register New Account">
+      <div class="card-content">
+        <paper-input label="Username" maxlength="50" value={{username}}></paper-input>
+        <paper-input label="UserID" maxlength="50" value={{userId}}></paper-input>
+        <paper-input label="Email" maxlength="50" type="email" auto-validate="true" value={{email}}></paper-input>
+        <paper-input label="Password" type="password" maxlength="50" value={{password}}></paper-input>
+        <paper-dropdown-menu class="dropdownmenu" label="Role">
+          <paper-listbox class="dropdown-content">
+            <template is="dom-repeat" items="[[rolesList]]">
+              <paper-item class="items">{{item}}</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+        <div class="card-actions">
+          <paper-button flat dialog-confirm on-tap="registerUser">Register</paper-button>
+        </div>
+      </div>
+    </paper-card>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'admin-regis',
+
+      properties: {
+        errorMessage: String,
+        username: String,
+        userId: String,
+        email: String,
+        password: String,
+        roles: Array
+      },
+
+      registerUser: function() {
+        if (this.username === "" || this.username.trim() === "") {
+          console.log("Missing username");
+          modal.open();
+        } else if (this.userId === "" || this.userId.trim() === "") {
+          console.log("Missing userid");
+          modal.open();
+        } else if (this.email === "" || this.email.trim() === "") {
+          console.log("Missing email");
+          modal.open();
+        }  else if (this.password === "" || this.password.trim() === "") {
+          console.log("Missing password");
+          modal.open();
+        }
+        else {
+          this.$.createUserAjax.body = {"userObj": {"name": this.username, "email": this.email, "userId": this.userId, "password": this.password,  "roles": "stoodent"}};
+          this.$.createUserAjax.generateRequest();
+        }
+			},
+
+      handleCreateUserResponse: function(request) {
+				console.log(request.detail.response);
+				console.log(this.$.createUserAjax.lastResponse);
+        if(request.detail.response.success === true) {
+          console.log("LOGGING IN!");
+          alert("Successfully created user with name " + this.username);
+        }
+        else {
+          console.log("LOG IN FAILED!");
+          alert("Could not create user with name: " + this.username);
+        }
+			}
+    });
+  </script>
+</dom-module>
