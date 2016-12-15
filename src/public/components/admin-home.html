@@ -74,6 +74,7 @@
 			<paper-card id="card">
 			<paper-item id="instance" value="[[item.id]]" on-tap="naviForm">Workflow: [[item.name]]</b><br>Owner: [[item.owner]] <br> Created: [[item.created]]
 			</paper-item>
+			<paper-icon-button id="icond" value="[[item]]" src="/image/delete.png" on-tap="deleteWorkflow"></paper-icon-button>
 			</paper-card>
 		</template>
 	</paper-listbox>
@@ -92,10 +93,7 @@
 				type:Number,
 				value: 0,
 			},
-		},
-		back:function(){
-			location.href= "/home.html";
-		},		
+		},	
 		tab1: function(){
 			selected=0;
 		},
