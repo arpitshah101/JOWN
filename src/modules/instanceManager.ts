@@ -5,8 +5,11 @@ import * as Event from "../models/Event";
 import * as Form from "../models/Form";
 import * as FormData from "../models/FormData";
 import * as Instance from "../models/Instance";
+import * as State from "../models/State";
 import * as User from "../models/User";
 import * as Workflow from "../models/Workflow";
+
+import { ConditionParser } from "../modules/conditionParser";
 
 export class InstanceManager {
 
@@ -20,7 +23,7 @@ export class InstanceManager {
 	 * @memberOf InstanceManager
 	 */
 	public static createNewInstance(workflowId: mongoose.Types.ObjectId, creator: mongoose.Types.ObjectId, role: string) {
-		return new Bluebird((resolve, reject) => {
+		return new Bluebird<boolean>((resolve, reject) => {
 			let newInstance = new Instance.model({
 				creator,
 				members: [{user: creator, role}],
@@ -52,7 +55,23 @@ export class InstanceManager {
 					return this.createFormDataInstances(forms, newInstance._id);
 				})
 				.then((formDatas: FormData.IDocument[]) => {
-					// Execute any START condition listeners
+					// get all events
+					return Bluebird.all(
+						newInstance.events.map(
+							(eventId: mongoose.Types.ObjectId) => Event.model.findById(eventId),
+						));
+				})
+				.then((events: Event.IDocument[]) => {
+					for (let event of events) {
+						if (event.condition === "START") {
+							this.processTransitions(event.transitions, newInstance._id);
+						}
+					}
+					resolve(true);
+				})
+				.catch((reason) => {
+					console.error(reason);
+					newInstance.remove();
 				});
 		});
 	}
@@ -147,6 +166,19 @@ export class InstanceManager {
 	}
 
 	/**
+	 * Wrapper function to get a State document based on ObjectId
+	 * 
+	 * @static
+	 * @param {mongoose.Types.ObjectId} stateId
+	 * @returns {Bluebird<State.IDocument>}
+	 * 
+	 * @memberOf InstanceManager
+	 */
+	public static getState(stateId: mongoose.Types.ObjectId): Bluebird<State.IDocument> {
+		return State.model.findById(stateId).exec();
+	}
+
+	/**
 	 * Creates the form data instances corresponding to all forms in a workflow blueprint.
 	 * Returns a list of all the FormData documents created.
 	 * 
@@ -173,5 +205,31 @@ export class InstanceManager {
 			formDataSaves.push(formData.save());
 		}
 		return Bluebird.all(formDataSaves);
+	}
+
+	private static processTransitions(transitions: Event.ITransition[], instanceId: mongoose.Types.ObjectId): void {
+		this.getInstance({ _id: instanceId })
+			.then((instance: Instance.IDocument) => {
+				Bluebird.reduce(transitions, (total: State.IDocument[], current: Event.ITransition) => {
+					return ConditionParser.prototype.parseAndEvaluate(current.condition, instanceId.toString())
+						.then((value: boolean) => {
+							if (value) {
+								State.model.findOne({ name: current.dest, workflowId: instance.workflowId }).exec()
+									.then((state: State.IDocument) => {
+										total.push(state);
+										return total;
+									});
+							}
+							else {
+								return total;
+							}
+						});
+				}, [])
+					.then((states: State.IDocument[]) => {
+						for (let state of states) {
+							instance.activeStates.push(state._id);
+						}
+					});
+			});
 	}
 }

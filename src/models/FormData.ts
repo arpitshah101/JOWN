@@ -3,16 +3,22 @@ import * as mongoose from "mongoose";
 let Schema = mongoose.Schema;
 
 let formDataSchema = new Schema({
-	alias: String,
+	alias: Schema.Types.String,
 	assignedTo: Schema.Types.ObjectId,
-	data: Schema.Types.Mixed,
+	data: {
+		default: {},
+		type: Schema.Types.Mixed,
+	},
 	instanceId: {
 		required: true,
 		type: Schema.Types.ObjectId,
 	},
-	lastEdit: Date,
-	name: String,
-	status: Schema.Types.Number,
+	lastEdit: Schema.Types.Date,
+	name: Schema.Types.String,
+	status: {
+		default: "incomplete",
+		type: Schema.Types.String,
+	},
 }, { skipVersioning : true });
 
 export interface IFormData {
