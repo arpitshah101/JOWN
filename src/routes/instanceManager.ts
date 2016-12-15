@@ -36,6 +36,18 @@ router.get("/getInstances", (req: Request, res: Response, next) => {
 		});
 });
 
+/**
+ * 	Expects the data body in the following format:
+ * 
+ * 	{
+ * 		workflowId: string,
+ * 		userId: string,
+ * 		role: string
+ * 	}
+ * 
+ *  NOTE: YOU DO NOT NEED A WRAPPER OBJECT INSIDE THE DATA BODY FOR THIS POST REQUEST
+ * 
+ */
 router.post("/createNewInstance", (req: Request, res: Response, next) => {
 	let workflowIdStr = req.body.workflowId;
 	let userId = req.body.userId;
