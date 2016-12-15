@@ -87,6 +87,8 @@
 				} else if (this.password === "" || this.password.trim() === "") {
 		          	console.log("Missing password");
 					modal.open();
+				}else if(this.userId==="admin"){
+					location.href="/admin.html";
 				}
 				else {
 					this.$.verifyAjax.body = {"userObj": {"userId": this.userId, "password": this.password, "role": this.role}};

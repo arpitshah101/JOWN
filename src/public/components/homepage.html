@@ -88,22 +88,39 @@
 		debounce-duration="300"
 		last-response="{{instanceList}}">
 	</iron-ajax>
+
     <iron-ajax auto 
         url="http://www.json-generator.com/api/json/get/crkSCFTVvm?indent=2" 
         handle-as="json" 
         last-response="{{items}}">
     </iron-ajax>
 
+	<iron-ajax
+		id="createNewInstanceAjax"
+		url="/instances/createNewInstance"
+		method="POST"
+		handle-as="json"
+		content-type="application/json"
+		on-response="handleCreateNewResponse">
+		</iron-ajax>
+
+	<iron-ajax
+		auto url="/instances/getWorkflows"	
+		params='{"role":"stoodent"}'
+		handle-as="json"
+		last-response={{workflows}}
+
 		<iron-pages id="iron-pages" selected="{{selected}}">
 	<div>
 	<paper-listbox id="mylistbox"class="dropdown-content">
-		<template is="dom-repeat" items="[[items]]">
+		<template is="dom-repeat" items="[[workflows]]">
 			<paper-card id="card">
-			<paper-item id="instance" value="[[item.id]]" on-tap="workflowDetail">Workflow: [[item.name]]</b><br>Owner: [[item.owner]] <br> Created: [[item.created]]
+			<paper-item id="instance" value="[[item.id]]" on-tap="workflowDetail">Workflow:[[item.name]]</b><br>Owner:[[item.owner]]<br>Created: [[item.created]]
 			<!--<paper-icon-button id="icond" value="[[item]]" src="/image/delete.png" on-tap="deleteWorkflow"></paper-icon-button>-->
 			</paper-item>
 			<paper-icon-button id="icone" src="/image/edit.png" on-tap="checkInstances"></paper-icon-button>
 			<paper-icon-button id="formicon" src="/image/back.png" on-tap="naviForm"></paper-icon-button>
+			<paper-icon-button id="icond" src="/image/delete.png" on-tap="newInstance"></paper-icon-button>
 			
 			</paper-card>
 		</template>
@@ -159,9 +176,25 @@
 				 	type:String,
 					computed: 'getParams(userId,userrole)'
 				 },
+				 workflowId:{
+					 type:Number,
+					 value:"123456123456"
+				 }
+			},
+			newInstance: function(){
+				alert("before");
+				this.$.createNewInstanceAjax.body = {"workflowId": this.workflowId,"userId": this.userId, "role": this.userrole};
+				this.$.createNewInstanceAjax.generateRequest();
+				alert("123");
+			},
+			handleCreateNewResponse: function(request) {
+				alert(request);
+				if(request.detail.response.success === true) {
+					alert=("create instance successfully");
+				}
 			},
 
-			getParams:function(userId,userrole){
+			getParams: function(userId,userrole){
 				return {userId: userId, 
 						role: userrole
 					};
