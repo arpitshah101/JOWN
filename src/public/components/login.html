@@ -1,6 +1,5 @@
 <link rel="import" href="/bower_components/polymer/polymer.html">
 <link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
-
 <link rel="import" href="/bower_components/paper-card/paper-card.html">
 <link rel="import" href="/bower_components/paper-button/paper-button.html">
 <link rel="import" href="/bower_components/paper-input/paper-input.html">
@@ -29,7 +28,12 @@
 			}
         </style>
 
-        <iron-ajax auto url="/users/allRoles" handle-as="json" debounce-duration="300" last-response="{{rolesList}}"></iron-ajax>
+        <iron-ajax
+			auto url="/users/allRoles"
+			handle-as="json"
+			debounce-duration="300"
+			last-response="{{rolesList}}">
+		</iron-ajax>
 
 		<iron-ajax id="verifyAjax"
 			url="/users/verifyUser"
@@ -72,6 +76,9 @@
 				password: String,
 				role: String,
 				userId: String
+			},
+			ready: function() {
+				// LOAD ROLES HERE
 			},
             login: function() {
 				if (this.userId === "" || this.userId.trim() === "") {
