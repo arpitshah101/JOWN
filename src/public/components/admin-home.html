@@ -53,11 +53,11 @@
 
 	<paper-header-panel class="red">
 		<paper-toolbar>
-		<paper-icon-button src="/image/back.png" on-tap="back"></paper-icon-button>
 		<paper-tabs id="paper-tabs" selected="{{selected}}" >
-			<paper-tab on-tap="tab1">Active Instances</paper-tab>
-			<paper-tab on-tap="tab2">Completed Instances</paper-tab>
+			<paper-tab on-tap="tab1">Manage Workflows</paper-tab>
+			<paper-tab on-tap="tab2">Manage Users</paper-tab>
 		<paper-tabs>
+		<paper-item>Admin</paper-item>
 		<paper-button id="item3" on-tap="logout">Logout</paper-button>
 		</paper-toolbar>
 	 </paper-header-panel>
@@ -93,9 +93,6 @@
 				value: 0,
 			},
 		},
-		logout: function() {
-			location.href = "index.html";
-		},
 		back:function(){
 			location.href= "/home.html";
 		},		
@@ -106,18 +103,6 @@
 			selected=1;
 		}
   	});
-
-
-
-
-
-	//  var pages = document.querySelector('iron-pages');
-    //  var tabs = document.querySelector("paper-tabs");
-
-    //  tabs.addEventListener('iron-select', function() { 
-    //      pages.selected = tabs.selected;
-    //  });
-
 	</script>
 </dom-module>
 
