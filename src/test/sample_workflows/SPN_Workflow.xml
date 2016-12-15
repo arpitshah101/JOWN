@@ -9,17 +9,17 @@
 		</groups>
 		<form name="Student SPN Request Form" alias="studentForm" fileName="wf-spn-student-form.html">
 			<entity>
+				<key>firstName</key>
+				<label>First Name</label>
+				<type>String</type>
+			</entity>
+			<entity>
 				<key>lastName</key>
 				<label>Last Name</label>
 				<type>String</type>
 			</entity>
 			<entity>
-				<key>firstName</key>
-				<label>firstName</label>
-				<type>String</type>
-			</entity>
-			<entity>
-				<key>midInit</key>
+				<key>middleInitials</key>
 				<label>Middle Initial</label>
 				<type>String</type>
 			</entity>
@@ -29,38 +29,73 @@
 				<type>String</type>
 			</entity>
 			<entity>
-				<key>email</key>
+				<key>officialRutgersEmail</key>
 				<label>Official Rutgers Email Only</label>
 				<type>String</type>
 			</entity>
 			<entity>
-				<key>gradDate</key>
+				<key>declaredGraduationDate</key>
 				<label>Declared Graduation Date (month/year)</label>
 				<type>String</type>
 			</entity>
 			<entity>
-				<key>gpa</key>
+				<key>cumulativeGPA</key>
 				<label>Cumulative GPA</label>
 				<type>number</type>
 			</entity>
 			<entity>
-				<key>isSasHonors</key>
+				<key>honorsSchool</key>
 				<label>Are you a member of the School of Arts and Sciences Honors Program?</label>
 				<type>boolean</type>
 			</entity>
 			<entity>
-				<key>semYear</key>
+				<key>semesterAndYear</key>
 				<label>Semester and Year</label>
 				<type>String</type>
 			</entity>
 			<entity>
-				<key>course</key>
-				<label>Course (School # | Subject # | Course # | Section # | Index # | Credits | Title | Reasons for Taking)</label>
+				<key>schoolNumber</key>
+				<label>School #</label>
 				<type>String</type>
 			</entity>
 			<entity>
-				<key>instructorEmail</key>
-				<label>Email of Rutgers Graduate Course Instructor</label>
+				<key>subjectNumber</key>
+				<label>Subject #</label>
+				<type>String</type>
+			</entity>
+			<entity>
+				<key>courseNumber</key>
+				<label>Course #</label>
+				<type>String</type>
+			</entity>
+			<entity>
+				<key>sectionNumber</key>
+				<label>Section #</label>
+				<type>String</type>
+			</entity>
+			<entity>
+				<key>indexNumber</key>
+				<label>Index #</label>
+				<type>String</type>
+			</entity>
+			<entity>
+				<key>numberOfCredits</key>
+				<label>Credits</label>
+				<type>String</type>
+			</entity>
+			<entity>
+				<key>courseTitle</key>
+				<label>Course</label>
+				<type>String</type>
+			</entity>
+			<entity>
+				<key>reasonsForTakingCourse</key>
+				<label>Reasons for Taking</label>
+				<type>String</type>
+			</entity>
+			<entity>
+				<key>instructorUserId</key>
+				<label>User ID of Rutgers Graduate Course Instructor</label>
 				<type>String</type>
 			</entity>
 		</form>
@@ -132,7 +167,7 @@
 		<state id="1.REVIEW_FORM">
 		<!-- When student form is submitted -->
 			<condition>studentForm._$.status == "submitted"</condition>
-			<action>assign form instructorForm to studentForm.instructorEmail</action>
+			<action>assign form instructorForm to studentForm.instructorUserId</action>
 			<!-- When intructor form is submitted -->
 			<condition>instructorForm._$.status == "submitted"</condition>
 			<transitions>
