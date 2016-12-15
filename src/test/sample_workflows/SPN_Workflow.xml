@@ -7,7 +7,7 @@
 			<group>DCS Grad Secretary</group>
 			<group>Graduate School Dean</group>
 		</groups>
-		<form name="Student SPN Request Form" alias="studentForm">
+		<form name="Student SPN Request Form" alias="studentForm" fileName="wf-spn-student-form.html">
 			<entity>
 				<key>lastName</key>
 				<label>Last Name</label>
@@ -54,13 +54,8 @@
 				<type>String</type>
 			</entity>
 			<entity>
-				<key>course1</key>
-				<label>Course 1 (School # | Subject # | Course # | Section # | Index # | Credits | Title)</label>
-				<type>String</type>
-			</entity>
-			<entity>
-				<key>course2</key>
-				<label>Course 2 (School # | Subject # | Course # | Section # | Index # | Credits | Title)</label>
+				<key>course</key>
+				<label>Course (School # | Subject # | Course # | Section # | Index # | Credits | Title | Reasons for Taking)</label>
 				<type>String</type>
 			</entity>
 			<entity>
@@ -69,7 +64,7 @@
 				<type>String</type>
 			</entity>
 		</form>
-		<form name="Graduate Professor Form" alias="profForm">
+		<form name="Graduate Professor Form" alias="instructorForm" fileName="wf-spn-instructor-form.html">
 			<entity>
 				<key>isApproved</key>
 				<label>Recommend Approval?</label>
@@ -86,14 +81,14 @@
 				<type>Date</type>
 			</entity>
 		</form>
-		<form name="DCS Graduate Secretary Form" alias="dcsGradSecForm">
+		<form name="DCS Graduate Secretary Form" alias="secretaryForm" fileName="wf-spn-secretary-form.html">
 			<entity>
 				<key>spn</key>
 				<label>SPN #</label>
 				<type>String</type>
 			</entity>
 		</form>
-		<form name="Graduate School Form" alias="gradSchForm">
+		<form name="Graduate School Form" alias="directorForm" fileName="wf-spn-director-form.html">
 			<entity>
 				<key>isApproved</key>
 				<label>Approved?</label>
@@ -126,36 +121,31 @@
 		<state id="0.FILE_REQUEST_FORM">
 			<condition>true</condition>
 			<action>assign form studentForm to INSTANCE.CREATOR</action>
-		</state>
-
-		<!-- When student form is submitted -->
-		<event id="1.START">
-			<condition>studentForm._$.status == "submitted"</condition>
 			<transitions>
 				<transition>
 					<condition>true</condition>
 					<dest>1.REVIEW_FORM</dest>
 				</transition>
 			</transitions>
-		</event>
-		<state id="1.REVIEW_FORM">
-			<condition>true</condition>
-			<action>assign form profForm to studentForm.profEmail</action>
 		</state>
 
-		<!-- When professor form is submitted -->
-		<event id="2.START">
-			<condition>profForm._$.status == "submitted"</condition>
+		<state id="1.REVIEW_FORM">
+		<!-- When student form is submitted -->
+			<condition>studentForm._$.status == "submitted"</condition>
+			<action>assign form instructorForm to studentForm.profEmail</action>
+			<!-- When intructor form is submitted -->
+			<condition>instructorForm._$.status == "submitted"</condition>
 			<transitions>
 				<transition>
 					<condition>true</condition>
 					<dest>2.SAVE_REQUEST_FORM</dest>
 				</transition>
 			</transitions>
-		</event>
+		</state>
+
 		<state id="2.SAVE_REQUEST_FORM">
 			<condition>true</condition>
-			<action>save studentForm+profForm</action>
+			<action>save studentForm+instructorForm</action>
 			<transition>
 				<condition>true</condition>
 				<dest>2.ASSIGN_SPN</dest>
@@ -163,11 +153,17 @@
 		</state>
 		<state id="2.ASSIGN_SPN">
 			<condition>true</condition>
-			<action>assign form dcsGradSecForm to USERS.dcsGradSec</action>
+			<action>assign form secretaryForm to USERS.secretary</action>
+			<transitions>
+				<transition>
+					<condition>true</condition>
+					<dest>2.RECEIVE_SIGNED_FORM</dest>
+				</transition>
+			</transitions>
 		</state>
 
-		<event id="2.RECEIVE_SIGNED_FORM">
-			<condition>gradSchForm._$.status == "submitted"</condition>
+		<state id="2.RECEIVE_SIGNED_FORM">
+			<condition>secretaryForm._$.status == "submitted"</condition>
 			<transitions>
 				<transition>
 					<condition>true</condition>
@@ -177,23 +173,19 @@
 		</event>
 		<state id="2.SAVE_FORM">
 			<condition>true</condition>
-			<action>save studentForm+profForm+dcsGradSecForm+gradSchForm</action>
-		</state>
-
-
-		<!-- When DCS Grad Sec form is submitted -->
-		<event id="3.START">
-			<condition>dcsGradSecForm._$.status == "submitted"</condition>
+			<action>save studentForm+instructorForm+secretaryForm+directorForm</action>
 			<transitions>
 				<transition>
 					<condition>true</condition>
-					<dest>3.SEND_TO_GRAD_SCH</dest>
+					<dest>3.SEND_TO_DIRECTOR</dest>
 				</transition>
 			</transitions>
-		</event>
-		<state id="3.SEND_TO_GRAD_SCH">
-			<condition>true</condition>
-			<action>assign form gradSchForm to USERS.gradSchRep</action>
+		</state>
+
+		<!-- When secretary form is submitted -->
+		<state id="3.SEND_TO_DIRECTOR">
+			<condition>directorForm._$.status == "submitted"</condition>
+			<action>assign form directorForm to USERS.director</action>
 		</state>
 		
 	</workflow>
