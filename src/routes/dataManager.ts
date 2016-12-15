@@ -7,7 +7,7 @@ import { DataManager } from "../modules/dataManager";
 
 let router = Router();
 
-router.post("/getFormData", (req: Request, res: Response, next: Function) => {
+router.get("/getFormData", (req: Request, res: Response, next: Function) => {
 	let instanceId: mongoose.Types.ObjectId = mongoose.Types.ObjectId(req.params("instanceId"));
 	let formAlias: string = req.params.formAlias;
 
