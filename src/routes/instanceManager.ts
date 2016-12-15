@@ -8,7 +8,7 @@ import { UserManager } from "../modules/userManager";
 let router = Router();
 
 router.get("/getInstances", (req: Request, res: Response, next) => {
-	let userObj = {userId: req.params.userId, role: req.params.role};
+	let userObj = {userId: req.query.userId, role: req.query.role};
 
 	let missingFields = verifyFields(["userId", "role"], userObj);
 	if (missingFields.length > 0) {
@@ -22,7 +22,12 @@ router.get("/getInstances", (req: Request, res: Response, next) => {
 
 	User.model.findOne({userId: userObj.userId}).exec()
 		.then((userDoc: User.IDocument) => {
-			return Instance.model.find().elemMatch("members", {user: userDoc._id, role: userObj.role}).exec();
+			if (userDoc) {
+				return Instance.model.find().elemMatch("members", {user: userDoc._id, role: userObj.role}).exec();
+			}
+			else {
+				return [];
+			}
 		})
 		.then((instances: Instance.IDocument[]) => {
 			res.json(instances);
