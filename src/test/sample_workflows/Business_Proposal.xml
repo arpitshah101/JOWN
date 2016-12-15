@@ -254,8 +254,21 @@
             <transitions>
 				<transition>
 					<condition>CEOReviewForm.approved == "true"</condition>
+					<dest>5.PROPOSAL_ACCEPTANCE</dest>
+				</transition>
+				<transition>
+					<condition>CEOReviewForm.approved == "false"</condition>
+					<dest>5.PROPOSAL_REJECTION</dest>
 				</transition>
 			</transitions>
+		</state>
+
+		<state id="5.PROPOSAL_ACCEPTANCE">
+			<action>email recipientEmail "Your proposal has been approved."</action>
+		</state>
+
+		<state id="5.PROPOSAL_REJECTION">
+			<action>email recipientEmail "Your proposal has been rejected."</action>
 		</state>
 		
 	</workflow>
