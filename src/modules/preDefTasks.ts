@@ -94,22 +94,39 @@ export class PreDefTasks {
 		});
 	}
 
-	public static email(sendTo: string, message: string) {
-		// setup e-mail data with unicode symbols
-		let mailOptions = {
-			from: "'J.O.W.N. Instance 007' <arpitshah101@gmail.com>",
-			subject: "Notification from the J.O.W.N. System",
-			text: message,
-			to: sendTo,
-		};
+	public static email(sendTo: string, message: string, instanceId?: mongoose.Types.ObjectId) {
+		Bluebird.resolve()
+			.then(() => {
+				if (sendTo.indexOf("USERS.") > -1 || sendTo.indexOf("INSTANCE.") > -1) {
+					return new Bluebird<string>((resolve, reject) => {
+						this.getTargetUser(sendTo, instanceId)
+							.then((user: User.IDocument) => {
+								resolve(user.userEmail);
+							});
+					});
+				}
+				else {
+					return sendTo;
+				}
+			})
+			.then((emailAddr: string) => {
+				// setup e-mail data with unicode symbols
+				let mailOptions = {
+					from: "'J.O.W.N. Instance 007' <arpitshah101@gmail.com>",
+					subject: "Notification from the J.O.W.N. System",
+					text: message,
+					to: emailAddr,
+				};
 
-		// send mail with defined transport object
-		transporter.sendMail(mailOptions, (error, info) => {
-			if (error) {
-				return console.error(error);
-			}
-			console.log(`Email sent to ${sendTo} with the following message:\n\t${message}\nResponse: ${info.response}`);
-		});
+				// send mail with defined transport object
+				transporter.sendMail(mailOptions, (error, info) => {
+					if (error) {
+						return console.error(error);
+					}
+					console.log(`Email sent to ${emailAddr} with the following message:\n\t${message}\nResponse: ${info.response}`);
+				});
+			});
+
 	}
 
 	public static save(forms: string, userId: string, instanceId: mongoose.Types.ObjectId) {
