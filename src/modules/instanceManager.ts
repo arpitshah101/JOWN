@@ -10,6 +10,7 @@ import * as User from "../models/User";
 import * as Workflow from "../models/Workflow";
 
 import { ConditionParser } from "../modules/conditionParser";
+import { TaskRunner } from "../modules/taskRunner";
 
 export class InstanceManager {
 
@@ -252,6 +253,7 @@ export class InstanceManager {
 			.then((value: boolean) => {
 				if (value) {
 					// process action
+					TaskRunner.run(state.action, instanceId);
 					this.deactivateState(state._id, instanceId);
 					this.processTransitions(state.transitions, instanceId);
 				}

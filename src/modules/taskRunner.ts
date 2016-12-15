@@ -5,13 +5,25 @@ import { PreDefTasks } from "./preDefTasks";
 
 export class TaskRunner {
 
-	public static run(command: string): Bluebird<any> {
+	public static run(command: string, instanceId: mongoose.Types.ObjectId): Bluebird<any> {
 		let cmd: string[] = this.tokenizeCommand(command);
 		let cmdName: string = cmd[0];
 		let args: string[] = cmd.slice(1);
 		if (this.checkIfPreDef(cmdName)) {
 			// pass args arr for execution
-			return Bluebird.resolve(PreDefTasks[cmdName](args));
+			// return Bluebird.resolve(PreDefTasks[cmdName](args, instanceId));
+			if (cmdName === "assign") {
+				return Bluebird.resolve(PreDefTasks.assign(instanceId, args[0], args[1], args[2]));
+			}
+			else if (cmdName === "email") {
+				return Bluebird.resolve(PreDefTasks.email(args[0], args[1], instanceId));
+			}
+			else if (cmdName === "save") {
+				return Bluebird.resolve(PreDefTasks.save(args[0], args[1], instanceId));
+			}
+			else {
+				return Bluebird.resolve(0);
+			}
 		}
 		let execFunc = Bluebird.promisify(exec);
 		let childProcess = execFunc(command);
