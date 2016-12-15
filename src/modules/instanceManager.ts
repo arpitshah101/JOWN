@@ -124,6 +124,24 @@ export class InstanceManager {
 		});
 	}
 
+	/**
+	 * Function to retrieve the available workflows for a role
+	 */
+	public static getWorkflows(role: string): Bluebird<Workflow.IDocument[]> {
+		return new Bluebird<Workflow.IDocument[]>((resolve, reject) => {
+			Workflow.model.find({groups: role}).exec()
+			.then((workflow: Workflow.IDocument[]) => {
+				if(!workflow) {
+					reject("No workflows found for the provided role.");
+				}
+				else {
+					resolve(workflow);
+				}
+			});
+		});
+
+	}
+
 	public static addInstanceMember(instance: Instance.IDocument, userDoc: User.IDocument,
 		role: string): Bluebird<Instance.IDocument> {
 
