@@ -13,36 +13,41 @@
 	<template>
 		<style>	
 
-		paper-button{
-			width:5%;
-		}
-		#title{
-			position:absolute;
-			left:22%;
-		}
-		#item1{
-			position:absolute;
-			left:43%;
-		}
-		#item2{
-			position:absolute;
-			left:65%;
-		}
-		#item3{
-			position:absolute;
-			left:90%;
-		}
-		#card{
-			width:100%;
-		}
-		#icond{
-			position:relative;
-			left:80%;
-		}
-		#icone{
-			position:relative;
-			left:75%;
-		}
+            paper-button{
+                width:5%;
+            }
+            #title{
+                position:absolute;
+                left:22%;
+            }
+            #item1{
+                position:absolute;
+                left:43%;
+            }
+            #item2{
+                position:absolute;
+                left:65%;
+            }
+            #item3{
+                position:absolute;
+                left:90%;
+            }
+            #card{
+                width:100%;
+            }
+            #icond{
+                position:relative;
+                left:80%;
+            }
+            #icone{
+                position:relative;
+                left:75%;
+            }
+            paper-input {
+                --paper-input-container-disabled: {
+                    opacity: 0.7;
+                };
+            } 
 
 		</style>
 
@@ -52,15 +57,34 @@
 			params="studentFormParams"
 			handle-as="json"
 			content-type="application/json"
-			on-response="handleStudentFormResponse">
+			on-response="handlestudentFormResponse">
 		</iron-ajax>
 
-		<iron-ajax id="submitFormAjax"
-			url="/data/saveFormData"
-			method="POST"
+		<iron-ajax id="getInstructorFormAjax"
+			url="/data/getFormData"
+			method="GET"
+			params="instructorFormParams"
 			handle-as="json"
 			content-type="application/json"
-			on-response="handleSubmitFormResponse">
+			on-response="handleInstructorFormResponse">
+		</iron-ajax>
+
+		<iron-ajax id="getDirectorFormAjax"
+			url="/data/getFormData"
+			method="GET"
+			params="directorFormParams"
+			handle-as="json"
+			content-type="application/json"
+			on-response="handleDirectorFormResponse">
+		</iron-ajax>
+
+		<iron-ajax id="getSecretaryFormAjax"
+			url="/data/getFormData"
+			method="GET"
+			params="secretaryFormParams"
+			handle-as="json"
+			content-type="application/json"
+			on-response="handleSecretaryFormResponse">
 		</iron-ajax>
 
 		<paper-header-panel class="red">
@@ -75,38 +99,37 @@
 		</paper-header-panel>
 
 		<!-- ADD NEW FIELDS AND CHANGE PARAMETERS FOR FORMS BELOW -->
-		<paper-card id="instructor-form" heading="Register New Account">
+		<paper-card id="director-form" heading="Register New Account">
 			<div class="card-content">
-				<br>
-				<!--Student submitted: <br>
-				First name: {{this.firstName}}<br>
-				Last name: {{this.LastName}}<br>-->
                 <!-- Student -->
-				<!---->
-				<paper-input label="First name" maxlength="50" disabled value={{firstName}}></paper-input>
-				<paper-input label="Last name" maxlength="50" disabled value={{lastName}}></paper-input>
-				<paper-input label="Middle initials" maxlength="50" disabled value={{middleInitials}}></paper-input>
-				<paper-input label="RUID" maxlength="50" disabled value={{ruid}}></paper-input>
-				<paper-input label="Official Rutgers Email" maxlength="50" disabled value={{officialRutgersEmail}}></paper-input>
-				<paper-input label="Declared Graduation Date" maxlength="50" disabled value={{declaredGraduationDate}}></paper-input>
-				<paper-input label="Cumulative GPA" maxlength="50" disabled value={{cumulativeGpa}}></paper-input>
-				<paper-input label="Member of the Honors Program?" maxlength="50" disabled value={{honorsSchool}}></paper-input>
-				<paper-input label="Semester and Year" maxlength="50" disabled value={{semesterAndYear}}></paper-input>
-				<paper-input label="School #" maxlength="50" disabled value={{schoolNumber}}></paper-input>
-				<paper-input label="Subject #" maxlength="50" disabled value={{subjectNumber}}></paper-input>
-				<paper-input label="Course #" maxlength="50" disabled value={{courseNumber}}></paper-input>
-				<paper-input label="Section #" maxlength="50" disabled value={{sectionNumber}}></paper-input>
-				<paper-input label="Index #" maxlength="50" disabled value={{indexNumber}}></paper-input>
-				<paper-input label="Number of Credits" maxlength="50" disabled value={{numberOfCredits}}></paper-input>
-				<paper-input label="Course Title #" maxlength="50" disabled value={{title}}></paper-input>
-				<paper-input label="Reasons for taking the course:" maxlength="50" disabled value={{reasonsForTakingCourse}}></paper-input>
-				<!---->
-                <!-- Instructor -->
-                <paper-input label="Approved by Instructor" maxlength="50" value={{instructorApproval}}></paper-input>
-                <paper-input label="Approval date" maxlength="50" value={{instructorApprovalDate}}></paper-input>
+				<paper-input id="firstNameInput" label="First name" maxlength="50" value={{firstName}}></paper-input>
+				<paper-input id="lastNameInput" label="Last name" maxlength="50" value={{lastName}}></paper-input>
+				<paper-input id="middleInitialsInput" label="Middle initials" maxlength="50" value={{middleInitials}}></paper-input>
+				<paper-input id="ruidInput" label="RUID" maxlength="50" value={{ruid}}></paper-input>
+				<paper-input id="officialRutgersEmailInput" label="Official Rutgers Email" maxlength="50" value={{officialRutgersEmail}}></paper-input>
+				<paper-input id="declaredGraduationDateInput" label="Declared Graduation Date" maxlength="50" value={{declaredGraduationDate}}></paper-input>
+				<paper-input id="cumulativeGpaInput" label="Cumulative GPA" maxlength="50" value={{cumulativeGpa}}></paper-input>
+				<paper-input id="honorsSchoolInput" label="Member of the Honors Program?" maxlength="50" value={{honorsSchool}}></paper-input>
+				<paper-input id="semesterAndYearInput" label="Semester and Year" maxlength="50" value={{semesterAndYear}}></paper-input>
+				<paper-input id="schoolNumberInput" label="School #" maxlength="50" value={{schoolNumber}}></paper-input>
+				<paper-input id="subjectNumberInput" label="Subject #" maxlength="50" value={{subjectNumber}}></paper-input>
+				<paper-input id="courseNumberInput" label="Course #" maxlength="50" value={{courseNumber}}></paper-input>
+				<paper-input id="sectionNumberInput" label="Section #" maxlength="50" value={{sectionNumber}}></paper-input>
+				<paper-input id="indexNumberInput" label="Index #" maxlength="50" value={{indexNumber}}></paper-input>
+				<paper-input id="numberOfCreditsInput" label="Number of Credits" maxlength="50" value={{numberOfCredits}}></paper-input>
+				<paper-input id="courseTitleInput" label="Course Title #" maxlength="50" value={{courseTitle}}></paper-input>
+				<paper-input id="reasonsForTakingCourseInput" label="Reasons for taking the course:" maxlength="50" value={{reasonsForTakingCourse}}></paper-input>
+                <!--  Instructor -->
+                <paper-input id="instructorApprovalInput" label="Approved by Instructor" maxlength="50" value={{instructorApproval}}></paper-input>
+                <paper-input id="instructorApprovalDateInput" label="Approval Date" maxlength="50" value={{instructorApprovalDate}}></paper-input>
+                <!-- Director -->
+                <paper-input id="directorApprovalInput" label="Approved by Director" maxlength="50" value={{directorApproval}}></paper-input>
+                <paper-input id="directorApprovalDateInput" label="Approval Date" maxlength="50" value={{directorApprovalDate}}></paper-input>
+                <!-- Secretary -->
+                <paper-input id="spnInput" label="Special Permission #" maxlength="50" value={{spn}}></paper-input>
 
 				<div class="card-actions">
-					<paper-button flat on-tap="submitForm">Submit Form</paper-button>
+					<paper-button id="submitFormButton" flat on-tap="submitForm">Submit Form</paper-button>
 				</div>
 			</div>
 		</paper-card>
@@ -121,8 +144,25 @@
 				userId: String,
 				instanceId: String,
 				formAlias: String,
-				studentFormAlias: String,
+				studentFormAlias: {
+                    type: String,
+                    value: "studentForm"
+                },
 				studentFormParams: {},
+				instructorFormAlias: {
+                    type: String,
+                    value: "instructorForm"
+                },
+				instructorFormParams: {},
+                directorFormAlias: {
+                    type: String,
+                    value: "directorForm"
+                },
+                directorFormParams: {},
+                secretaryFormAlias: {
+                    type: String,
+                    value: "secretaryForm"
+                },
 
 				/* PROPERTIES FOR FORMS BELOW */
 				/* Student form */
@@ -141,7 +181,7 @@
 				sectionNumber: String,
 				indexNumber: String,
 				numberOfCredits: String,
-				title: String,
+				courseTitle: String,
 				reasonsForTakingCourse: String,
 				/* Instructor form */
                 instructorApproval: String,
@@ -150,15 +190,26 @@
                     value: function() {return localStorage.getItem("userId");}
                 },
                 instructorApprovalDate: String,
+				/* Director form */
+                directorApproval: String,
+                directorSignature: String,
+                directorApprovalDate: String,
+                /* Secretary form*/
+                spn: String,
+                secretarySignature: String,
+                secretarySignatureDate: String,
 			},
 			ready: function() {
-				// FOR TESTING
-				this.instanceId = "123456789012";
-				// this.instanceId = localStorage.getItem("instanceId");
+				this.instanceId = localStorage.getItem("instanceId");
 				this.formAlias = "instructorForm"
-				this.studentFormAlias = "studentForm";
 				this.studentFormParams = {"instanceId": this.instanceId, "formAlias": this.studentFormAlias};
 				this.$.getStudentFormAjax.generateRequest();
+				this.instructorFormParams = {"instanceId": this.instanceId, "formAlias": this.instructorFormAlias};
+				this.$.getInstructorFormAjax.generateRequest();
+				this.directorFormParams = {"instanceId": this.instanceId, "formAlias": this.directorFormAlias};
+				this.$.getDirectorFormAjax.generateRequest();
+                this.secretaryFormParams = {"instanceId": this.instanceId, "formAlias": this.secretaryFormAlias};
+                this.$.getSecretaryFormAjax.generateRequest();
 			},
 			logout: function() {
 				alert("logging out " + this.username);
@@ -181,40 +232,132 @@
 				console.log(request.detail.response);
 				console.log(this.$.submitFormAjax.lastResponse);
 				if( request === undefined) {
-					alert("REQUEST UNDEFINED")
+					alert("REQUEST UNDEFINED in handleSubmitFormResponse")
 				} else if(request.success === true) {
 					alert("FORM SAVED");
 				} else if (request.success === false){
 					alert("ERROR! COULD NOT SAVE FORM");
 				}
 				else {
-					alert("IF YOU READ THIS, YOU HAVE GOT SOME KIND OF TROUBLE");
+					alert("IF YOU READ THIS, YOU HAVE GOT SOME KIND OF TROUBLE IN handleSubmitFormResponse");
 				}
 			},
 			handleStudentFormResponse: function(request) {
 				console.log(request.detail.response);
 				console.log(this.$.getStudentFormAjax.lastResponse);
-				if(request.success === true) {
-					this.firstName = request.formData.data.firstName;
-					this.lastName = request.formData.data.lastName;
-					this.middleInitials = request.formData.data.middleInitials;
-					this.ruid = request.formData.data.ruid;
-					this.officialRutgersEmail = request.formData.data.officialRutgersEmail;
-					this.declaredGraduationDate = request.formData.data.declaredGraduationDate;
-					this.cumulativeGpa = request.formData.data.cumulativeGpa;
-					this.honorsSchool = request.formData.data.honorsSchool;
-					this.semesterAndYear = request.formData.data.semesterAndYear;
-					this.schoolNumber = request.formData.data.schoolNumber;
-					this.subjectNumber = request.formData.data.subjectNumber;
-					this.courseNumber = request.formData.data.courseNumber;
-					this.sectionNumber = request.formData.data.sectionNumber;
-					this.indexNumber = request.formData.data.indexNumber;
-					this.numberOfCredits = request.formData.data.numberOfCredits;
-					this.courseTitle = request.formData.data.courseTitle;
-					this.reasonsForTakingCourse = request.formData.data.reasonsForTakingCourse;
+				if (request === undefined) {
+					alert("request === undefined IN: handleStudentFormResponse");
+				} else if (request.success === true) {
+                    if (request.formData.data.firstName !== "") {
+                        this.firstName = request.formData.data.firstName;
+                        this.lastName = request.formData.data.lastName;
+                        this.middleInitials = request.formData.data.middleInitials;
+                        this.ruid = request.formData.data.ruid;
+                        this.officialRutgersEmail = request.formData.data.officialRutgersEmail;
+                        this.declaredGraduationDate = request.formData.data.declaredGraduationDate;
+                        this.cumulativeGpa = request.formData.data.cumulativeGpa;
+                        this.honorsSchool = request.formData.data.honorsSchool;
+                        this.semesterAndYear = request.formData.data.semesterAndYear;
+                        this.schoolNumber = request.formData.data.schoolNumber;
+                        this.subjectNumber = request.formData.data.subjectNumber;
+                        this.courseNumber = request.formData.data.courseNumber;
+                        this.sectionNumber = request.formData.data.sectionNumber;
+                        this.indexNumber = request.formData.data.indexNumber;
+                        this.numberOfCredits = request.formData.data.numberOfCredits;
+                        this.courseTitle = request.formData.data.courseTitle;
+                        this.reasonsForTakingCourse = request.formData.data.reasonsForTakingCourse;
+                        /* Disables fields pertaining to loaded form*/
+                        this.$.firstNameInput.disabled = "true";
+                        this.$.lastNameInput.disabled = "true";
+                        this.$.middleInitialsInput.disabled = "true";
+                        this.$.ruidInput.disabled = "true";
+                        this.$.officialRutgersEmailInput.disabled = "true";
+                        this.$.declaredGraduationDateInput.disabled = "true";
+                        this.$.cumulativeGpaInput.disabled = "true";
+                        this.$.honorsSchoolInput.disabled = "true";
+                        this.$.semesterAndYearInput.disabled = "true";
+                        this.$.schoolNumberInput.disabled = "true";
+                        this.$.subjectNumberInput.disabled = "true";
+                        this.$.courseNumberInput.disabled = "true";
+                        this.$.sectionNumberInput.disabled = "true";
+                        this.$.indexNumberInput.disabled = "true";
+                        this.$.numberOfCreditsInput.disabled = "true";
+                        this.$.courseTitleInput.disabled = "true";
+                        this.$.reasonsForTakingInput.disabled = "true";
+                        /* Disables submit button if current user has submitted already */
+                        if (request.formData.formAlias === this.formAlias) {
+                            this.$.submitFormButton.disabled = "true";
+                        }
+                    }
 				}
 				else {
-					modal.open();
+					alert("ERROR IN: handleStudentFormResponse");
+				}
+			},
+			handleInstructorFormResponse: function(request) {
+				console.log(request.detail.response);
+				console.log(this.$.getInstructorFormAjax.lastResponse);
+				if (request === undefined) {
+					alert("request === undefined IN: handleInstructorFormResponse");
+				} else if(request.success === true) {
+                    if(request.formData.data.instructorApproval !== "") {
+                        this.instructorApproval = request.formData.data.instructorApproval;
+					    this.instructorSignature = request.formData.data.instructorSignature;
+					    this.instructorApprovalDate = request.formData.data.instructorApprovalDate;
+                        /* Disables fields pertaining to loaded form*/
+                        this.$.instructorApprovalInput.disabled = "true";
+                        this.$.instructorApprovalDateInput.disabled = "true";
+                        /* Disables submit button if current user has submitted already */
+                        if (request.formData.formAlias === this.formAlias) {
+                            this.$.submitFormButton.disabled = "true";
+                        }
+                    }
+				}
+				else {
+					alert("ERROR IN: handleInstructorFormResponse");
+				}
+			},
+            handleDirectorFormResponse: function(request) {
+				console.log(request.detail.response);
+				console.log(this.$.getDirectorFormAjax.lastResponse);
+				if (request === undefined) {
+					alert("request === undefined IN: handleDirectorFormResponse");
+				} else if(request.success === true) {
+                    if(request.formData.data.directorApproval !== "") {
+                        this.directorApproval = request.formData.data.directorApproval;
+                        this.directorSignature = request.formData.data.directorSignature;
+                        this.directorApprovalDate = request.formData.data.directorApprovalDate;
+                        /* Disables fields pertaining to loaded form*/
+                        this.$.directorApprovalInput.disabled = "true";
+                        this.$.directorApprovalDateInput.disabled = "true";
+                        /* Disables submit button if current user has submitted already */
+                        if (request.formData.formAlias === this.formAlias) {
+                            this.$.submitFormButton.disabled = "true";
+                        }
+                    }
+				}
+				else {
+					alert("ERROR IN: handleDirectorFormResponse");
+				}
+			},
+            handleSecretaryFormResponse: function(request) {
+				console.log(request.detail.response);
+				console.log(this.$.getDirectorFormAjax.lastResponse);
+				if (request === undefined) {
+					alert("request === undefined IN: handleSecretaryFormResponse");
+				} else if(request.success === true) {
+                    if(request.formData.data.secretarySignature !== "") {
+                        this.spn = request.formData.data.spn;
+                        /* Disables fields pertaining to loaded form*/
+                        this.$.spnInput.disabled = "true";
+                        /* Disables submit button if current user has submitted already */
+                        if (request.formData.formAlias === this.formAlias) {
+                            this.$.submitFormButton.disabled = "true";
+                        }
+                    }
+				}
+				else {
+					alert("ERROR IN: handleSecretaryFormResponse");
 				}
 			}
 		});
