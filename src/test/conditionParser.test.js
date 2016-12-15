@@ -4,6 +4,26 @@ var conditionParser = require("../modules/conditionParser");
 
 describe("ConditionParser", function() {
 
+	describe("#parseAndEvaluate", function() {
+		var tests = [
+			{arg: "studentForm.isSubmitted == \"submitted\"", expected: true},
+			{arg: "bananaboat == \"submitted\" && studentForm.isSubmitted == \"submitted\" || test ==  \"submitted\"",
+				expected: true},
+			{arg: "true", expected: true},
+			{arg: "true && true && false", expected: false},
+			{arg: "bananas == \"failin test\" || boat == \"banana\" && true}", expected: false},
+			{arg: "bananaboat == \"submitted\" && true || bananaboatin == \"submitted\"", expected: true},
+
+		];
+
+		tests.forEach(function(test) {
+			it("parses and evaluates " + test.arg, function() {
+				var res = conditionParser.ConditionParser.prototype.parseAndEvaluate(test.arg, "instanceID");
+				assert.equal(res, test.expected);
+			});
+		});
+	});
+
 	describe("#deconstructCondition", function() {
 		var tests = [
 			{arg: "testin && testenin", expected: ["testin", "&&", "testenin"]},
@@ -11,8 +31,10 @@ describe("ConditionParser", function() {
 			{arg: "  tis && teh || test ||", expected: undefined},
 			{arg: " another && (test || to) || test", expected: ["another", "&&", ["test", "||", "to"], "||", "test"]},
 			{arg: " testing &&&& to ||| getundefined &&& and |||| makeitwork", expected: undefined},
-            {arg: " test == 2 && (banana != boat) || hi == hello", expected: ["test == 2", "&&", ["banana != boat"], "||", "hi == hello"]},
-			{arg: "cond == 2 && another != 5 || this == \"that\"", expected: ["cond == 2", "&&", "another != 5", "||", "this == \"that\""]}
+			{arg: " test == 2 && (banana != boat) || hi == hello",
+				expected: ["test == 2", "&&", ["banana != boat"], "||", "hi == hello"]},
+			{arg: "cond == 2 && another != 5 || this == \"that\"",
+				expected: ["cond == 2", "&&", "another != 5", "||", "this == \"that\""]},
 		];
 
 		tests.forEach(function(test) {
@@ -26,7 +48,7 @@ describe("ConditionParser", function() {
 	describe("#checkCondition", function() {
 		var tests = [
 			{arg: "banana == boat", expected: ["banana", "==", "boat"]},
-			{arg: "123 != 456", expected: ["123", "!=", "456"]}
+			{arg: "123 != 456", expected: ["123", "!=", "456"]},
 		];
 
 		tests.forEach(function(test) {
@@ -45,7 +67,7 @@ describe("ConditionParser", function() {
 			{arg: "123 < 345", expected: -4},
 			{arg: "<=345", expected: undefined},
 			{arg: "123<", expected: undefined},
-			{arg: "==", expected: undefined}
+			{arg: "==", expected: undefined},
 		];
 
 		tests.forEach(function(test) {
