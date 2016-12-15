@@ -46,8 +46,7 @@
 
 		}
 		#detailDio{
-			width:50%;
-			text-align: center;
+			width:70%;
 		}
 		#paper-tabs{
 			width:85%;
@@ -62,7 +61,6 @@
 			<paper-item value="{{workflowname}}">Name: {{workflowname}}</paper-item>
 			<paper-item value="{{workflowform}}">Form: {{workflowform}}</paper-item>
 			<paper-item value="{{workflowgroups}}">Groups: {{workflowgroups}}</paper-item>
-			<paper-item value="{{workflowdate}}">Created: {{workflowdate}}</paper-item>
 			<paper-button dialog-dismiss autofocus>Cancel</paper-button>
 		</div>
     </paper-dialog>
@@ -116,7 +114,7 @@
 	<paper-listbox id="mylistbox"class="dropdown-content">
 		<template is="dom-repeat" items="[[workflows]]">
 			<paper-card id="card">
-			<paper-item id="instance" value="[[item.id]]" on-tap="workflowDetail">Workflow:[[item.name]]</b><br>Owner:[[item.owner]]<br>Created: [[item.created]]
+			<paper-item id="instance" value="[[item.id]]" on-tap="workflowDetail">Workflow:[[item.name]]</b><br>Created: [[item.created]]
 			<!--<paper-icon-button id="icond" value="[[item]]" src="/image/delete.png" on-tap="deleteWorkflow"></paper-icon-button>-->
 			</paper-item>
 			<paper-icon-button id="formicon" src="/image/back.png" on-tap="newInstance"></paper-icon-button>
@@ -173,6 +171,14 @@
 					type: String,
 					value:function(){return {};}
 				},
+				workflowform:{
+					type:String,
+					value:function(){return{};}
+				},
+				workflowgroups:{
+					type:String,
+					value:function(){return{};}
+				},
 				 ajaxParams:{
 				 	type:String,
 					computed: 'getParams(userId,userrole)'
@@ -184,10 +190,10 @@
 			},
 			newInstance: function(e){
 				var model=e.model;
-				var id=e.model.item._id;
-				alert(e.model.item._id);
+				var name =e.model.item.name;
+				alert(name);
 				alert("before");
-				this.$.createNewInstanceAjax.body = {"workflowId": id,"userId": this.userId, "role": this.userrole};
+				this.$.createNewInstanceAjax.body = {"workflowName": name,"userId": this.userId, "role": this.userrole};
 				this.$.createNewInstanceAjax.generateRequest();
 				alert("123");
 			},
@@ -233,6 +239,8 @@
 			workflowDetail: function(e){
 				var model=e.model;
 				this.workflowname=model.item.name;
+				this.workflowform=model.item.forms;
+				this.workflowgroups=model.item.groups;
 				detailDio.open();
 			}
 			
