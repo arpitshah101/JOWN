@@ -71,12 +71,12 @@
 				<type>boolean</type>
 			</entity>
 			<entity>
-				<key>signature</key>
-				<label>Instructor's Name</label>
+				<key>instructorSignature</key>
+				<label>Instructor's Signature</label>
 				<type>String</type>
 			</entity>
 			<entity>
-				<key>date</key>
+				<key>instructorApprovalDate</key>
 				<label>Date</label>
 				<type>Date</type>
 			</entity>
@@ -95,12 +95,12 @@
 				<type>boolean</type>
 			</entity>
 			<entity>
-				<key>signature</key>
-				<label>Graduate School Faculty Name</label>
+				<key>directorSignature</key>
+				<label>Director's Signature</label>
 				<type>String</type>
 			</entity>
 			<entity>
-				<key>date</key>
+				<key>directorApprovalDate</key>
 				<label>Date</label>
 				<type>Date</type>
 			</entity>
