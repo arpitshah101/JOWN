@@ -235,13 +235,19 @@
 			submitForm: function() {
 				alert("Submitting form");
 				// this.instructorApprovalDate = Date.now();
-				this.$.submitFormAjax.body = {"instanceId": this.instanceId, "formAlias": this.formAlias, "data":
-					{
-						"instructorApproval": this.instructorApproval, "instructorSignature": this.instructorSignature,
-						"instructorApprovalDate": this.instructorApprovalDate
-					}
-				};
-				this.$.submitFormAjax.generateRequest();
+				if (this.instructorApproval === "true" || this.instructorApproval === "false" ) {
+					this.$.submitFormAjax.body = {"instanceId": this.instanceId, "formAlias": this.formAlias, "data":
+						{
+							"instructorApproval": this.instructorApproval, "instructorSignature": this.instructorSignature,
+							"instructorApprovalDate": this.instructorApprovalDate
+						}
+					};
+					this.$.submitFormAjax.generateRequest();
+				}
+				else {
+					alert("Instructor approval needs to be true or false");
+				}
+
 			},
 			handleSubmitFormResponse: function(request) {
 				console.log(request);
