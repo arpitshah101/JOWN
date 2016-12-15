@@ -34,7 +34,7 @@ export class DataManager {
 					if (formDataDoc) {
 						formDataDoc.data = dataObj;
 						formDataDoc.lastEdited = new Date(Date.now());
-						formDataDoc.status = FormData.FormStatus.COMPLETE;
+						formDataDoc.status = "submitted";
 						return formDataDoc.save();
 					}
 					else {

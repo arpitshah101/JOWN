@@ -10,7 +10,13 @@ declare module "mongoose" {
 	type Promise<T> = Bluebird<T>;
 }
 (<any> mongoose).Promise = Bluebird;
+
 import * as routes from "./routes/";
+
+import { ConditionParser, InstanceManager } from "./modules";
+
+import * as Instance from "./models/Instance";
+import * as State from "./models/State";
 
 let app = express();
 
@@ -27,11 +33,29 @@ app.use("/users", routes.userRoutes);
 app.use("/instances", routes.instanceRoutes);
 app.use("/data", routes.dataRoutes);
 
-function checkEventListeners() {
-	//
+function checkActiveInstances() {
+	/**
+	 * for each instance that is active:
+	 * 		process events
+	 * 		process states as s:
+	 * 			if s.condition == true:
+	 * 				execute action
+	 * 				processTransitions(s.transitions)
+	 */
+
+	InstanceManager.getActiveInstances()
+		.each((instance: Instance.IDocument) => {
+			InstanceManager.processEvents(instance._id);
+			InstanceManager.getActiveStates(instance._id)
+				.then((states: State.IDocument[]) => {
+					for (let state of states) {
+						InstanceManager.processActiveState(state, instance._id);
+					}
+				});
+		});
 }
 
 app.listen(3000, () => {
-	setInterval(checkEventListeners, 10000);
+	setInterval(checkActiveInstances, 1500);
 	console.log("Application running on port 3000");
 });

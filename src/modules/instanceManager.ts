@@ -196,6 +196,77 @@ export class InstanceManager {
 		return State.model.findById(stateId).exec();
 	}
 
+	public static getActiveInstances(): Bluebird<Instance.IDocument[]> {
+		return Instance.model.find({status: "active"}).exec();
+	}
+
+	public static processEvents(instanceId: mongoose.Types.ObjectId): void {
+		this.getInstance({_id: instanceId})
+			.then((instance: Instance.IDocument) => {
+				return Bluebird.all(
+					instance.events.map(
+						(eventId: mongoose.Types.ObjectId) => Event.model.findById(eventId),
+					));
+			})
+			.then((events: Event.IDocument[]) => {
+				Bluebird.each(events, (event: Event.IDocument) => {
+					if (event.condition !== "START") {
+						ConditionParser.prototype.parseAndEvaluate(event.condition, instanceId.toString())
+							.then((value: boolean) => {
+								if (value) {
+									this.processTransitions(event.transitions, instanceId);
+								}
+							});
+					}
+				});
+			});
+	}
+
+	public static getActiveStates(instanceId: mongoose.Types.ObjectId): Bluebird<State.IDocument[]> {
+		return new Bluebird<State.IDocument[]>((resolve, reject) => {
+			Instance.model.findById(instanceId)
+				.then((instance: Instance.IDocument) => {
+					return Bluebird.map(instance.activeStates, (stateId: mongoose.Types.ObjectId) => State.model.findById(stateId));
+				})
+				.then((states: State.IDocument[]) => {
+					if (states) {
+						resolve(states);
+					}
+					else {
+						resolve([]);
+					}
+				});
+		});
+	}
+
+	public static processActiveState(state: State.IDocument, instanceId: mongoose.Types.ObjectId) {
+		/**
+		 * if state.condition is true:
+		 * 		process action
+		 * 		remove self state from instance's active states
+		 * 		process transitions
+		 */
+		ConditionParser.prototype.parseAndEvaluate(state.condition, instanceId.toString())
+			.then((value: boolean) => {
+				if (value) {
+					// process action
+					this.deactivateState(state._id, instanceId);
+					this.processTransitions(state.transitions, instanceId);
+				}
+			});
+	}
+
+	private static deactivateState(stateId: mongoose.Types.ObjectId, instanceId: mongoose.Types.ObjectId) {
+		Instance.model.findOne(instanceId).exec()
+			.then((instance: Instance.IDocument) => {
+				let index = instance.activeStates.indexOf(stateId);
+				if (index > -1) {
+					instance.activeStates.splice(index, 1);
+					instance.save();
+				}
+			});
+	}
+
 	/**
 	 * Creates the form data instances corresponding to all forms in a workflow blueprint.
 	 * Returns a list of all the FormData documents created.
@@ -245,7 +316,9 @@ export class InstanceManager {
 				}, [])
 					.then((states: State.IDocument[]) => {
 						for (let state of states) {
-							instance.activeStates.push(state._id);
+							if (instance.activeStates.indexOf(state._id) < 0) {
+								instance.activeStates.push(state._id);
+							}
 						}
 					});
 			});

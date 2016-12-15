@@ -28,7 +28,7 @@ export interface IFormData {
 	instanceId: mongoose.Types.ObjectId;
 	lastEdited: Date;
 	name: string;
-	status: number;
+	status: string;
 }
 
 export enum FormStatus {

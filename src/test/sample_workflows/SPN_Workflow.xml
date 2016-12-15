@@ -155,7 +155,7 @@
 		</event>
 		<state id="0.FILE_REQUEST_FORM">
 			<condition>true</condition>
-			<action>assign form studentForm to INSTANCE.CREATOR</action>
+			<action>assign studentForm INSTANCE.creator</action>
 			<transitions>
 				<transition>
 					<condition>true</condition>
@@ -167,9 +167,7 @@
 		<state id="1.REVIEW_FORM">
 		<!-- When student form is submitted -->
 			<condition>studentForm._$.status == "submitted"</condition>
-			<action>assign form instructorForm to studentForm.instructorUserId</action>
-			<!-- When intructor form is submitted -->
-			<condition>instructorForm._$.status == "submitted"</condition>
+			<action>assign instructorForm studentForm.instructorUserId</action>
 			<transitions>
 				<transition>
 					<condition>true</condition>
@@ -179,8 +177,8 @@
 		</state>
 
 		<state id="2.SAVE_REQUEST_FORM">
-			<condition>true</condition>
-			<action>save studentForm+instructorForm</action>
+			<condition>instructorForm._$.status == "submitted"</condition>
+			<action>save studentForm+instructorForm USERS.secretary</action>
 			<transition>
 				<condition>true</condition>
 				<dest>2.ASSIGN_SPN</dest>
@@ -188,27 +186,7 @@
 		</state>
 		<state id="2.ASSIGN_SPN">
 			<condition>true</condition>
-			<action>assign form secretaryForm to USERS.secretary</action>
-			<transitions>
-				<transition>
-					<condition>true</condition>
-					<dest>2.RECEIVE_SIGNED_FORM</dest>
-				</transition>
-			</transitions>
-		</state>
-
-		<state id="2.RECEIVE_SIGNED_FORM">
-			<condition>secretaryForm._$.status == "submitted"</condition>
-			<transitions>
-				<transition>
-					<condition>true</condition>
-					<dest>2.SAVE_FORM</dest>
-				</transition>
-			</transitions>
-		</event>
-		<state id="2.SAVE_FORM">
-			<condition>true</condition>
-			<action>save studentForm+instructorForm+secretaryForm+directorForm</action>
+			<action>assign secretaryForm USERS.secretary</action>
 			<transitions>
 				<transition>
 					<condition>true</condition>
@@ -217,10 +195,50 @@
 			</transitions>
 		</state>
 
+		<state id="2.SAVE_FORM">
+			<condition>directorForm._$.status == "submitted"</condition>
+			<action>save studentForm+instructorForm+secretaryForm+directorForm USERS.secretary</action>
+			<transitions>
+				<transition>
+					<condition>true</condition>
+					<dest>2.SEND_TO_ASC_DEAN</dest>
+				</transition>
+			</transitions>
+		</state>
+
+		<state id="2.SEND_TO_ASC_DEAN">
+			<condition>true</condition>
+			<action>save studentForm+instructorForm+secretaryForm+directorForm USERS.sasAscDean</action>
+		</state>
+
+		<state id="2.SEND_SPN_STUDENT">
+			<condition>directorForm.directorApproval == "true"</condition>
+			<action>email INSTANCE.creator.email "Your SPN is "+secretaryForm.spn</action>
+		</state>
+
+		<state id="2.SEND_SPN_REJECTION">
+			<condition>directorForm.directorApproval == "false"</condition>
+			<action>email INSTANCE.creator.email "Unfortunately, your SPN request was denied."</action>
+		</state>
+
 		<!-- When secretary form is submitted -->
 		<state id="3.SEND_TO_DIRECTOR">
-			<condition>directorForm._$.status == "submitted"</condition>
-			<action>assign form directorForm to USERS.director</action>
+			<condition>secretaryForm._$.status == "submitted"</condition>
+			<action>assign directorForm USERS.director</action>
+			<transitions>
+				<transition>
+					<condition>true</condition>
+					<dest>2.SAVE_FORM</dest>
+				</transition>
+				<transition>
+					<condition>true</condition>
+					<dest>2.SEND_SPN_STUDENT</dest>
+				</transition>
+				<transition>
+					<condition>true</condition>
+					<dest>2.SEND_SPN_REJECTION</dest>
+				</transition>
+			</transitions>
 		</state>
 		
 	</workflow>
