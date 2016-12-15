@@ -19,11 +19,11 @@ export class InstanceManager {
 	 * 
 	 * @memberOf InstanceManager
 	 */
-	public static createNewInstance(workflowId: mongoose.Types.ObjectId, creator: mongoose.Types.ObjectId) {
+	public static createNewInstance(workflowId: mongoose.Types.ObjectId, creator: mongoose.Types.ObjectId, role: string) {
 		return new Bluebird((resolve, reject) => {
 			let newInstance = new Instance.model({
 				creator,
-				members: [creator],
+				members: [{user: creator, role}],
 				workflowId,
 			});
 			newInstance.save()

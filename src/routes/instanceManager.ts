@@ -3,6 +3,7 @@ import * as mongoose from "mongoose";
 
 import * as Instance from "../models/Instance";
 import * as User from "../models/User";
+import { InstanceManager } from "../modules/instanceManager";
 import { UserManager } from "../modules/userManager";
 
 let router = Router();
@@ -33,6 +34,55 @@ router.get("/getInstances", (req: Request, res: Response, next) => {
 			res.json(instances);
 			next();
 		});
+});
+
+router.post("/createNewInstance", (req: Request, res: Response, next) => {
+	let workflowIdStr = req.body.workflowId;
+	let userId = req.body.userId;
+	let role = req.body.role;
+
+	UserManager.getUser({userId})
+		.then((user: User.IDocument): mongoose.Types.ObjectId => {
+			if (!user) {
+				res.json({
+					message: `No user found with the userId: ${userId}`,
+					success: false,
+				});
+				next();
+				return;
+			}
+			else {
+				return user._id;
+			}
+		})
+		.then((userObjectId: mongoose.Types.ObjectId) => {
+			let workflowId = mongoose.Types.ObjectId(workflowIdStr);
+			return InstanceManager.createNewInstance(workflowId, userObjectId, role);
+		})
+		.then((success: boolean) => {
+			if (success) {
+				res.json({
+					message: `Your new instance has been successfully created.`,
+					success: true,
+				});
+			}
+			else {
+				res.json({
+					message: `We could NOT create a new instance for you. Try again.`,
+					success: false,
+				});
+			}
+			next();
+		})
+		.catch((reason) => {
+			res.json({
+				message: `An error occurred. Please try again.`,
+				success: false,
+			});
+			next();
+		});
+
+	InstanceManager.createNewInstance(workflowId, creator, role)
 });
 
 function verifyFields(fields: string[], obj: any): string[] {
