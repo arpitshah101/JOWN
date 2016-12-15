@@ -14,9 +14,15 @@
 		<state id="0.CREATE_PROPOSAL_FORM">
 			<condition>true</condition>
 			<action>assign form proposalForm to INSTANCE.CREATOR</action>
+			<transitions>
+				<transition>
+					<condition>true</condition>
+					<dest>1.REVIEW_FORM</dest>
+				</transition>
+			</transitions>
 		</state>
 
-		<form name = "Business Proposal Form" alias="proposalForm">
+		<form name = "Business Proposal Form" alias="proposalForm" fileName="wf-bp-proposal-form.html">
 			<entity>
 				<key>institution</key>
 				<label>Institution</label>
@@ -71,195 +77,23 @@
 			</entity>
 		</form>
 
-		<event id="1.START">
-			<condition>proposalForm._$.FORM_STATUS == "submitted"</condition>
-			<transitions>
-				<transition>
-					<condition>true</condition>
-					<dest>1.REVIEW_FORM</dest>
-				</transition>
-			</transitions>
-		</event>
 		<state id="1.REVIEW_FORM">
-			<condition>true</condition>
-			<action>assign form operationsReview to operationsTeamID</action> <!-- NOT SURE WHO TO SEND TO HERE, SHOULD GO TO 3 RECEIVERS -->
-            <!--<action>assign form marketingTeam to marketingTeamID</action> -->
-            <!--<action>assign form accountingReview to accountingTeamID</action> -->
-		</state>
-
-		<form name = "Operations Team Review" alias="operationsReview">
-			<entity>
-				<key>proposalId</key>
-				<label>Proposal Id</label>
-			</entity>
-			<entity>
-				<key>itemsToBeSold</key>
-				<label>Items to be Sold/Services to be Provided</label>
-			</entity>
-			<entity>
-				<key>preparationOfSelling</key>
-				<label>How your group will prepare the items for sale</label>
-			</entity>
-			<entity>
-				<key>conductBusiness</key>
-				<label>How do you intend to conduct your business</label>
-			</entity>
-			<entity>
-				<key>dateAndTime</key>
-				<label>Date/Time of business</label>
-			</entity>
-			<entity>
-				<key>location</key>
-				<label>Location of Business</label>
-			</entity>
-			<entity>
-				<key>remarks</key>
-				<label>Any Remarks</label>
-			</entity>
-		</form>	
-
-		<event id="2.START">
-			<condition>operationsReview._$.FORM_STATUS == "submitted"</condition>
+			<condition>proposalForm._$.FORM_STATUS == "submitted"</condition>
+			<action>assign form CFOReviewForm to USERS.cfoUserId</action>
+            <action>assign form COOReviewForm to USERS.cooUserId</action>
 			<transitions>
 				<transition>
 					<condition>true</condition>
-					<dest>2.SAVE_PROPOSAL_REVIEW</dest>
+					<dest>2.SAVE_CFO_PROPOSAL_REVIEW</dest>
 				</transition>
-			</transitions>
-		</event>
-		<state id="2.SAVE_PROPOSAL_REVIEW">
-			<condition>true</condition>
-			<action>save proposalForm+operationsReview</action>
-		</state>
-
-		<form name = "Marketing Team" alias="marketingTeam">
-			<entity>
-				<key>proposalId</key>
-				<label>Proposal Id</label>
-			</entity>
-			<entity>
-				<key>intendedSuppliers</key>
-				<label>Intended Suppliers</label>
-			</entity>
-			<entity>
-				<key>intendedCustomers</key>
-				<label>Intended Customers</label>
-			</entity>
-			<entity>
-				<key>promotion</key>
-				<label>How will you promote your business and product</label>
-			</entity>
-			<entity>
-				<key>remarks</key>
-				<label>Any Remarks</label>
-			</entity>
-		</form>
-
-		<event id="3.START">
-			<condition>marketingTeam._$.FORM_STATUS == "submitted"</condition>
-			<transitions>
 				<transition>
 					<condition>true</condition>
-					<dest>3.SAVE_PROPOSAL_REVIEW</dest>
+					<dest>3.SAVE_COO_PROPOSAL_REVIEW</dest>
 				</transition>
 			</transitions>
-		</event>
-		<state id="3.SAVE_PROPOSAL_REVIEW">
-			<condition>true</condition>
-			<action>save proposalForm+operationsReview+marketingTeam</action>
 		</state>
 
-		<form name= "Accounting Team Review" alias="accountingReview">
-			<entity>
-				<key>proposalId</key>
-				<label>Proposal Id</label>
-			</entity>
-			<entity>
-				<key>capitalContributors</key>
-				<label>Captial Contributors</label>
-			</entity>
-			<entity>
-				<key>costOfItems</key>
-				<label>Cost of items or services</label>
-			</entity>
-			<entity>
-				<key>priceOfItems</key>
-				<label>Selling price of items or services to be sold</label>
-			</entity>
-			<entity>
-				<key>projectedAmountOfSales</key>
-				<label>Projected Amount of Sales</label>
-			</entity>
-			<entity>
-				<key>projectedAmountOfExpenses</key>
-				<label>Porjected Amount of Expenses</label>
-			</entity>
-			<entity>
-				<key>projectedNetProfit</key>
-				<label>Projected Net Profit</label>
-			</entity>
-			<entity>
-				<key>remarks</key>
-				<label>Any Remarks</label>
-			</entity>
-		</form>
-
-		<event id="4.START">
-			<condition>accountingReview._$.FORM_STATUS == "submitted"</condition>
-			<transitions>
-				<transition>
-					<condition>true</condition>
-					<dest>4.SAVE_PROPOSAL_REVIEW</dest>
-				</transition>
-			</transitions>
-		</event>
-		<state id="4.SAVE_PROPOSAL_REVIEW">
-			<condition>true</condition>
-			<action>save proposalForm+operationsReview+marketingTeam+accountingReview</action>
-		</state>
-
-		<form name= "Group Review" alias="groupReview">
-			<entity>
-				<key>proposalId</key>
-				<label>Proposal Id</label>
-			</entity>
-			<entity>
-				<key>operationsReview</key>
-				<label>Operations Team Feedback</label>
-			</entity>
-			<entity>
-				<key>marketingTeam</key>
-				<label>Marketing Team Feedback</label>
-			</entity>
-			<entity>
-				<key>accountingReview</key>
-				<label>Accounts Team Feedback</label>
-			</entity>
-			<entity>
-				<key>approvalStatus</key>
-				<label>Approval Status</label>
-			</entity>
-			<entity>
-				<key>rejectedReason</key>
-				<label>Rejected Reason</label>
-			</entity>
-		</form>
-
-		<event id="5.START">
-			<condition>groupReview._$.FORM_STATUS == "submitted"</condition>
-			<transitions>
-				<transition>
-					<condition>true</condition>
-					<dest>5.SAVE_PROPOSAL_REVIEW</dest>
-				</transition>
-			</transitions>
-		</event>
-		<state id="5.SAVE_PROPOSAL_REVIEW">
-			<condition>true</condition>
-			<action>save proposalForm+operationsReview+marketingTeam+accountingReview+groupReview</action>
-		</state>
-
-		<form name ="CFO Review Form" alias="CFOReviewForm">
+		<form name ="CFO Review Form" alias="CFOReviewForm" fileName="wf-bp-cfo-review-form.html">
             <entity>
 				<key>proposalId</key>
 				<label>Proposal Id</label>
@@ -302,21 +136,18 @@
 			</entity>
 		</form>
 
-        <event id="6.START">
+		<state id="2.SAVE_CFO_PROPOSAL_REVIEW">
 			<condition>CFOReviewForm._$.FORM_STATUS == "submitted"</condition>
+			<action>save proposalForm+CFOReviewForm</action>
 			<transitions>
 				<transition>
 					<condition>true</condition>
-					<dest>6.SAVE_PROPOSAL_REVIEW</dest>
+					<dest>4.SAVE_CEO_PROPOSAL_REVIEW</dest>
 				</transition>
 			</transitions>
-		</event>
-		<state id="6.SAVE_PROPOSAL_REVIEW">
-			<condition>true</condition>
-			<action>save proposalForm+operationsReview+marketingTeam+accountingReview+groupReview+CFOReviewForm</action>
 		</state>
             
-		<form name ="CSO Review Form" alias="CSOReviewForm">
+		<form name ="COO Review Form" alias="COOReviewForm" fileName="wf-bp-coo-review-form.html">
 		    <entity>
 				<key>proposalId</key>
 				<label>Proposal Id</label>
@@ -359,78 +190,18 @@
 			</entity>
 		</form>
 
-        <event id="7.START">
-			<condition>CSOReviewForm._$.FORM_STATUS == "submitted"</condition>
+		<state id="3.SAVE_COO_PROPOSAL_REVIEW">
+			<condition>COOReviewForm._$.FORM_STATUS == "submitted"</condition>
+			<action>save proposalForm+CFOReviewForm+COOReviewForm</action>
 			<transitions>
 				<transition>
 					<condition>true</condition>
-					<dest>7.SAVE_PROPOSAL_REVIEW</dest>
+					<dest>4.SAVE_CEO_PROPOSAL_REVIEW</dest>
 				</transition>
 			</transitions>
-		</event>
-		<state id="7.SAVE_PROPOSAL_REVIEW">
-			<condition>true</condition>
-			<action>save proposalForm+operationsReview+marketingTeam+accountingReview+groupReview+CFOReviewForm+CSOReviewForm</action>
 		</state>
 
-		<form name ="CTO Review Form" alias="CTOReviewForm">
-            <entity>
-				<key>proposalId</key>
-				<label>Proposal Id</label>
-			</entity>
-			<entity>
-				<key>projectTitle</key>
-				<label>Project Title</label>	
-			</entity>
-			<entity>
-				<key>grantStatus</key>
-				<label>Grant Status</label>
-			</entity>
-			<entity>
-				<key>projectPurpose</key>
-				<label>Project Purpose</label>
-			</entity>
-			<entity>
-				<key>startDate</key>
-				<label>Start Date</label>
-			</entity>
-			<entity>
-				<key>endDate</key>
-				<label>End Date</label>
-			</entity>
-			<entity>
-				<key>amountOfFundRequested</key>
-				<label>Amount of Funds Requested</label>
-			</entity>
-			<entity>
-				<key>reviewedBy</key>
-				<label>Reviewed By</label>
-			</entity>	
-			<entity>
-				<key>recommendation</key>
-				<label>Recommendation</label>
-			</entity>
-            <entity>
-				<key>reason</key>
-				<label>Reason</label>
-			</entity>
-		</form>
-
-        <event id="8.START">
-			<condition>CTOReviewForm._$.FORM_STATUS == "submitted"</condition>
-			<transitions>
-				<transition>
-					<condition>true</condition>
-					<dest>8.SAVE_PROPOSAL_REVIEW</dest>
-				</transition>
-			</transitions>
-		</event>
-		<state id="8.SAVE_PROPOSAL_REVIEW">
-			<condition>true</condition>
-			<action>save proposalForm+operationsReview+marketingTeam+accountingReview+groupReview+CFOReviewForm+CSOReviewForm+CTOReviewForm</action>
-		</state>
-
-		<form name = "CEO Review Form" alias="CEOReviewForm">
+		<form name = "CEO Review Form" alias="CEOReviewForm" fileName="wf-bp-ceo-review-form.html">
 			<entity>
 				<key>approvedBy</key>
 				<label>Approved By:</label>
@@ -477,19 +248,14 @@
 			</entity>
 		</form>
 
-        <event id="8.START">
+		<state id="4.SAVE_CEO_PROPOSAL_REVIEW">
 			<condition>CEOReviewForm._$.FORM_STATUS == "submitted"</condition>
-			<transitions>
+			<action>save proposalForm+CFOReviewForm+COOReviewForm+CEOReviewForm</action>
+            <transitions>
 				<transition>
-					<condition>true</condition>
-					<dest>8.SAVE_PROPOSAL_REVIEW</dest>
+					<condition>CEOReviewForm.approved == "true"</condition>
 				</transition>
 			</transitions>
-		</event>
-		<state id="8.SAVE_PROPOSAL_REVIEW">
-			<condition>true</condition>
-			<action>save proposalForm+operationsReview+marketingTeam+accountingReview+groupReview+CFOReviewForm+CSOReviewForm+CTOReviewForm+CEOReviewForm</action>
-            <action>assign form CEOReviewForm to USERS.whoeverFilesThisSomewhere</action> <!-- who to send to? -->
 		</state>
 		
 	</workflow>
