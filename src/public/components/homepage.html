@@ -83,7 +83,7 @@
 
 	<iron-ajax 
 		auto url="/instances/getInstances"
- 		params= '{"userId":"qwe123","role":"stoodent"}'
+ 		params= '{"userId":"qwe123","role":"student"}'
 		handle-as="json"
 		debounce-duration="300"
 		last-response="{{instanceList}}">
@@ -106,9 +106,10 @@
 
 	<iron-ajax
 		auto url="/instances/getWorkflows"	
-		params='{"role":"stoodent"}'
+		params='{"role":"Student"}'
 		handle-as="json"
-		last-response={{workflows}}
+		last-response={{workflows}}>
+		</iron-ajax>
 
 		<iron-pages id="iron-pages" selected="{{selected}}">
 	<div>
@@ -213,7 +214,7 @@
 			},
 			naviForm: function(){
 				var role=localStorage.getItem("userRole");
-				if(role=="stoodent"){
+				if(role=="student"){
 					location.href = "/wf-spn-stu-page.html";
 				}
 			},
