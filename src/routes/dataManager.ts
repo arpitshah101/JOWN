@@ -9,9 +9,9 @@ let router = Router();
 
 router.post("/getFormData", (req: Request, res: Response, next: Function) => {
 	let instanceId: mongoose.Types.ObjectId = mongoose.Types.ObjectId(req.params("instanceId"));
-	let formName: string = req.params.formName;
+	let formAlias: string = req.params.formAlias;
 
-	if (!req.params.instanceId || !req.params.formName) {
+	if (!req.params.instanceId || !req.params.formAlias) {
 		res.json({
 			message: "Insufficient information provided.",
 			success: false,
@@ -20,7 +20,7 @@ router.post("/getFormData", (req: Request, res: Response, next: Function) => {
 		return;
 	}
 
-	DataManager.getFormData(instanceId, formName)
+	DataManager.getFormData(instanceId, formAlias)
 		.then((formDataDoc: FormData.IDocument) => {
 			res.json(formDataDoc);
 		})
@@ -38,10 +38,10 @@ router.post("/getFormData", (req: Request, res: Response, next: Function) => {
 
 router.post("/saveFormData", (req: Request, res: Response, next: Function) => {
 	let instanceId: mongoose.Types.ObjectId = mongoose.Types.ObjectId(req.body.instanceId);
-	let formName: string = req.body.formName;
+	let formAlias: string = req.body.formAlias;
 	let data: any = req.body.data;
 
-	let missingFields: string[] = verifyFields(["instanceId", "formName", "data"], {instanceId, formName, data});
+	let missingFields: string[] = verifyFields(["instanceId", "formAlias", "data"], {instanceId, formAlias, data});
 	if (missingFields.length > 0) {
 		res.json({
 			message: `Insufficient information provided. Missing the following information: ${missingFields}`,
@@ -51,7 +51,7 @@ router.post("/saveFormData", (req: Request, res: Response, next: Function) => {
 		return;
 	}
 
-	DataManager.saveFormData(instanceId, formName, data)
+	DataManager.saveFormData(instanceId, formAlias, data)
 		.then((success: boolean) => {
 			res.json({
 				message: "Successfully saved the form data.",
