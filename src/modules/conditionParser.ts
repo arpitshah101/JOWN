@@ -52,9 +52,9 @@ export class ConditionParser {
 	 *          undefined if the conditional is not properly formatted
 	 */
 	public deconstructCondition (condition: String): any[] {
-		console.log("deconstructCondition @ trim#1: " + condition);
+		// console.log("deconstructCondition @ trim#1: " + condition);
 		condition = condition.trim();
-		console.log("deconstructCondition @ trim#1");
+		// console.log("deconstructCondition @ trim#1");
 
 		let ret = [];
 		let currCondition = "";
@@ -74,9 +74,9 @@ export class ConditionParser {
 					// console.log(recRet + "<<<<");
 					ret.push(recRet);
 				} else if ((i !== 0) && (c === ")")) {
-					console.log("deconstructCondition @ trim#2");
+					// console.log("deconstructCondition @ trim#2");
 					currCondition = currCondition.trim();
-					console.log("deconstructCondition @ trim#2");
+					// console.log("deconstructCondition @ trim#2");
 					if (currCondition !== "") {
 						ret.push(currCondition);
 					}
@@ -85,9 +85,9 @@ export class ConditionParser {
 					return ret;
 				} else if (c === "&" || c === "|") {
 					if ((currCondition !== "") && (ret[ret.length - 1] !== currCondition)) {
-						console.log("deconstructCondition @ trim#3");
+						// console.log("deconstructCondition @ trim#3");
 						currCondition = currCondition.trim();
-						console.log("deconstructCondition @ trim#3");
+						// console.log("deconstructCondition @ trim#3");
 						if (currCondition !== "") {
 							ret.push(currCondition);
 						}
@@ -112,9 +112,9 @@ export class ConditionParser {
 			}
 
 			if (i === (condition.length - 1)) {
-				console.log("deconstructCondition @ trim#4");
+				// console.log("deconstructCondition @ trim#4");
 				currCondition = currCondition.trim();
-				console.log("deconstructCondition @ trim#4");
+				// console.log("deconstructCondition @ trim#4");
 				if (currCondition !== "") {
 					ret.push(currCondition);
 				}

@@ -11,6 +11,8 @@ describe("ConditionParser", function() {
 				expected: true},
 			{arg: "true", expected: true},
 			{arg: "true && true && false", expected: false},
+			{arg: "bananas == \"failin test\" || boat == \"banana\" && true}", expected: false},
+			{arg: "bananaboat == \"submitted\" && true || bananaboatin == \"submitted\"", expected: true},
 
 		];
 
@@ -31,8 +33,8 @@ describe("ConditionParser", function() {
 			{arg: " testing &&&& to ||| getundefined &&& and |||| makeitwork", expected: undefined},
 			{arg: " test == 2 && (banana != boat) || hi == hello",
 				expected: ["test == 2", "&&", ["banana != boat"], "||", "hi == hello"]},
-			{arg: "cond == 2 && another != 5 || this == \"that\"", expected:
-				["cond == 2", "&&", "another != 5", "||", "this == \"that\""]},
+			{arg: "cond == 2 && another != 5 || this == \"that\"",
+				expected: ["cond == 2", "&&", "another != 5", "||", "this == \"that\""]},
 		];
 
 		tests.forEach(function(test) {
