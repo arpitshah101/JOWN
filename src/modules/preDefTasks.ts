@@ -27,7 +27,7 @@ export class PreDefTasks {
 		return output;
 	}
 
-	public static assignForm(instanceId: mongoose.Types.ObjectId, formAlias: string,
+	public static assign(instanceId: mongoose.Types.ObjectId, formAlias: string,
 								userId: string, role: string, ...extraParams: any[]): Bluebird<boolean> {
 
 		/**
@@ -70,7 +70,7 @@ export class PreDefTasks {
 						formData = formDataDoc;
 					}
 				})
-				.then((): Bluebird<User.IDocument> => UserManager.getUser({ userId, roles: role }))
+				.then((): Bluebird<User.IDocument> => this.getTargetUser(userId, instanceId))
 				.then((userDoc: User.IDocument): Bluebird<Instance.IDocument> => {
 					if (!userDoc) {
 						reject(`No user found with the given userId: ${userId}`);
@@ -84,7 +84,7 @@ export class PreDefTasks {
 					formData.assignedTo = user._id;
 				})
 				.then(() => {
-					this.jownemail(user.userEmail, `You've been assigned a 
+					this.email(user.userEmail, `You've been assigned a 
 						new form on your ${role} account. Please check the system.`);
 				})
 				.catch((reason) => {
@@ -94,7 +94,7 @@ export class PreDefTasks {
 		});
 	}
 
-	public static jownemail(sendTo: string, message: string) {
+	public static email(sendTo: string, message: string) {
 		// setup e-mail data with unicode symbols
 		let mailOptions = {
 			from: "'J.O.W.N. Instance 007' <arpitshah101@gmail.com>",
@@ -109,6 +109,67 @@ export class PreDefTasks {
 				return console.error(error);
 			}
 			console.log(`Email sent to ${sendTo} with the following message:\n\t${message}\nResponse: ${info.response}`);
+		});
+	}
+
+	public static save(forms: string, userId: string, instanceId: mongoose.Types.ObjectId) {
+
+		let formNames = forms.split("+");
+		let output: string;
+		Bluebird.reduce(formNames, (total: string, current: string) => {
+			return new Bluebird<string>((resolve, reject) => {
+				this.getFormAsJsonStr(current, instanceId)
+					.then((str: string) => {
+						total += "\n\n" + str;
+						resolve(total);
+					});
+			});
+		}, "")
+			.then((jsonString: string) => {
+				output = jsonString;
+			})
+			.then(() => {
+				return this.getTargetUser(userId, instanceId);
+			})
+			.then((user: User.IUser) => {
+				this.email(user.userEmail, output);
+			});
+	}
+
+	private static getTargetUser(userId: string, instanceId: mongoose.Types.ObjectId): Bluebird<User.IDocument> {
+		return new Bluebird<User.IDocument>((resolve, reject) => {
+			if (userId.indexOf("USERS.") > -1) {
+				UserManager.getUser({userId: userId.substring(userId.indexOf("USERS.") + 6)})
+					.then((user: User.IDocument) => {
+						resolve(user);
+					});
+			}
+			else if (userId === "INSTANCE.creator") {
+				InstanceManager.getInstance({ _id: instanceId })
+					.then((instance: Instance.IDocument) => {
+						return instance.creator;
+					})
+					.then((userObjectId: mongoose.Types.ObjectId) => {
+						return UserManager.getUser({ _id: userObjectId });
+					})
+					.then((user: User.IDocument) => {
+						// get forms here
+						resolve(user);
+					});
+			}
+		});
+	}
+
+	private static getFormAsJsonStr(formAlias: string, instanceId: mongoose.Types.ObjectId) {
+		return new Bluebird<string>((resolve, reject) => {
+			FormData.model.findOne({ alias: formAlias, instanceId })
+				.then((formData: FormData.IDocument) => {
+					resolve(JSON.stringify(formData));
+				})
+				.catch((reason) => {
+					console.error(reason);
+					resolve("");
+				});
 		});
 	}
 }
