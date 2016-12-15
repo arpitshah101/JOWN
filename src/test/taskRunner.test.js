@@ -1,7 +1,7 @@
 var assert = require("assert");
 var Promise = require("bluebird");
 
-var taskRunner = require("../modules/taskRunner");
+var TaskRunner = require("../modules/taskRunner").TaskRunner;
 
 describe("TaskRunner", function () {
 
@@ -13,7 +13,7 @@ describe("TaskRunner", function () {
 
 		tests.forEach(function (test) {
 			it("correctly checks whether " + test.arg + " is present in PreDefTasks", function () {
-				var res = taskRunner.TaskRunner.prototype.checkIfPreDef(test.arg);
+				var res = TaskRunner.checkIfPreDef(test.arg);
 				assert.equal(res, test.expected);
 			});
 		});
@@ -27,7 +27,7 @@ describe("TaskRunner", function () {
 
 		tests.forEach(function (test) {
 			it("correctly checks whether " + test.arg + " is tokenized correctly", function () {
-				var res = taskRunner.TaskRunner.prototype.tokenizeCommand(test.arg);
+				var res = TaskRunner.tokenizeCommand(test.arg);
 				assert.deepEqual(res, test.expected);
 			});
 		});
@@ -43,9 +43,13 @@ describe("TaskRunner", function () {
 
 		tests.forEach(function (test) {
 			it("correctly runs " + test.arg + " function", function (done) {
-				var res = taskRunner.TaskRunner.prototype.run(test.arg);
+				var res = TaskRunner.run(test.arg);
 				res.then(function (resolve, reject) {
 					assert.deepEqual(resolve, test.expected);
+					done();
+				})
+				.catch((reason) => {
+					console.error(reason);
 					done();
 				});
 			});
