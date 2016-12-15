@@ -46,12 +46,21 @@
 
 		</style>
 
-		<iron-ajax id="getPrevFormAjax"
+		<iron-ajax id="getStudentFormAjax"
 			url="/data/getFormData"
+			method="GET"
+			params="studentFormParams"
+			handle-as="json"
+			content-type="application/json"
+			on-response="handleStudentFormResponse">
+		</iron-ajax>
+
+		<iron-ajax id="submitFormAjax"
+			url="/data/saveFormData"
 			method="POST"
 			handle-as="json"
 			content-type="application/json"
-			on-response="handlePrevFormResponse">
+			on-response="handleSubmitFormResponse">
 		</iron-ajax>
 
 		<paper-header-panel class="red">
@@ -68,7 +77,12 @@
 		<!-- ADD NEW FIELDS AND CHANGE PARAMETERS FOR FORMS BELOW -->
 		<paper-card id="instructor-form" heading="Register New Account">
 			<div class="card-content">
+				<br>
+				<!--Student submitted: <br>
+				First name: {{this.firstName}}<br>
+				Last name: {{this.LastName}}<br>-->
                 <!-- Student -->
+				<!---->
 				<paper-input label="First name" maxlength="50" disabled value={{firstName}}></paper-input>
 				<paper-input label="Last name" maxlength="50" disabled value={{lastName}}></paper-input>
 				<paper-input label="Middle initials" maxlength="50" disabled value={{middleInitials}}></paper-input>
@@ -86,6 +100,7 @@
 				<paper-input label="Number of Credits" maxlength="50" disabled value={{numberOfCredits}}></paper-input>
 				<paper-input label="Course Title #" maxlength="50" disabled value={{title}}></paper-input>
 				<paper-input label="Reasons for taking the course:" maxlength="50" disabled value={{reasonsForTakingCourse}}></paper-input>
+				<!---->
                 <!-- Instructor -->
                 <paper-input label="Approved by Instructor" maxlength="50" value={{instructorApproval}}></paper-input>
                 <paper-input label="Approval date" maxlength="50" value={{instructorApprovalDate}}></paper-input>
@@ -106,6 +121,8 @@
 				userId: String,
 				instanceId: String,
 				formAlias: String,
+				studentFormAlias: String,
+				studentFormParams: {},
 
 				/* PROPERTIES FOR FORMS BELOW */
 				/* Student form */
@@ -128,17 +145,20 @@
 				reasonsForTakingCourse: String,
 				/* Instructor form */
                 instructorApproval: String,
-                instructorName: {
+                instructorSignature: {
                     type: String,
-                    // needs to be changed to username
                     value: function() {return localStorage.getItem("userId");}
                 },
                 instructorApprovalDate: String,
 			},
 			ready: function() {
-				this.instanceId = localStorage.getItem("instanceId");
-				this.formAlias = "instructorForm";
-				this.$.getPrevFormAjax.body = {"instanceId": this.instanceId, "formAlias": this.formAlias};
+				// FOR TESTING
+				this.instanceId = "123456789012";
+				// this.instanceId = localStorage.getItem("instanceId");
+				this.formAlias = "instructorForm"
+				this.studentFormAlias = "studentForm";
+				this.studentFormParams = {"instanceId": this.instanceId, "formAlias": this.studentFormAlias};
+				this.$.getStudentFormAjax.generateRequest();
 			},
 			logout: function() {
 				alert("logging out " + this.username);
@@ -147,12 +167,51 @@
 			},
 			submitForm: function() {
 				alert("Submitting form");
+				// this.instructorApprovalDate = Date.now();
+				this.$.submitFormAjax.body = {"instanceId": this.instanceId, "formAlias": this.formAlias, "data":
+					{
+						"instructorApproval": this.instructorApproval, "instructorSignature": this.instructorSignature,
+						"instructorApprovalDate": this.instructorApprovalDate
+					}
+				};
+				this.$.submitFormAjax.generateRequest();
 			},
-			handlePrevFormResponse: function(request) {
+			handleSubmitFormResponse: function(request) {
+				console.log(request);
 				console.log(request.detail.response);
-				console.log(this.$.getPrevFormAjax.lastResponse);
-				if(request.detail.response.success === true) {
-
+				console.log(this.$.submitFormAjax.lastResponse);
+				if( request === undefined) {
+					alert("REQUEST UNDEFINED")
+				} else if(request.success === true) {
+					alert("FORM SAVED");
+				} else if (request.success === false){
+					alert("ERROR! COULD NOT SAVE FORM");
+				}
+				else {
+					alert("IF YOU READ THIS, YOU HAVE GOT SOME KIND OF TROUBLE");
+				}
+			},
+			handleStudentFormResponse: function(request) {
+				console.log(request.detail.response);
+				console.log(this.$.getStudentFormAjax.lastResponse);
+				if(request.success === true) {
+					this.firstName = request.formData.data.firstName;
+					this.lastName = request.formData.data.lastName;
+					this.middleInitials = request.formData.data.middleInitials;
+					this.ruid = request.formData.data.ruid;
+					this.officialRutgersEmail = request.formData.data.officialRutgersEmail;
+					this.declaredGraduationDate = request.formData.data.declaredGraduationDate;
+					this.cumulativeGpa = request.formData.data.cumulativeGpa;
+					this.honorsSchool = request.formData.data.honorsSchool;
+					this.semesterAndYear = request.formData.data.semesterAndYear;
+					this.schoolNumber = request.formData.data.schoolNumber;
+					this.subjectNumber = request.formData.data.subjectNumber;
+					this.courseNumber = request.formData.data.courseNumber;
+					this.sectionNumber = request.formData.data.sectionNumber;
+					this.indexNumber = request.formData.data.indexNumber;
+					this.numberOfCredits = request.formData.data.numberOfCredits;
+					this.courseTitle = request.formData.data.courseTitle;
+					this.reasonsForTakingCourse = request.formData.data.reasonsForTakingCourse;
 				}
 				else {
 					modal.open();

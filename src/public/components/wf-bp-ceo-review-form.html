@@ -1,4 +1,5 @@
 <link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="/bower_components/paper-item/paper-item.html">
 <link rel="import" href="/bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
@@ -43,6 +44,42 @@
 		}
 
 		</style>
+
+		<iron-ajax id="getProposalFormAjax"
+			url="/data/getFormData"
+			method="GET"
+			params="proposalFormParams"
+			handle-as="json"
+			content-type="application/json"
+			on-response="handleProposalFormResponse">
+		</iron-ajax>
+
+		<iron-ajax id="getCfoReviewFormAjax"
+			url="/data/getFormData"
+			method="GET"
+			params="cfoReviewFormParams"
+			handle-as="json"
+			content-type="application/json"
+			on-response="handleCfoReviewFormResponse">
+		</iron-ajax>
+
+		<iron-ajax id="getCooReviewFormAjax"
+			url="/data/getFormData"
+			method="GET"
+			params="cooReviewFormParams"
+			handle-as="json"
+			content-type="application/json"
+			on-response="handleCooReviewFormResponse">
+		</iron-ajax>
+
+		<iron-ajax id="submitFormAjax"
+			url="/data/saveFormData"
+			method="POST"
+			handle-as="json"
+			content-type="application/json"
+			on-response="handleSubmitFormResponse">
+		</iron-ajax>
+
 		<paper-header-panel class="red">
 			<paper-toolbar>
 				<div class="paper-header">Just Our Workflow Notation</div>
@@ -69,13 +106,15 @@
 				<paper-input label="Proposal Description" maxlength="10000" disable value={{proposalDescription}}></paper-input>
                 <paper-input label="Group Size" maxlength="50" disable value={{groupSize}}></paper-input>
 				<paper-input label="Proposal Budget" maxlength="50" disable value={{proposalBudget}}></paper-input>
-				<paper-input label="Proposal Length (Time)" maxlength="50" disable value={{proposalLength}}></paper-input>
-                <!-- Financial review form -->
+				<paper-input label="Proposal Duration" maxlength="50" disable value={{proposalDuration}}></paper-input>
+                <!-- Financials review form -->
 				<paper-input label="CFO Proposal Review Comments" maxlength="1000" disable value={{cfoReviewComments}}></paper-input>
 				<paper-input label="CFO Proposal Review Recommendation" maxlength="50" disable value={{cfoReviewRecommendation}}></paper-input>
+				<paper-input label="CFO Proposal Review Date" maxlength="50" disable value={{cfoReviewDate}}></paper-input>
                 <!-- Operations review form -->
 				<paper-input label="COO Proposal Review Comments" maxlength="1000" disable value={{cooReviewComments}}></paper-input>
 				<paper-input label="COO Proposal Review Recommendation" maxlength="50" disable value={{cooReviewRecommendation}}></paper-input>
+				<paper-input label="COO Proposal Review Date" maxlength="50" disable value={{cooReviewDate}}></paper-input>
                 <!-- Executive review form -->
 				<paper-input label="CEO Proposal Review Comments" maxlength="1000" value={{ceoReviewComments}}></paper-input>
 				<paper-input label="CEO Proposal Review Recommendation" maxlength="50" value={{ceoApproval}}></paper-input>
@@ -92,8 +131,17 @@
 		Polymer({
 		is: "workflow-bp-ceo-review-form",
 			properties: {
+				userId: String,
+				instanceId: String,
+				formAlias: String,
+				proposalFormAlias: String,
+				proposalFormParams: {},
+				cfoReviewFormAlias: String,
+				cfoReviewFormParams: {},
+				cooReviewFormAlias: String,
+				cooReviewFormParams: {},
+
 				department: String,
-                proposalSubmissionDate: String,
 				proposalId: String,
 				groupCode: String,
 				groupName: String,
@@ -103,7 +151,8 @@
 				proposalTitle: String,
 				proposalDescription: String,
                 proposalBudget: String,
-                proposalLength: String,
+                proposalDuration: String,
+                proposalSubmissionDate: String,
 
 				cfoReviewDate: String,
                 cfoReviewComments: String,
@@ -117,14 +166,94 @@
                 ceoReviewComments: String,
                 ceoApproval: String,                
 			},
+			ready: function() {
+				this.instanceId = localStorage.getItem("instanceId");
+				this.formAlias = "ceoReviewForm"
+				this.proposalFormAlias = "proposalForm";
+				this.proposalFormParams = {"instanceId": this.instanceId, "formAlias": this.proposalFormAlias};
+				this.$.getProposalFormAjax.generateRequest();
+				this.cfoReviewFormAlias = "cfoReviewForm";
+				this.cfoReviewFormParams = {"instanceId": this.instanceId, "formAlias": this.cfoReviewFormAlias};
+				this.$.getCfoReviewFormAjax.generateRequest();
+				this.cooReviewFormAlias = "cooReviewForm";
+				this.cooReviewFormParams = {"instanceId": this.instanceId, "formAlias": this.cooReviewFormAlias};
+				this.$.getCooReviewFormAjax.generateRequest();
+			},
 			logout: function() {
 				alert("logging out " + this.username);
 				localStorage.clear();
 				location.href = "index.html";
 			},
 			submitForm: function() {
-                this.ceoReviewDate = Date.now();
 				alert("Submitting form");
+                this.ceoReviewDate = Date.now();
+				this.$.submitFormAjax.body = {"instanceId": this.instanceId, "formAlias": this.formAlias, "data":
+					{
+						"ceoReviewDate": this.ceoReviewDate, "ceoReviewComments": this.ceoReviewComments,
+						"ceoApproval": this.ceoApproval
+					}
+				};
+				this.$.submitFormAjax.generateRequest();
+			},
+			handleSubmitFormResponse: function(request) {
+				console.log(request);
+				console.log(request.detail.response);
+				console.log(this.$.submitFormAjax.lastResponse);
+				if( request === undefined) {
+					alert("REQUEST UNDEFINED")
+				} else if(request.success === true) {
+					alert("FORM SAVED");
+				} else if (request.success === false){
+					alert("ERROR! COULD NOT SAVE FORM");
+				}
+				else {
+					alert("IF YOU READ THIS, YOU HAVE GOT SOME KIND OF TROUBLE");
+				}
+			},
+			handleProposalFormResponse: function(request) {
+				console.log(request.detail.response);
+				console.log(this.$.getProposalFormAjax.lastResponse);
+				if(request.success === true) {
+					this.department = request.formData.data.department;
+					this.proposalId = request.formData.data.proposalId;
+					this.groupCode = request.formData.data.groupCode;
+					this.groupName = request.formData.data.groupName;
+					this.groupSize = request.formData.data.groupSize;
+					this.contactPerson = request.formData.data.contactPerson;
+					this.contactPersonEmail = request.formData.data.contactPersonEmail;
+					this.proposalTitle = request.formData.data.proposalTitle;
+					this.proposalDescription = request.formData.data.proposalDescription;
+					this.proposalBudget = request.formData.data.proposalBudget;
+					this.proposalDuration = request.formData.data.proposalDuration;
+					this.proposalSubmissionDate = request.formData.data.proposalSubmissionDate;
+				}
+				else {
+					alert("Could not retrieve form");
+				}
+			},
+			handleCfoFormResponse: function(request) {
+				console.log(request.detail.response);
+				console.log(this.$.getCfoFormAjax.lastResponse);
+				if(request.success === true) {
+					this.cfoReviewDate = request.formData.data.cfoReviewDate;
+					this.cfoReviewComments = request.formData.data.cfoReviewComments;
+					this.cfoReviewRecommendation = request.formData.data.cfoReviewRecommendation;
+				}
+				else {
+					alert("Could not retrieve form");
+				}
+			},
+			handleCooReviewFormResponse: function(request) {
+				console.log(request.detail.response);
+				console.log(this.$.getCooReviewFormAjax.lastResponse);
+				if(request.success === true) {
+					this.cooReviewDate = request.formData.data.cooReviewDate;
+					this.cooReviewComments = request.formData.data.cooReviewComments;
+					this.cooReviewRecommendation = request.formData.data.cooReviewRecommendation;
+				}
+				else {
+					alert("Could not retrieve form");
+				}
 			}
 		});
 

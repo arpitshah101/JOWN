@@ -284,6 +284,8 @@ export class ConditionParser {
 	 */
 	public evaluateExpression(expression: any[], instanceId: String): boolean {
 		let expressionArray = [];
+		// let fieldValue = String;
+
 		if (expression === undefined) {
 			return undefined;
 		}
@@ -308,8 +310,15 @@ export class ConditionParser {
 				return undefined;
 			}
 			// PSEUDO-ish
-			/*formObject = datamanager.getform(expressionArray[0], instanceID);
-			let fieldValue = eval("formObject.data." + expressionArray[expressionArray.length - 1]);*/
+			/*formObject = datamanager.getform(expressionArray[0], instanceID);*/
+			/*if (expressionArray.indexOf("_$") === -1) {
+				// tslint:disable-next-line:no-eval
+				fieldValue = eval("formObject.data." + expressionArray[expressionArray.length - 1]);
+			}
+			else {
+				// tslint:disable-next-line:no-eval
+				fieldValue = eval("formObject." + expressionArray[expressionArray.length - 1]);
+			}*/
 			// For testing
 			let fieldValue = "\"submitted\"";
 			console.log("before concatExpression: " + fieldValue + " " + expression[1] + " " + expression[2]);
@@ -318,6 +327,9 @@ export class ConditionParser {
 			// tslint:disable-next-line:no-eval
 			let evaluated = eval(concatExpression);
 			console.log("evaluated: " + evaluated);
+			if (typeof(evaluated) !== "boolean") {
+				return false;
+			}
 			return evaluated;
 		}
 	}

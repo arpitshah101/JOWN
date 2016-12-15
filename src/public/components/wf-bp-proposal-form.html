@@ -1,4 +1,5 @@
 <link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="/bower_components/paper-item/paper-item.html">
 <link rel="import" href="/bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
@@ -43,6 +44,15 @@
 		}
 
 		</style>
+
+		<iron-ajax id="submitFormAjax"
+			url="/data/saveFormData"
+			method="POST"
+			handle-as="json"
+			content-type="application/json"
+			on-response="handleSubmitFormResponse">
+		</iron-ajax>
+
 		<paper-header-panel class="red">
 			<paper-toolbar>
 				<div class="paper-header">Just Our Workflow Notation</div>
@@ -59,7 +69,7 @@
 			<div class="card-content">
 				<!-- Proposal form -->
 				<paper-input label="Department Name" maxlength="50" value={{department}}></paper-input>
-				<!--<paper-input label="Date" maxlength="50" value={{date}}></paper-input>-->
+				<!--<paper-input label="Date" maxlength="50" value={{proposalSubmissionDate}}></paper-input>-->
 				<paper-input label="Proposal ID" maxlength="50" value={{proposalId}}></paper-input>
 				<paper-input label="Group Code" maxlength="50" value={{groupCode}}></paper-input>
 				<paper-input label="Group Name" maxlength="50" value={{groupName}}></paper-input>
@@ -69,7 +79,7 @@
 				<paper-input label="Proposal Description" maxlength="10000" value={{proposalDescription}}></paper-input>
                 <paper-input label="Group Size" maxlength="50" value={{groupSize}}></paper-input>
 				<paper-input label="Proposal Budget" maxlength="50" value={{proposalBudget}}></paper-input>
-				<paper-input label="Proposal Length (Time)" maxlength="50" value={{proposalLength}}></paper-input>
+				<paper-input label="Proposal Duration" maxlength="50" value={{proposalDuration}}></paper-input>
 
 				<div class="card-actions">
 					<paper-button flat on-tap="submitForm">Submit Form</paper-button>
@@ -84,8 +94,11 @@
 		Polymer({
 		is: "workflow-bp-proposal-form",
 			properties: {
+				instanceId: String,
+				formAlias: String,
+
+				/* PROPERTIES FOR FORMS BELOW */
 				department: String,
-                proposalSubmissionDate: String,
 				proposalId: String,
 				groupCode: String,
 				groupName: String,
@@ -95,7 +108,12 @@
 				proposalTitle: String,
 				proposalDescription: String,
                 proposalBudget: String,
-                proposalLength: String
+                proposalDuration: String,
+				proposalSubmissionDate: String
+			},
+			ready: function() {
+				this.instanceId = localStorage.getItem("instanceId");
+				this.formAlias = "proposalForm";
 			},
 			logout: function() {
 				alert("logging out " + this.username);
@@ -103,8 +121,32 @@
 				location.href = "index.html";
 			},
 			submitForm: function() {
-                this.proposalSubmissionDate = Date.now();
 				alert("Submitting form");
+				this.$.submitFormAjax.body = {"instanceId": this.instanceId, "formAlias": this.formAlias, "data":
+					{
+						"department": this.department, "proposalId": this.proposalId, "groupCode": this.groupCode,
+						"groupName": this.groupName, "groupSize": this.groupSize, "contactPerson": this.contactPerson,
+						"contactPersonEmail": this.contactPersonEmail, "proposalTitle": this.proposalTitle,
+						"proposalDescription": this.proposalDescription, "proposalBudget": this.proposalBudget,
+						"proposalDuration": this.proposalDuration, "propsalSubmissionDate": this.proposalSubmissionDate
+					}
+				};
+				this.$.submitFormAjax.generateRequest();
+			},
+			handleSubmitFormResponse: function(request) {
+				console.log(request);
+				console.log(request.detail.response);
+				console.log(this.$.submitFormAjax.lastResponse);
+				if( request === undefined) {
+					alert("REQUEST UNDEFINED")
+				} else if(request.success === true) {
+					alert("FORM SAVED");
+				} else if (request.success === false){
+					alert("ERROR! COULD NOT SAVE FORM");
+				}
+				else {
+					alert("IF YOU READ THIS, YOU HAVE GOT SOME KIND OF TROUBLE");
+				}
 			}
 		});
 
