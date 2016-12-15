@@ -153,7 +153,7 @@
 						"indexNumber": this.indexNumber, "numberOfCredits": this.numberOfCretis,
 						"courseTitle": this.courseTitle, "reasonsForTakingCourse": this.reasonForTakingCourse
 					}
-			}	;
+				};
 				this.$.submitFormAjax.generateRequest();
 			},
 			handleSubmitFormResponse: function(request) {
@@ -162,9 +162,11 @@
 				//if (request.details.response.success === true) {
 				if(request.success === true) {
 					alert("FORM SAVED!");
+				} else if (request.success === false){
+					alert("ERROR! COULD NOT SAVE FORM!");
 				}
 				else {
-					alert("ERROR! COULD NOT SAVE FORM!");
+					alert("IF YOU READ THIS, YOU HAVE GOT SOME TROUBLE");
 				}
 			}
 		});

@@ -94,7 +94,7 @@
 				<paper-input label="Section #" maxlength="50" disabled value={{sectionNumber}}></paper-input>
 				<paper-input label="Index #" maxlength="50" disabled value={{indexNumber}}></paper-input>
 				<paper-input label="Number of Credits" maxlength="50" disabled value={{numberOfCredits}}></paper-input>
-				<paper-input label="Course Title #" maxlength="50" disabled value={{title}}></paper-input>
+				<paper-input label="Course Title #" maxlength="50" disabled value={{courseTitle}}></paper-input>
 				<paper-input label="Reasons for taking the course:" maxlength="50" disabled value={{reasonsForTakingCourse}}></paper-input>
                 <!--  Instructor -->
                 <paper-input label="Approved by Instructor" maxlength="50" disabled value={{instructorApproval}}></paper-input>
@@ -142,11 +142,11 @@
 				sectionNumber: String,
 				indexNumber: String,
 				numberOfCredits: String,
-				title: String,
+				courseTitle: String,
 				reasonsForTakingCourse: String,
 				/* Instructor form */
                 instructorApproval: String,
-                instructorName: String,
+                instructorSignature: String,
                 instructorApprovalDate: String,
 				/* Director form */
                 directorApproval: String,
@@ -158,14 +158,16 @@
                 directorApprovalDate: String,
 			},
 			ready: function() {
-				this.instanceId = localStorage.getItem("instanceId");
+				// FOR TESTING
+				this.instanceId = "123456789012";
+				// this.instanceId = localStorage.getItem("instanceId");
 				this.formAlias = "instructorForm"
 				this.studentFormAlias = "studentForm";
 				this.studentFormParams = {"instanceId": this.instanceId, "formAlias": this.studentFormAlias};
 				this.$.getStudentFormAjax.generateRequest();
 				this.instructorFormAlias = "instructorForm";
 				this.instructorFormPamas = {"instanceId": this.instanceId, "formAlias": this.instructorFormAlias}
-				this.$.getInstructorFormAjax
+				this.$.getInstructorFormAjax.generateRequest();
 			},
 			logout: function() {
 				alert("logging out " + this.username);
@@ -174,12 +176,49 @@
 			},
 			submitForm: function() {
 				alert("Submitting form");
+				// this.directorApprovalDate = Date.now();
+				this.$.submitFormAjax.body = {"instanceId": this.instanceId, "formAlias": this.formAlias, "data":
+					{
+						"directorApproval": this.directorApproval, "directorSignature": this.directorSignature,
+						"directorApprovalDate": this.directorApprovalDate
+					}
+				};
+				this.$.submitFormAjax.generateRequest();
+			},
+			handleSubmitFormResponse: function(request) {
+				console.log(request.detail.response);
+				console.log(this.$.submitFormAjax.lastResponse);
+				//if (request.details.response.success === true) {
+				if(request.success === true) {
+					alert("FORM SAVED!");
+				} else if (request.success === false){
+					alert("ERROR! COULD NOT SAVE FORM!");
+				}
+				else {
+					alert("IF YOU READ THIS, YOU HAVE GOT SOME TROUBLE");
+				}
 			},
 			handleStudentFormResponse: function(request) {
 				console.log(request.detail.response);
 				console.log(this.$.getStudentFormAjax.lastResponse);
-				if(request.detail.response.success === true) {
-					
+				if(request.success === true) {
+					this.firstName = request.formData.data.firstName;
+					this.lastName = request.formData.data.lastName;
+					this.middleInitials = request.formData.data.middleInitials;
+					this.ruid = request.formData.data.ruid;
+					this.officialRutgersEmail = request.formData.data.officialRutgersEmail;
+					this.declaredGraduationDate = request.formData.data.declaredGraduationDate;
+					this.cumulativeGpa = request.formData.data.cumulativeGpa;
+					this.honorsSchool = request.formData.data.honorsSchool;
+					this.semesterAndYear = request.formData.data.semesterAndYear;
+					this.schoolNumber = request.formData.data.schoolNumber;
+					this.subjectNumber = request.formData.data.subjectNumber;
+					this.courseNumber = request.formData.data.courseNumber;
+					this.sectionNumber = request.formData.data.sectionNumber;
+					this.indexNumber = request.formData.data.indexNumber;
+					this.numberOfCredits = request.formData.data.numberOfCredits;
+					this.courseTitle = request.formData.data.courseTitle;
+					this.reasonsForTakingCourse = request.formData.data.reasonsForTakingCourse;
 				}
 				else {
 					modal.open();
@@ -188,8 +227,10 @@
 			handleInstructorFormResponse: function(request) {
 				console.log(request.detail.response);
 				console.log(this.$.getInstructorFormAjax.lastResponse);
-				if(request.detail.response.success === true) {
-					
+				if(request.success === true) {
+					this.instructorApproval = request.formData.data.instructorApproval;
+					this.instructorSignature = request.formData.data.instructorSignature;
+					this.instructorApprovalDate = request.formData.data.instructorApprovalDate;
 				}
 				else {
 					modal.open();

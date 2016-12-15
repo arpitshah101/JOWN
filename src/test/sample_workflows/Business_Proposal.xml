@@ -24,12 +24,12 @@
 
 		<form name = "Business Proposal Form" alias="proposalForm" fileName="wf-bp-proposal-form.html">
 			<entity>
-				<key>institution</key>
-				<label>Institution</label>
+				<key>department</key>
+				<label>Department</label>
 			</entity>
 			<entity>
 				<key>proposalId</key>
-				<label>Proposal Id</label>
+				<label>Proposal ID</label>
 			</entity>
 			<entity>
 				<key>groupCode</key>
@@ -44,36 +44,28 @@
 				<label>Group Size</label>
 			</entity>
 			<entity>
-				<key>groupMembers</key>
-				<label>Group Members</label>
-			</entity>			
-			<entity>
-				<key>memberPositions</key>
-				<label>Group Member Positions</label>
-			</entity>			
-			<entity>
-				<key>businessIdeaTitle</key>
-				<label>Business Idea Title:</label>
+				<key>contactPerson</key>
+				<label>Contact Person</label>
 			</entity>
 			<entity>
-				<key>typeOfBusiness</key>
-				<label>type of Business:</label>
+				<key>contactPersonEmail</key>
+				<label>Contact Person's Email</label>
 			</entity>
 			<entity>
-				<key>submittedBy</key>
-				<label>Submitted By:</label>
+				<key>proposalTitle</key>
+				<label>Proposal Title</label>
 			</entity>
 			<entity>
-				<key>date</key>
-				<label>Date</label>
+				<key>proposalDescription</key>
+				<label>Proposal Description</label>
 			</entity>
 			<entity>
-				<key>remarks</key>
-				<label>Any Remarks</label>
+				<key>proposalDuration</key>
+				<label>Proposal Duration</label>
 			</entity>
 			<entity>
-				<key>approvedBy</key>
-				<label>Approved By:</label>
+				<key>proposalSubmissionDate</key>
+				<label>Proposal Submission Date</label>
 			</entity>
 		</form>
 

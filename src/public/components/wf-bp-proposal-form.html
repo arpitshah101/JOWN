@@ -69,7 +69,7 @@
 			<div class="card-content">
 				<!-- Proposal form -->
 				<paper-input label="Department Name" maxlength="50" value={{department}}></paper-input>
-				<!--<paper-input label="Date" maxlength="50" value={{date}}></paper-input>-->
+				<!--<paper-input label="Date" maxlength="50" value={{proposalSubmissionDate}}></paper-input>-->
 				<paper-input label="Proposal ID" maxlength="50" value={{proposalId}}></paper-input>
 				<paper-input label="Group Code" maxlength="50" value={{groupCode}}></paper-input>
 				<paper-input label="Group Name" maxlength="50" value={{groupName}}></paper-input>
@@ -79,7 +79,7 @@
 				<paper-input label="Proposal Description" maxlength="10000" value={{proposalDescription}}></paper-input>
                 <paper-input label="Group Size" maxlength="50" value={{groupSize}}></paper-input>
 				<paper-input label="Proposal Budget" maxlength="50" value={{proposalBudget}}></paper-input>
-				<paper-input label="Proposal Length (Time)" maxlength="50" value={{proposalLength}}></paper-input>
+				<paper-input label="Proposal Duration" maxlength="50" value={{proposalDuration}}></paper-input>
 
 				<div class="card-actions">
 					<paper-button flat on-tap="submitForm">Submit Form</paper-button>
@@ -99,7 +99,6 @@
 
 				/* PROPERTIES FOR FORMS BELOW */
 				department: String,
-                proposalSubmissionDate: String,
 				proposalId: String,
 				groupCode: String,
 				groupName: String,
@@ -109,7 +108,8 @@
 				proposalTitle: String,
 				proposalDescription: String,
                 proposalBudget: String,
-                proposalDuration: String
+                proposalDuration: String,
+				proposalSubmissionDate: String
 			},
 			ready: function() {
 				this.instanceId = localStorage.getItem("instanceId");
@@ -128,18 +128,22 @@
 						"groupName": this.groupName, "groupSize": this.groupSize, "contactPerson": this.contactPerson,
 						"contactPersonEmail": this.contactPersonEmail, "proposalTitle": this.proposalTitle,
 						"proposalDescription": this.proposalDescription, "proposalBudget": this.proposalBudget,
-						"proposalDuration": this.proposalDuration
+						"proposalDuration": this.proposalDuration, "propsalSubmissionDate": this.proposalSubmissionDate
 					}
 				};
 				this.$.submitFormAjax.generateRequest();
-
 			},
 			handleSubmitFormResponse: function(request) {
-				if (request.details.response.success === true) {
+				console.log(request.detail.response);
+				console.log(this.$.submitFormAjax.lastResponse);
+				//if (request.details.response.success === true) {
+				if(request.success === true) {
 					alert("FORM SAVED!");
+				} else if (request.success === false){
+					alert("ERROR! COULD NOT SAVE FORM!");
 				}
 				else {
-					alert("ERROR! COULD NOT SAVE FORM!");
+					alert("IF YOU READ THIS, YOU HAVE GOT SOME SRS TROUBLE");
 				}
 			}
 		});
