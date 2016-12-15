@@ -1,5 +1,7 @@
 import * as Bluebird from "bluebird";
 import * as mongoose from "mongoose";
+// tslint:disable-next-line:no-var-requires
+let nodemailer = require("nodemailer");
 
 import * as Form from "../models/Form";
 import * as FormData from "../models/FormData";
@@ -9,8 +11,8 @@ import * as User from "../models/User";
 import { InstanceManager } from "../modules/instanceManager";
 import { UserManager } from "../modules/userManager";
 
-// tslint:disable-next-line:no-var-requires
-// let emailConfig = require("../config/email.json");
+// tslint:disable-next-line:max-line-length
+let transporter = nodemailer.createTransport("smtps://aps180%40scarletmail.rutgers.edu:qzcbbhvucayticyj@smtp.gmail.com");
 
 export class PreDefTasks {
 
@@ -93,7 +95,20 @@ export class PreDefTasks {
 	}
 
 	public static jownemail(sendTo: string, message: string) {
-		// TODO: FINISH THIS FUNCTION!!!
-		console.log(emailConfig);
+		// setup e-mail data with unicode symbols
+		let mailOptions = {
+			from: "'J.O.W.N. Instance 007' <arpitshah101@gmail.com>",
+			subject: "Notification from the J.O.W.N. System",
+			text: message,
+			to: sendTo,
+		};
+
+		// send mail with defined transport object
+		transporter.sendMail(mailOptions, (error, info) => {
+			if (error) {
+				return console.error(error);
+			}
+			console.log(`Email sent to ${sendTo} with the following message:\n\t${message}\nResponse: ${info.response}`);
+		});
 	}
 }

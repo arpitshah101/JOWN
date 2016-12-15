@@ -54,12 +54,17 @@ gulp.task("copy-public", function () {
 		.pipe(gulp.dest(basePaths.dest));
 });
 
+gulp.task("copy-config", function () {
+	return gulp.src([basePaths.src + "config/**"], { base: basePaths.src })
+		.pipe(gulp.dest(basePaths.dest));
+});
+
 gulp.task("copy-tests", function () {
 	return gulp.src([basePaths.src + "test/**"], { base: basePaths.src })
 		.pipe(gulp.dest(basePaths.dest));
 });
 
-gulp.task("test", ["copy-tests", "compile-ts"], function () {
+gulp.task("test", ["copy-config", "copy-tests", "compile-ts"], function () {
 	return gulp
 		.src("dest/test/*.js")
 		.pipe(mocha({
@@ -78,7 +83,7 @@ gulp.task("tslint", () => {
 		}));
 });
 
-gulp.task("build:watch", ["clean-dest", "compile-ts"], function() {
+gulp.task("build:watch", ["clean-dest", "compile-ts", "copy-config"], function() {
 	cleanFolder(basePaths.dest + "public");
 	gulp.run("copy-public");
 	gulp.watch("src/public/**", function(event) {
@@ -87,7 +92,7 @@ gulp.task("build:watch", ["clean-dest", "compile-ts"], function() {
 	});
 });
 
-gulp.task("build", ["clean-dest", "compile-ts", "copy-public"]);
+gulp.task("build", ["clean-dest", "compile-ts", "copy-public", "copy-config"]);
 
 gulp.task("default", ["clean-dest", "compile-ts", "copy-tests", "copy-public", "test"], function () {
 

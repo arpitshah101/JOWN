@@ -15,6 +15,7 @@
     "express": "^4.14.0",
     "mocha": "^3.1.2",
     "mongoose": "^4.6.8",
+    "nodemailer": "^2.7.0",
     "xml-parser": "^1.2.1"
   },
   "devDependencies": {

@@ -93,8 +93,6 @@ router.post("/createNewInstance", (req: Request, res: Response, next) => {
 			});
 			next();
 		});
-
-	InstanceManager.createNewInstance(workflowId, creator, role)
 });
 
 function verifyFields(fields: string[], obj: any): string[] {
