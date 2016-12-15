@@ -17,17 +17,43 @@ describe("#UserManager", function () {
 		mongoose.disconnect();
 	});
 
-	var testUser = {
-		created: new Date(Date.now()),
-		password: "abc123",
-		roles: ["Professor"],
-		userEmail: "johnsmith@gmail.com",
-		userId: "123",
-		userName: "JohnSmith",
-	};
+	var testUsers = [
+		{
+			created: new Date(Date.now()),
+			password: "pw",
+			roles: ["Student"],
+			userEmail: "!em@gmail.com",
+			userId: "ui",
+			userName: "un",
+		},
+		{
+			created: new Date(Date.now()),
+			password: "inspw",
+			roles: ["Instructor"],
+			userEmail: "!ins@gmail.com",
+			userId: "ins",
+			userName: "JohnSmith",
+		},
+		{
+			created: new Date(Date.now()),
+			password: "dirpw",
+			roles: ["Director"],
+			userEmail: "!dir@gmail.com",
+			userId: "dir",
+			userName: "JohnnySmith",
+		},
+		{
+			created: new Date(Date.now()),
+			password: "secpw",
+			roles: ["Secretary"],
+			userEmail: "!sec@gmail.com",
+			userId: "sec",
+			userName: "JohnSmithers",
+		},
+		];
 
 	afterEach(function (done) {
-		User.findOne({ userId: testUser.userId }, function (err, result) {
+		User.findOne({ userId: testUsers[0].userId }, function (err, result) {
 			if (result) {
 				User.remove({}, function () {
 					done();
@@ -40,25 +66,28 @@ describe("#UserManager", function () {
 	});
 
 	describe("#createUser", function () {
-		it("successfully creates a user when account doesn't already exist", function (done) {
-			UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles)
-				.then(function (response) {
-					// only passes assert if param is truthy
-					assert(response);
-					done();
-				},
-				function (reject) {
-					assert(false, "This fails for no reason. Check it out!\n" + reject);
-					done();
-				});
+		testUsers.forEach(function (testUser){
+			it("successfully creates a user when account doesn't already exist", function (done) {
+				UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles)
+					.then(function (response) {
+						// only passes assert if param is truthy
+						assert(response);
+						done();
+					},
+					function (reject) {
+						assert(false, "This fails for no reason. Check it out!\n" + reject);
+						done();
+					});
+			});
 		});
 
 		it("#unable to create a user when with existing account", function (done) {
-			UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles)
+			UserManager.createUser(testUsers[0].userName, testUsers[0].userEmail, testUsers[0].userId,
+					testUsers[0].password, testUsers[0].roles)
 				.then(function (response) {
 					assert.equal(response, true);
-					return UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId,
-							testUser.password, testUser.roles);
+					return UserManager.createUser(testUsers[0].userName, testUsers[0].userEmail, testUsers[0].userId,
+							testUsers[0].password, testUsers[0].roles);
 				})
 				.then(function (response) {
 					assert(false, "shouldn't get be getting here...");
@@ -73,9 +102,10 @@ describe("#UserManager", function () {
 
 	describe("#deleteUser", function () {
 		it("#successfully deletes existing user", function (done) {
-			UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles)
+			UserManager.createUser(testUsers[0].userName, testUsers[0].userEmail, testUsers[0].userId,
+					testUsers[0].password, testUsers[0].roles)
 				.then(function (response) {
-					return UserManager.deleteUser(testUser.userId);
+					return UserManager.deleteUser(testUsers[0].userId);
 				})
 				.then(function (response) {
 					assert.equal(response, true);
@@ -87,7 +117,7 @@ describe("#UserManager", function () {
 		});
 
 		it("#unable to delete non-existing user", function (done) {
-			UserManager.deleteUser(testUser.userId)
+			UserManager.deleteUser(testUsers[0].userId)
 				.then(function (response) {
 					assert(false, "Attempts to delete non-existing user and returns success.");
 					done();
@@ -102,7 +132,8 @@ describe("#UserManager", function () {
 	describe("#getNextTenUsers", function () {
 		it("#successfully gets the next 1-10 users", function (done) {
 			// this.timeout(50000);
-			UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles)
+			UserManager.createUser(testUsers[0].userName, testUsers[0].userEmail, testUsers[0].userId,
+					testUsers[0].password, testUsers[0].roles)
 				.then(function (response) {
 					return UserManager.getUserCount();
 				})
@@ -111,8 +142,8 @@ describe("#UserManager", function () {
 				})
 				.then(function (result) {
 					return UserManager.createUser(
-						testUser.userName, "newEmail@gmail.com", "newUserId", "newPassword",
-						testUser.roles, new Date(Date.now() + 5000));
+						testUsers[0].userName, "newEmail@gmail.com", "newUserId", "newPassword",
+						testUsers[0].roles, new Date(Date.now() + 5000));
 				})
 				.then(function (response) {
 					return UserManager.getUserCount();
@@ -121,7 +152,7 @@ describe("#UserManager", function () {
 					assert.equal(userCount, 2);
 				})
 				.then(function (response) {
-					return UserManager.getNextTenUsers(testUser.created);
+					return UserManager.getNextTenUsers(testUsers[0].created);
 				})
 				.then(function (response) {
 					assert.isTrue(Array.isArray(response));
@@ -139,9 +170,10 @@ describe("#UserManager", function () {
 	describe("#modifyUser", function () {
 		it("#successfully modifies an existing user", function (done) {
 			let newRoles = ["newRole1", "newRole2"];
-			UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles)
+			UserManager.createUser(testUsers[0].userName, testUsers[0].userEmail, testUsers[0].userId,
+					testUsers[0].password, testUsers[0].roles)
 				.then(function (response) {
-					return UserManager.modifyUser(testUser.userId, "newEmail@gmail.com", "newPassword", newRoles);
+					return UserManager.modifyUser(testUsers[0].userId, "newEmail@gmail.com", "newPassword", newRoles);
 				})
 				.then(function (response) {
 					assert.deepEqual(response, true);
@@ -155,7 +187,7 @@ describe("#UserManager", function () {
 
 		it("#unable to modify a non-existing account", function (done) {
 			let newRoles = ["newRole1", "newRole2"];
-			UserManager.modifyUser(testUser.userId, "newEmail@gmail.com", "newPassword", newRoles)
+			UserManager.modifyUser(testUsers[0].userId, "newEmail@gmail.com", "newPassword", newRoles)
 				.then(function (response) {
 					assert(false, "Shouldn't be able to update a non-existing account.");
 					done();
@@ -170,8 +202,9 @@ describe("#UserManager", function () {
 
 	describe("#userExists", function () {
 		it("#successfully checks that a user exists", function (done) {
-			UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles)
-				.then(UserManager.userExists(testUser.userId))
+			UserManager.createUser(testUsers[0].userName, testUsers[0].userEmail, testUsers[0].userId,
+				testUsers[0].password, testUsers[0].roles)
+				.then(UserManager.userExists(testUsers[0].userId))
 				.then(function (response) {
 					assert.deepEqual(response, true);
 					done();
@@ -183,13 +216,13 @@ describe("#UserManager", function () {
 		});
 
 		it("#successfully checks that a user does not exist", function (done) {
-			UserManager.userExists(testUser.userId)
+			UserManager.userExists(testUsers[0].userId)
 				.then(function (response) {
 					assert.deepEqual(response, null);
 					done();
 				},
 				function (reject) {
-					assert.deepEqual(reject, testUser);
+					assert.deepEqual(reject, testUsers[0]);
 					done();
 				});
 		});
@@ -205,7 +238,8 @@ describe("#UserManager", function () {
 		});
 
 		it("#returns 1 when exactly 1 user exists", function(done) {
-			UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles)
+			UserManager.createUser(testUsers[0].userName, testUsers[0].userEmail, testUsers[0].userId,
+				testUsers[0].password, testUsers[0].roles)
 				.then(function (response) {
 					return UserManager.getUserCount();
 				})

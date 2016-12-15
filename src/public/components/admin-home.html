@@ -4,13 +4,16 @@
 <link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="/bower_components/paper-button/paper-button.html">
 <link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="/bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="/bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="registration-form.html">
+<link rel="import" href="admin-regis.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../index.html">
 
-<dom-module is="dom-bind" id="instance-page">
+<dom-module is="dom-bind" id="admin-home">
 	<template>
 		<style>	
 		
@@ -26,12 +29,12 @@
 			left:43%;
 		}
 		#item2{
-			position:absolute;
-			left:65%;
+			position:relative;
+			left:1%;
 		}
 		#item3{
 			position:relative;
-			left:15%;
+			left:2%;
 		}
 		#card{
 			width:100%;
@@ -42,14 +45,17 @@
 		}
 		#icone{
 			position:relative;
-			left:75%;
+			left:1%;
 		}
 		#paper-tabs{
-			width:85%;
+			width:95%;
 
 		}
 
 		</style>
+		<paper-dialog id="createUser" modal alwaysOnTop="true">
+		<admin-regis></admin-regis>	
+		</paper-dialog>
 
 	<paper-header-panel class="red">
 		<paper-toolbar>
@@ -57,7 +63,8 @@
 			<paper-tab on-tap="tab1">Manage Workflows</paper-tab>
 			<paper-tab on-tap="tab2">Manage Users</paper-tab>
 		<paper-tabs>
-		<paper-item>Admin</paper-item>
+		<paper-item id="item2">Admin</paper-item>
+		<paper-icon-button id="icone" src="/image/edit.png" on-tap="createUser1"></paper-icon-button>
 		<paper-button id="item3" on-tap="logout">Logout</paper-button>
 		</paper-toolbar>
 	 </paper-header-panel>
@@ -67,6 +74,23 @@
         handle-as="json" 
         last-response="{{items}}">
     </iron-ajax>
+
+	<iron-ajax
+		id="deleteUserAjax"
+		url="/users/deleteUser"
+		method="POST"
+		handle-as="json"
+		content-type="application/json"
+		on-response="handleDeleteUserResponse">
+	</iron-ajax>
+
+
+	<iron-ajax
+		auto url="/users/getAllUsers"
+		handle-as="json"
+		last-response="{{users}}">
+	</iron-ajax>
+
 	<iron-pages id="iron-pages" selected="{{selected}}">
 	<div>
 	<paper-listbox id="mylistbox"class="dropdown-content">
@@ -80,13 +104,24 @@
 	</paper-listbox>
 	</div>
 
-	<div>page2</div>
+	<div>	<div>
+	<paper-listbox id="mylistbox"class="dropdown-content">
+		<template id="userlist" is="dom-repeat" items="{{users.data}}">
+			<paper-card id="card">
+			<paper-item id="instance" value="[[item.id]]" >User Name:[[item.userName]]<br>User Id:[[item.userId]]
+			<paper-icon-button id="icond" value="[[item]]" src="/image/delete.png" on-tap="deleteUser1"></paper-icon-button>
+			</paper-item>
+			
+			</paper-card>
+		</template>
+	</paper-listbox>
+	</div></div>
 
 	</iron-pages>
 	</template>
 	<script>
 	Polymer({
-		is: "instance-page",
+		is: "admin-home",
 
 		properties:{
 			selected:{
@@ -94,6 +129,27 @@
 				value: 0,
 			},
 		},	
+		deleteUser1:function(e){
+			var model = e.model;
+			var id=e.model.item.userId;
+			alert(e.model.item.userId);	
+			if(id=="admin"){
+				alert("Deleting Admin is not allowed");
+				return;
+			}
+			this.$.deleteUserAjax.body={"userObj": {"userId": id}};
+			this.$.deleteUserAjax.generateRequest();
+			this.$.userlist.render();
+		},
+		handleDeleteUserResponse:function(request){
+			alert(request.detail.response.success);	
+			alert(request.detail.response.message);
+			
+		},
+		createUser1:function(){
+			alert("hi");
+			createUser.open();
+		},
 		tab1: function(){
 			selected=0;
 		},
