@@ -69,11 +69,21 @@
     </iron-ajax>
 
 	<iron-ajax
+		id="deleteUserAjax"
+		url="/users/deleteUser"
+		method="POST"
+		handle-as="json"
+		content-type="application/json"
+		on-response="handleDeleteUserResponse">
+	</iron-ajax>
+
+
+	<iron-ajax
 		auto url="/users/getAllUsers"
 		handle-as="json"
 		last-response="{{users}}">
 	</iron-ajax>
-	
+
 	<iron-pages id="iron-pages" selected="{{selected}}">
 	<div>
 	<paper-listbox id="mylistbox"class="dropdown-content">
@@ -91,9 +101,10 @@
 	<paper-listbox id="mylistbox"class="dropdown-content">
 		<template is="dom-repeat" items="{{users.data}}">
 			<paper-card id="card">
-			<paper-item id="instance" value="[[item.id]]" on-tap="naviForm">Workflow:[[item.userName]]</b><br>User Id:[[item.userId]]
+			<paper-item id="instance" value="[[item.id]]" >Workflow:[[item.userName]]<br>User Id:[[item.userId]]
+			<paper-icon-button id="icond" value="[[item]]" src="/image/delete.png" on-tap="deleteUser1"></paper-icon-button>
 			</paper-item>
-			<paper-icon-button id="icond" value="[[item]]" src="/image/delete.png" on-tap="deleteWorkflow"></paper-icon-button>
+			
 			</paper-card>
 		</template>
 	</paper-listbox>
@@ -111,6 +122,17 @@
 				value: 0,
 			},
 		},	
+		deleteUser1:function(e){
+			var model = e.model;
+			var id=e.model.item.userId;
+			alert(e.model.item.userId);	
+			this.$.deleteUserAjax.body={"userObj": {"userId": id}};
+			this.$.deleteUserAjax.generateRequest();
+		},
+		handleDeleteUserResponse:function(request){
+			alert(request.detail.response.success);	
+			alert(request.detail.response.message);
+		},
 		tab1: function(){
 			selected=0;
 		},
