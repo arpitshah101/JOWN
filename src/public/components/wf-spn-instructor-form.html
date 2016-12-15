@@ -46,12 +46,13 @@
 
 		</style>
 
-		<iron-ajax id="getPrevFormAjax"
+		<iron-ajax id="getStudentFormAjax"
 			url="/data/getFormData"
-			method="POST"
+			method="GET"
+			params="studentFormParams"
 			handle-as="json"
 			content-type="application/json"
-			on-response="handlePrevFormResponse">
+			on-response="handleStudentFormResponse">
 		</iron-ajax>
 
 		<paper-header-panel class="red">
@@ -68,7 +69,12 @@
 		<!-- ADD NEW FIELDS AND CHANGE PARAMETERS FOR FORMS BELOW -->
 		<paper-card id="instructor-form" heading="Register New Account">
 			<div class="card-content">
+				<br>
+				<!--Student submitted: <br>
+				First name: {{this.firstName}}<br>
+				Last name: {{this.LastName}}<br>-->
                 <!-- Student -->
+				<!--
 				<paper-input label="First name" maxlength="50" disabled value={{firstName}}></paper-input>
 				<paper-input label="Last name" maxlength="50" disabled value={{lastName}}></paper-input>
 				<paper-input label="Middle initials" maxlength="50" disabled value={{middleInitials}}></paper-input>
@@ -86,6 +92,7 @@
 				<paper-input label="Number of Credits" maxlength="50" disabled value={{numberOfCredits}}></paper-input>
 				<paper-input label="Course Title #" maxlength="50" disabled value={{title}}></paper-input>
 				<paper-input label="Reasons for taking the course:" maxlength="50" disabled value={{reasonsForTakingCourse}}></paper-input>
+				-->
                 <!-- Instructor -->
                 <paper-input label="Approved by Instructor" maxlength="50" value={{instructorApproval}}></paper-input>
                 <paper-input label="Approval date" maxlength="50" value={{instructorApprovalDate}}></paper-input>
@@ -106,6 +113,8 @@
 				userId: String,
 				instanceId: String,
 				formAlias: String,
+				studentFormAlias: String,
+				studentFormParams: {},
 
 				/* PROPERTIES FOR FORMS BELOW */
 				/* Student form */
@@ -128,7 +137,7 @@
 				reasonsForTakingCourse: String,
 				/* Instructor form */
                 instructorApproval: String,
-                instructorName: {
+                instructorSignature: {
                     type: String,
                     // needs to be changed to username
                     value: function() {return localStorage.getItem("userId");}
@@ -137,8 +146,10 @@
 			},
 			ready: function() {
 				this.instanceId = localStorage.getItem("instanceId");
-				this.formAlias = "instructorForm";
-				this.$.getPrevFormAjax.body = {"instanceId": this.instanceId, "formAlias": this.formAlias};
+				this.formAlias = "instructorForm"
+				this.studentFormAlias = "studentForm";
+				this.studentFormParams = {"instanceId": this.instanceId, "formAlias": this.studentFormAlias};
+				this.$.getStudentFormAjax.generateRequest();
 			},
 			logout: function() {
 				alert("logging out " + this.username);
@@ -147,12 +158,19 @@
 			},
 			submitForm: function() {
 				alert("Submitting form");
+				this.$.submitFormAjax.body = {"instanceId": this.instanceId, "formAlias": this.formAlias, "data":
+					{
+						"instructorApproval": this.instructorApproval, "instructorSignature": this.instructorSignature,
+						"instructorApprovalDate": this.instructorApprovalDate
+					}
+				};
+				this.$.submitFormAjax.generateRequest();
 			},
-			handlePrevFormResponse: function(request) {
+			handleStudentFormResponse: function(request) {
 				console.log(request.detail.response);
-				console.log(this.$.getPrevFormAjax.lastResponse);
+				console.log(this.$.getStudentFormAjax.lastResponse);
 				if(request.detail.response.success === true) {
-
+					
 				}
 				else {
 					modal.open();

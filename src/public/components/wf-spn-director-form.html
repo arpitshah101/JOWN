@@ -46,12 +46,22 @@
 
 		</style>
 
-		<iron-ajax id="getPrevFormAjax"
-			url="/users/verifyUser"
-			method="POST"
+		<iron-ajax id="getStudentFormAjax"
+			url="/data/getFormData"
+			method="GET"
+			params="studentFormParams"
 			handle-as="json"
 			content-type="application/json"
-			on-response="handlePrevFormResponse">
+			on-response="handlestudentFormResponse">
+		</iron-ajax>
+
+		<iron-ajax id="getInstructorFormAjax"
+			url="/data/getFormData"
+			method="GET"
+			params="instructorFormParams"
+			handle-as="json"
+			content-type="application/json"
+			on-response="handleInstructorFormResponse">
 		</iron-ajax>
 
 		<paper-header-panel class="red">
@@ -107,8 +117,13 @@
 		Polymer({
 		is: "workflow-spn-director-form",
 			properties: {
+				userId: String,
 				instanceId: String,
 				formAlias: String,
+				studentFormAlias: String,
+				studentFormParams: {},
+				instructorFormAlias: String,
+				instructorFormParams: {},
 
 				/* PROPERTIES FOR FORMS BELOW */
 				/* Student form */
@@ -135,13 +150,22 @@
                 instructorApprovalDate: String,
 				/* Director form */
                 directorApproval: String,
-                directorName: {
+                directorSignature: {
                     type: String,
                     // Needs to be changed to username
                     value: function() {return localStorage.getItem("userId");}
                 },
                 directorApprovalDate: String,
-                spn: String
+			},
+			ready: function() {
+				this.instanceId = localStorage.getItem("instanceId");
+				this.formAlias = "instructorForm"
+				this.studentFormAlias = "studentForm";
+				this.studentFormParams = {"instanceId": this.instanceId, "formAlias": this.studentFormAlias};
+				this.$.getStudentFormAjax.generateRequest();
+				this.instructorFormAlias = "instructorForm";
+				this.instructorFormPamas = {"instanceId": this.instanceId, "formAlias": this.instructorFormAlias}
+				this.$.getInstructorFormAjax
 			},
 			logout: function() {
 				alert("logging out " + this.username);
@@ -150,6 +174,26 @@
 			},
 			submitForm: function() {
 				alert("Submitting form");
+			},
+			handleStudentFormResponse: function(request) {
+				console.log(request.detail.response);
+				console.log(this.$.getStudentFormAjax.lastResponse);
+				if(request.detail.response.success === true) {
+					
+				}
+				else {
+					modal.open();
+				}
+			},
+			handleInstructorFormResponse: function(request) {
+				console.log(request.detail.response);
+				console.log(this.$.getInstructorFormAjax.lastResponse);
+				if(request.detail.response.success === true) {
+					
+				}
+				else {
+					modal.open();
+				}
 			}
 		});
 
