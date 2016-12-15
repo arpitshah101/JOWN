@@ -10,7 +10,7 @@ import { InstanceManager } from "../modules/instanceManager";
 import { UserManager } from "../modules/userManager";
 
 // tslint:disable-next-line:no-var-requires
-let emailConfig = require("../config/email.json");
+// let emailConfig = require("../config/email.json");
 
 export class PreDefTasks {
 

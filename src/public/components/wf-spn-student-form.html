@@ -1,4 +1,5 @@
 <link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="/bower_components/paper-item/paper-item.html">
 <link rel="import" href="/bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
@@ -129,7 +130,9 @@
 				reasonsForTakingCourse: String
 			},
 			ready: function() {
-				this.instanceId = localStorage.getItem("instanceId");
+				// FOR TESTING
+				this.instanceId = "123456789012";
+				// this.instanceId = localStorage.getItem("instanceId");
 				this.formAlias = "studentForm";
 			},
 			logout: function() {
@@ -150,11 +153,14 @@
 						"indexNumber": this.indexNumber, "numberOfCredits": this.numberOfCretis,
 						"courseTitle": this.courseTitle, "reasonsForTakingCourse": this.reasonForTakingCourse
 					}
-				};
+			}	;
 				this.$.submitFormAjax.generateRequest();
 			},
 			handleSubmitFormResponse: function(request) {
-				if (request.details.response.success === true) {
+				console.log(request.detail.response);
+				console.log(this.$.submitFormAjax.lastResponse);
+				//if (request.details.response.success === true) {
+				if(request.success === true) {
 					alert("FORM SAVED!");
 				}
 				else {
