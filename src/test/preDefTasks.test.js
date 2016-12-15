@@ -1,6 +1,6 @@
 var assert = require("chai").assert;
 
-var preDefTasks = require("../modules/preDefTasks");
+var PreDefTasks = require("../modules/preDefTasks").PreDefTasks;
 
 describe("PreDefTasks", function () {
 
@@ -15,7 +15,7 @@ describe("PreDefTasks", function () {
 
 		tests.forEach(function (test) {
 			it("correctly prints the arg array: " + test.arg, function () {
-				var res = preDefTasks.PreDefTasks.prototype.jownprint(test.arg);
+				var res = PreDefTasks.jownprint(test.arg);
 				assert.deepEqual(res, test.expected);
 			});
 		});

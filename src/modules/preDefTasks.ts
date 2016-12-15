@@ -44,7 +44,7 @@ export class PreDefTasks {
 
 		return new Bluebird<boolean>((resolve, reject) => {
 			// search for instance
-			InstanceManager.getInstance({_id: instanceId})
+			InstanceManager.getInstance({ _id: instanceId })
 				.then((instanceDoc: Instance.IDocument): void => {
 					// verify instance exists given instanceId
 					if (!instanceDoc) {
@@ -57,7 +57,7 @@ export class PreDefTasks {
 				})
 				.then((): Bluebird<FormData.IDocument> => {
 					// get form data
-					return FormData.model.findOne({instanceId, alias: formAlias}).exec();
+					return FormData.model.findOne({ instanceId, alias: formAlias }).exec();
 				})
 				.then((formDataDoc: FormData.IDocument) => {
 					// verify form exists
@@ -68,7 +68,7 @@ export class PreDefTasks {
 						formData = formDataDoc;
 					}
 				})
-				.then((): Bluebird<User.IDocument> => UserManager.getUser({userId, roles: role}))
+				.then((): Bluebird<User.IDocument> => UserManager.getUser({ userId, roles: role }))
 				.then((userDoc: User.IDocument): Bluebird<Instance.IDocument> => {
 					if (!userDoc) {
 						reject(`No user found with the given userId: ${userId}`);
@@ -82,7 +82,8 @@ export class PreDefTasks {
 					formData.assignedTo = user._id;
 				})
 				.then(() => {
-					this.email(user.userEmail, `You've been assigned a new form on your ${role} account. Please check the system.`);
+					this.jownemail(user.userEmail, `You've been assigned a 
+						new form on your ${role} account. Please check the system.`);
 				})
 				.catch((reason) => {
 					console.error(reason);
@@ -91,7 +92,7 @@ export class PreDefTasks {
 		});
 	}
 
-	public static email(sendTo: string, message: string) {
+	public static jownemail(sendTo: string, message: string) {
 		// TODO: FINISH THIS FUNCTION!!!
 		console.log(emailConfig);
 	}
