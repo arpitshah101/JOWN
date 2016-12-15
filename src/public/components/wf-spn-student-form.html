@@ -51,6 +51,14 @@
 
 		</style>
 
+		<iron-ajax auto
+			url="/users/getUsersWithRole"
+			handle-as="json"
+			params="Instructor"
+			debounce-duration="300"
+			last-response="{{instructors}}">
+		</iron-ajax>
+
 		<iron-ajax id="getStudentFormAjax"
 			url="/data/getFormData"
 			method="GET"
@@ -119,6 +127,13 @@
 				<paper-input id="numberOfCreditsInput" label="Number of Credits" maxlength="50" value={{numberOfCredits}}></paper-input>
 				<paper-input id="courseTitleInput" label="Course Title #" maxlength="50" value={{courseTitle}}></paper-input>
 				<paper-input id="reasonsForTakingCourseInput" label="Reasons for taking the course:" maxlength="50" value={{reasonsForTakingCourse}}></paper-input>
+				<paper-dropdown-menu id="instructorUserIdInput" class="dropdownmenu" label="Instructor" value="{{instructorUserId}}">
+					<paper-listbox class="dropdown-content">
+						<template is="dom-repeat" items="[[instructors]]">
+							<paper-item class="items">{{item.userId}}</paper-item>
+						</template>
+					</paper-listbox>
+				</paper-dropdown-menu>
                 <!--  Instructor -->
                 <paper-input id="instructorApprovalInput" label="Approved by Instructor" maxlength="50" value={{instructorApproval}}></paper-input>
                 <paper-input id="instructorApprovalDateInput" label="Approval Date" maxlength="50" value={{instructorApprovalDate}}></paper-input>
@@ -127,6 +142,7 @@
                 <paper-input id="directorApprovalDateInput" label="Approval Date" maxlength="50" value={{directorApprovalDate}}></paper-input>
                 <!-- Secretary -->
                 <paper-input id="spnInput" label="Special Permission #" maxlength="50" value={{spn}}></paper-input>
+
 
 				<div class="card-actions">
 					<paper-button id="submitFormButton" flat on-tap="submitForm">Submit Form</paper-button>
@@ -183,6 +199,7 @@
 				numberOfCredits: String,
 				courseTitle: String,
 				reasonsForTakingCourse: String,
+				instructorUserId: String,
 				/* Instructor form */
                 instructorApproval: String,
                 instructorSignature: String,
@@ -224,7 +241,8 @@
 						"schoolNumber": this.schoolNumber, "subjectNumber": this.subjectNumber,
 						"courseNumber": this.courseNumber, "sectionNumber": this.sectionNumber,
 						"indexNumber": this.indexNumber, "numberOfCredits": this.numberOfCretis,
-						"courseTitle": this.courseTitle, "reasonsForTakingCourse": this.reasonForTakingCourse
+						"courseTitle": this.courseTitle, "reasonsForTakingCourse": this.reasonForTakingCourse,
+						"instructorUserId": this.instructorUserId
 					}
 				};
 				this.$.submitFormAjax.generateRequest();
@@ -266,6 +284,7 @@
                         this.numberOfCredits = request.formData.data.numberOfCredits;
                         this.courseTitle = request.formData.data.courseTitle;
                         this.reasonsForTakingCourse = request.formData.data.reasonsForTakingCourse;
+						this.instructorUserId = request.formData.data.reasonForTakingCourse;
                         /* Disables fields pertaining to loaded form*/
                         this.$.firstNameInput.disabled = "true";
                         this.$.lastNameInput.disabled = "true";
@@ -284,6 +303,7 @@
                         this.$.numberOfCreditsInput.disabled = "true";
                         this.$.courseTitleInput.disabled = "true";
                         this.$.reasonsForTakingInput.disabled = "true";
+						this.$.instructorUserId.disabled = "true";
                         /* Disables submit button if current user has submitted already */
                         if (request.formData.formAlias === this.formAlias) {
                             this.$.submitFormButton.disabled = "true";
