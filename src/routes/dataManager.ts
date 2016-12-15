@@ -8,10 +8,10 @@ import { DataManager } from "../modules/dataManager";
 let router = Router();
 
 router.get("/getFormData", (req: Request, res: Response, next: Function) => {
-	let instanceId: mongoose.Types.ObjectId = mongoose.Types.ObjectId(req.params("instanceId"));
-	let formAlias: string = req.params.formAlias;
+	let instanceId: mongoose.Types.ObjectId = mongoose.Types.ObjectId(req.query("instanceId"));
+	let formAlias: string = req.query.formAlias;
 
-	if (!req.params.instanceId || !req.params.formAlias) {
+	if (!req.query.instanceId || !req.query.formAlias) {
 		res.json({
 			message: "Insufficient information provided.",
 			success: false,
@@ -71,7 +71,7 @@ router.post("/saveFormData", (req: Request, res: Response, next: Function) => {
 });
 
 router.get("/getInstanceData", (req: Request, res: Response, next: Function) => {
-	let instanceIdStr: string = req.params.instanceId;
+	let instanceIdStr: string = req.query.instanceId;
 	if (!instanceIdStr) {
 		res.json({
 			message: "Insufficient information provided.",
@@ -81,7 +81,7 @@ router.get("/getInstanceData", (req: Request, res: Response, next: Function) => 
 		return;
 	}
 
-	let instanceId: mongoose.Types.ObjectId = mongoose.Types.ObjectId(req.params.instanceId);
+	let instanceId: mongoose.Types.ObjectId = mongoose.Types.ObjectId(req.query.instanceId);
 
 	DataManager.getInstanceData(instanceId)
 		.then((instanceDoc: Instance.IDocument) => {
