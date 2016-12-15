@@ -134,16 +134,18 @@
 				this.$.submitFormAjax.generateRequest();
 			},
 			handleSubmitFormResponse: function(request) {
+				console.log(request);
 				console.log(request.detail.response);
 				console.log(this.$.submitFormAjax.lastResponse);
-				//if (request.details.response.success === true) {
-				if(request.success === true) {
-					alert("FORM SAVED!");
+				if( request === undefined) {
+					alert("REQUEST UNDEFINED")
+				} else if(request.success === true) {
+					alert("FORM SAVED");
 				} else if (request.success === false){
-					alert("ERROR! COULD NOT SAVE FORM!");
+					alert("ERROR! COULD NOT SAVE FORM");
 				}
 				else {
-					alert("IF YOU READ THIS, YOU HAVE GOT SOME SRS TROUBLE");
+					alert("IF YOU READ THIS, YOU HAVE GOT SOME KIND OF TROUBLE");
 				}
 			}
 		});
