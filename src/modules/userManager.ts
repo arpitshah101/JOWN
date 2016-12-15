@@ -100,7 +100,7 @@ export class UserManager {
 	 */
 	public static deleteUser(userId: String): Bluebird<boolean> {
 		return new Bluebird<boolean>((resolve, reject) => {
-			User.model.findOneAndRemove(userId).exec()
+			User.model.findOneAndRemove({userId}).exec()
 				.then((doc: User.IDocument) => {
 					if (doc) {
 						resolve(true);
