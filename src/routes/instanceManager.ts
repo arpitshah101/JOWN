@@ -40,7 +40,7 @@ router.get("/getInstances", (req: Request, res: Response, next) => {
 router.get("/getWorkflows", (req: Request, res: Response, next) => {
 	let role = req.query.role;
 
-	if (role === "" || typeof(role) === "string") {
+	if (role === "" || typeof(role) !== "string") {
 		return [];
 	}
 
