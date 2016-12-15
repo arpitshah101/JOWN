@@ -176,6 +176,26 @@ export class UserManager {
 		});
 	}
 
+	public static getAllUsers(): Bluebird<User.IUser[]> {
+		return new Bluebird<User.IUser[]>((resolve, reject) => {
+			User.model
+				.find({})
+				.sort("userId")
+				.exec()
+				.then((response) => {
+					if (response) {
+						resolve(response);
+					}
+					else {
+						resolve([]);
+					}
+				})
+				.catch((reason) => {
+					reject(reason);
+				});
+		});
+	}
+
 	/**
 	 * Returns a list of the next ten users created after the provided Date/Time
 	 *

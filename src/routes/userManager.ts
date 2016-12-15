@@ -132,21 +132,43 @@ router.post("/deleteUser", (req: Request, res: Response, next) => {
 		});
 });
 
+router.get("/getAllUsers", (req: Request, res: Response, next) => {
+	UserManager.getAllUsers()
+		.then( (response) => {
+			if (response) {
+				res.json({success: true, data: response});
+			}
+			else {
+				res.json({success: false, data: []});
+			}
+		})
+		.catch((reason) => {
+			console.log(reason);
+			res.json({success: false, message: "Could not get all users!"});
+		})
+		.then(() => {
+			next();
+		});
+});
+
 function getNextTenUsers(req: Request, rep: Response, next) {
 	let created = req.params("created");
 
-	let result = UserManager.getNextTenUsers(created);
-
-	result.then( (response) => {
-		if (response !== null) {
-			console.log("Successfully got the next 1-10 users!");
-		}
-		else {
-			console.log("Could not get the next 1-10 users!");
-		}
-	})
-	.then(next);
-
+	UserManager.getNextTenUsers(created)
+		.then( (response) => {
+			if (response) {
+				console.log("Successfully got the next 1-10 users!");
+			}
+			else {
+				console.log("Could not get the next 1-10 users!");
+			}
+		})
+		.catch((reason) => {
+			console.log(reason);
+		})
+		.then(() => {
+			next();
+		});
 }
 
 router.get("/getUserCount", (req: Request, res: Response, next) => {
