@@ -5,7 +5,7 @@ import { PreDefTasks } from "./preDefTasks";
 
 export class TaskRunner {
 
-	public run(command: string) {
+	public static run(command: string): Bluebird<any> {
 		let cmd: string[] = this.tokenizeCommand(command);
 		let cmdName: string = cmd[0];
 		let args: string[] = cmd.slice(1);
@@ -25,14 +25,14 @@ export class TaskRunner {
 	/**
 	 * Tokenizes commands into an ordered array of strings.
 	 */
-	public tokenizeCommand(command: string): string[] {
+	public static tokenizeCommand(command: string): string[] {
 		return command.match(/("(.*?)")|('(.*?)')|([^\s]+)/g);
 	}
 
 	/**
 	 * Checks if command is a function name in PreDefTasks class
 	 */
-	public checkIfPreDef(command: string): boolean {
-		return PreDefTasks.prototype[command] !== undefined;
+	public static checkIfPreDef(command: string): boolean {
+		return PreDefTasks[command] !== undefined;
 	}
 }
