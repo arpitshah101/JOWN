@@ -223,6 +223,20 @@ export class UserManager {
 		});
 	}
 
+	/**
+	 * Wrapper function to retrieve any given user based on provided query object
+	 * ** purely for object oriented design **
+	 * 
+	 * @static
+	 * @param {any} queryObj
+	 * @returns {Bluebird<User.IDocument>}
+	 * 
+	 * @memberOf UserManager
+	 */
+	public static getUser(queryObj): Bluebird<User.IDocument> {
+		return User.model.findOne(queryObj).exec();
+	}
+
 	private static addNewGroups(groups: string[], userDocId: mongoose.Types.ObjectId): Array<Bluebird<Group.IDocument>> {
 		let newGroups: Array<Bluebird<Group.IDocument>> = [];
 		groups.forEach((value: string) => {
