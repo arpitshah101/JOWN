@@ -3,9 +3,9 @@
 	<workflow name="SPN Workflow">
 		<groups>
 			<group>Student</group>
-			<group>Professor</group>
-			<group>DCS Grad Secretary</group>
-			<group>Graduate School Dean</group>
+			<group>Instructor</group>
+			<group>Secretary</group>
+			<group>Director</group>
 		</groups>
 		<form name="Student SPN Request Form" alias="studentForm" fileName="wf-spn-student-form.html">
 			<entity>
@@ -59,20 +59,20 @@
 				<type>String</type>
 			</entity>
 			<entity>
-				<key>profEmail</key>
-				<label>Email of Rutgers Graduate Course Professor</label>
+				<key>instructorEmail</key>
+				<label>Email of Rutgers Graduate Course Instructor</label>
 				<type>String</type>
 			</entity>
 		</form>
-		<form name="Graduate Professor Form" alias="instructorForm" fileName="wf-spn-instructor-form.html">
+		<form name="Instructor Form" alias="instructorForm" fileName="wf-spn-instructor-form.html">
 			<entity>
-				<key>isApproved</key>
+				<key>instructorApproval</key>
 				<label>Recommend Approval?</label>
 				<type>boolean</type>
 			</entity>
 			<entity>
 				<key>signature</key>
-				<label>Professor's Name</label>
+				<label>Instructor's Name</label>
 				<type>String</type>
 			</entity>
 			<entity>
@@ -81,16 +81,16 @@
 				<type>Date</type>
 			</entity>
 		</form>
-		<form name="DCS Graduate Secretary Form" alias="secretaryForm" fileName="wf-spn-secretary-form.html">
+		<form name="Secretary Form" alias="secretaryForm" fileName="wf-spn-secretary-form.html">
 			<entity>
 				<key>spn</key>
 				<label>SPN #</label>
 				<type>String</type>
 			</entity>
 		</form>
-		<form name="Graduate School Form" alias="directorForm" fileName="wf-spn-director-form.html">
+		<form name="Director Form" alias="directorForm" fileName="wf-spn-director-form.html">
 			<entity>
-				<key>isApproved</key>
+				<key>directorApproval</key>
 				<label>Approved?</label>
 				<type>boolean</type>
 			</entity>
@@ -132,7 +132,7 @@
 		<state id="1.REVIEW_FORM">
 		<!-- When student form is submitted -->
 			<condition>studentForm._$.status == "submitted"</condition>
-			<action>assign form instructorForm to studentForm.profEmail</action>
+			<action>assign form instructorForm to studentForm.instructorEmail</action>
 			<!-- When intructor form is submitted -->
 			<condition>instructorForm._$.status == "submitted"</condition>
 			<transitions>
