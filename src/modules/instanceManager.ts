@@ -207,7 +207,6 @@ export class InstanceManager {
 	public static processEvents(instanceId: mongoose.Types.ObjectId): void {
 		this.getInstance({_id: instanceId})
 			.then((instance: Instance.IDocument) => {
-				console.log(instance.events);
 				return Bluebird.all(
 					instance.events.map(
 						(eventId: mongoose.Types.ObjectId) => Event.model.findById(eventId),
@@ -328,7 +327,6 @@ export class InstanceManager {
 				});
 			})
 			.then((states: State.IDocument[]) => {
-				console.log(states);
 				for (let state of states) {
 					if (state && instanceDoc.activeStates.indexOf(state._id) < 0) {
 						instanceDoc.activeStates.push(state._id);
@@ -337,24 +335,6 @@ export class InstanceManager {
 			})
 			.then(() => {
 				instanceDoc.save();
-			});
-
-
-				// return Bluebird.reduce(transitions, (total: State.IDocument[], current: Event.ITransition) => {
-				// 	return ConditionParser.prototype.parseAndEvaluate(current.condition, instanceId.toString())
-				// 		.then((value: boolean) => {
-				// 			if (value) {
-				// 				State.model.findOne({ name: current.dest, workflowId: instance.workflowId }).exec()
-				// 					.then((state: State.IDocument) => {
-				// 						total.push(state);
-				// 						return total;
-				// 					});
-				// 			}
-				// 			else {
-				// 				return total;
-				// 			}
-				// 		});
-				// }, [])
 			});
 	}
 }

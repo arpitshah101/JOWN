@@ -88,7 +88,6 @@ router.post("/createNewInstance", (req: Request, res: Response, next) => {
 					success: false,
 				});
 				next();
-				return;
 			}
 			else {
 				return user._id;
@@ -113,13 +112,14 @@ router.post("/createNewInstance", (req: Request, res: Response, next) => {
 					success: false,
 				});
 			}
-			next();
 		})
 		.catch((reason) => {
 			res.json({
 				message: `An error occurred. Please try again.`,
 				success: false,
 			});
+		})
+		.then(() => {
 			next();
 		});
 });

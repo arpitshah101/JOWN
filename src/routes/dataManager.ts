@@ -8,7 +8,7 @@ import { DataManager } from "../modules/dataManager";
 let router = Router();
 
 router.get("/getFormData", (req: Request, res: Response, next: Function) => {
-	let instanceId: mongoose.Types.ObjectId = mongoose.Types.ObjectId(req.query("instanceId"));
+	let instanceId: mongoose.Types.ObjectId = mongoose.Types.ObjectId(req.query.instanceId);
 	let formAlias: string = req.query.formAlias;
 
 	if (!req.query.instanceId || !req.query.formAlias) {

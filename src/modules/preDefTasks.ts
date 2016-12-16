@@ -84,8 +84,7 @@ export class PreDefTasks {
 					formData.assignedTo = user._id;
 				})
 				.then(() => {
-					this.email(user.userEmail, `You've been assigned a 
-						new form on your ${role} account. Please check the system.`);
+					this.email(user.userEmail, `You've been assigned a new form on your ${role} account. Please check the system.`);
 				})
 				.catch((reason) => {
 					console.error(reason);
