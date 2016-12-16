@@ -215,8 +215,7 @@
 			},
 			deleteInstance: function(e){
 				var model=e.model;
-				alert(model.item._id);
-				this.$.deleteInstanceAjax.body={"instance" : model.item};
+				this.$.deleteInstanceAjax.body={"instance" : model.item._id};
 				this.$.deleteInstanceAjax.generateRequest();
 			},
 			handleDeleteInstanceResponse(request){
