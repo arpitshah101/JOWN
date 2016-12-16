@@ -117,24 +117,24 @@
 			<div class="card-content">
                 <!-- Student -->
 				<b>Student form below</b>
-				<paper-input id="firstNameInput" label="First name" maxlength="50" value={{firstName}}></paper-input>
-				<paper-input id="lastNameInput" label="Last name" maxlength="50" value={{lastName}}></paper-input>
-				<paper-input id="middleInitialsInput" label="Middle initials" maxlength="50" value={{middleInitials}}></paper-input>
-				<paper-input id="ruidInput" label="RUID" maxlength="50" value={{ruid}}></paper-input>
-				<paper-input id="officialRutgersEmailInput" label="Official Rutgers Email" maxlength="50" value={{officialRutgersEmail}}></paper-input>
-				<paper-input id="declaredGraduationDateInput" label="Declared Graduation Date" maxlength="50" value={{declaredGraduationDate}}></paper-input>
-				<paper-input id="cumulativeGpaInput" label="Cumulative GPA" maxlength="50" value={{cumulativeGpa}}></paper-input>
-				<paper-input id="honorsSchoolInput" label="Member of the Honors Program?" maxlength="50" value={{honorsSchool}}></paper-input>
-				<paper-input id="semesterAndYearInput" label="Semester and Year" maxlength="50" value={{semesterAndYear}}></paper-input>
-				<paper-input id="schoolNumberInput" label="School #" maxlength="50" value={{schoolNumber}}></paper-input>
-				<paper-input id="subjectNumberInput" label="Subject #" maxlength="50" value={{subjectNumber}}></paper-input>
-				<paper-input id="courseNumberInput" label="Course #" maxlength="50" value={{courseNumber}}></paper-input>
-				<paper-input id="sectionNumberInput" label="Section #" maxlength="50" value={{sectionNumber}}></paper-input>
-				<paper-input id="indexNumberInput" label="Index #" maxlength="50" value={{indexNumber}}></paper-input>
-				<paper-input id="numberOfCreditsInput" label="Number of Credits" maxlength="50" value={{numberOfCredits}}></paper-input>
-				<paper-input id="courseTitleInput" label="Course Title #" maxlength="50" value={{courseTitle}}></paper-input>
-				<paper-input id="reasonsForTakingCourseInput" label="Reasons for taking the course:" maxlength="50" value={{reasonsForTakingCourse}}></paper-input>
-				<paper-dropdown-menu id="instructorUserIdInput" class="dropdownmenu" label="Instructor" value="{{instructorUserId}}">
+				<paper-input id="firstNameInput" disabled="true" label="First name" maxlength="50" value={{firstName}}></paper-input>
+				<paper-input id="lastNameInput" disabled="true" label="Last name" maxlength="50" value={{lastName}}></paper-input>
+				<paper-input id="middleInitialsInput" disabled="true" label="Middle initials" maxlength="50" value={{middleInitials}}></paper-input>
+				<paper-input id="ruidInput" disabled="true" label="RUID" maxlength="50" value={{ruid}}></paper-input>
+				<paper-input id="officialRutgersEmailInput" disabled="true" label="Official Rutgers Email" maxlength="50" value={{officialRutgersEmail}}></paper-input>
+				<paper-input id="declaredGraduationDateInput" disabled="true" label="Declared Graduation Date" maxlength="50" value={{declaredGraduationDate}}></paper-input>
+				<paper-input id="cumulativeGpaInput" disabled="true" label="Cumulative GPA" maxlength="50" value={{cumulativeGpa}}></paper-input>
+				<paper-input id="honorsSchoolInput" disabled="true" label="Member of the Honors Program?" maxlength="50" value={{honorsSchool}}></paper-input>
+				<paper-input id="semesterAndYearInput" disabled="true" label="Semester and Year" maxlength="50" value={{semesterAndYear}}></paper-input>
+				<paper-input id="schoolNumberInput" disabled="true" label="School #" maxlength="50" value={{schoolNumber}}></paper-input>
+				<paper-input id="subjectNumberInput" disabled="true" label="Subject #" maxlength="50" value={{subjectNumber}}></paper-input>
+				<paper-input id="courseNumberInput" disabled="true" label="Course #" maxlength="50" value={{courseNumber}}></paper-input>
+				<paper-input id="sectionNumberInput" disabled="true" label="Section #" maxlength="50" value={{sectionNumber}}></paper-input>
+				<paper-input id="indexNumberInput" disabled="true" label="Index #" maxlength="50" value={{indexNumber}}></paper-input>
+				<paper-input id="numberOfCreditsInput" disabled="true" label="Number of Credits" maxlength="50" value={{numberOfCredits}}></paper-input>
+				<paper-input id="courseTitleInput" disabled="true" label="Course Title #" maxlength="50" value={{courseTitle}}></paper-input>
+				<paper-input id="reasonsForTakingCourseInput" disabled="true" label="Reasons for taking the course:" maxlength="50" value={{reasonsForTakingCourse}}></paper-input>
+				<paper-dropdown-menu id="instructorUserIdInput" disabled="true" class="dropdownmenu" label="Instructor" value="{{instructorUserId}}">
 					<paper-listbox class="dropdown-content">
 						<template is="dom-repeat" items="[[instructors]]">
 							<paper-item class="items">{{item.userId}}</paper-item>
@@ -147,11 +147,11 @@
                 <paper-input id="instructorApprovalDateInput" label="Approval Date" maxlength="50" value={{instructorApprovalDate}}></paper-input>
                 <!-- Director -->
 				<b>Student form below</b>
-                <paper-input id="directorApprovalInput" label="Approved by Director" maxlength="50" value={{directorApproval}}></paper-input>
-                <paper-input id="directorApprovalDateInput" label="Approval Date" maxlength="50" value={{directorApprovalDate}}></paper-input>
+                <paper-input id="directorApprovalInput" disabled="true" label="Approved by Director" maxlength="50" value={{directorApproval}}></paper-input>
+                <paper-input id="directorApprovalDateInput" disabled="true" label="Approval Date" maxlength="50" value={{directorApprovalDate}}></paper-input>
                 <!-- Secretary -->
 				<b>Secretary form below</b>
-                <paper-input id="spnInput" label="Special Permission #" maxlength="50" value={{spn}}></paper-input>
+                <paper-input id="spnInput" disabled="true" label="Special Permission #" maxlength="50" value={{spn}}></paper-input>
 
 				<div class="card-actions">
 					<paper-button id="submitFormButton" flat on-tap="submitForm">Submit Form</paper-button>
@@ -251,6 +251,7 @@
 						}
 					};
 					this.$.submitFormAjax.generateRequest();
+					location.href="home.html";
 				}
 				else {
 					alert("Instructor approval needs to be true or false");

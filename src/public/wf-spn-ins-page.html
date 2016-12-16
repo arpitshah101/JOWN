@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>J O W N</title>
+    <link rel="import" href="/bower_components/polymer/polymer.html">
+    <link rel="import" href="/bower_components/iron-flex-layout/iron-flex-layout.html">
+    <link rel="import" href="/bower_components/paper-header-panel/paper-header-panel.html">
+    <link rel="import" href="./colors.html">
+    <link rel="import" href="./shadows.html">
+    <link rel="import" href="./components/wf-spn-instructor-form.html">
+
+    <style>
+    body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--paper-grey-100);
+            overflow: scroll;
+        }
+        
+        .paper-header {
+            height: 60px;
+            font-size: 16px;
+            line-height: 60px;
+            padding: 0 10px;
+            color: white;
+            transition: height 0.2s;
+        }
+        
+        .blue .paper-header {
+            background-color: var(--paper-light-blue-500);
+        }
+        
+        .red .paper-header {
+            background-color: var(--paper-red-500);
+        }
+        
+        .orange .paper-header {
+            background-color: var(--paper-amber-500);
+        }
+        
+        .green .paper-header {
+            background-color: var(--paper-green-500);
+        }
+        
+        .cyan .paper-header {
+            background-color: var(--paper-cyan-500);
+        }
+        
+        paper-card#registration-form {
+            margin: 0 auto;
+            margin-top: 10%;
+            display: table;
+            min-width: 500px;
+        }
+        
+        paper-card#registration-form::content .title-text {
+            text-align: center;
+        }
+
+        paper-card#registration-form .card-actions {
+            text-align: right;
+        }
+
+        registration-form {
+            margin: 0 auto;
+            display: table;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+
+<body>
+    <workflow-spn-instructor-form></workflow-spn-instructor-form>
+</body>
+
+</html>
