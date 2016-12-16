@@ -272,6 +272,9 @@ export class ConditionParser {
 					console.log("1. in promise: expressionArray: " + expressionArray);
 					console.log("2. in promise: expressionArray[0]: " + expressionArray[0]);
 					// if (expressionArray.indexOf("_$") === -1) {
+
+					console.log(`\n\texpressionArray: ${expressionArray}\n`);
+
 					if (expressionArray[1] !== "_$") {
 						console.log("3. indexOf(_$) === -1, before fieldValue: " + fieldValue);
 						// tslint:disable-next-line:no-eval

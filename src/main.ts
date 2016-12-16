@@ -60,6 +60,6 @@ function checkActiveInstances() {
 }
 
 app.listen(3000, () => {
-	setInterval(checkActiveInstances, 1500);
+	setInterval(checkActiveInstances, 4000);
 	console.log("Application running on port 3000");
 });
