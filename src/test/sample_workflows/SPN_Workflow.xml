@@ -179,7 +179,7 @@
 
 		<state id="2.SAVE_REQUEST_FORM">
 			<condition>instructorForm._$.status == "submitted"</condition>
-			<action>save studentForm+instructorForm ROLES.Secretary</action>
+			<action>save studentForm+instructorForm USERS.Secretary</action>
 			<transition>
 				<condition>true</condition>
 				<dest>2.ASSIGN_SPN</dest>
@@ -187,7 +187,7 @@
 		</state>
 		<state id="2.ASSIGN_SPN">
 			<condition>true</condition>
-			<action>assign secretaryForm ROLES.Secretary Secretary</action>
+			<action>assign secretaryForm USERS.Secretary Secretary</action>
 			<transitions>
 				<transition>
 					<condition>true</condition>
@@ -198,7 +198,7 @@
 
 		<state id="2.SAVE_FORM">
 			<condition>directorForm._$.status == "submitted"</condition>
-			<action>save studentForm+instructorForm+secretaryForm+directorForm ROLES.Secretary</action>
+			<action>save studentForm+instructorForm+secretaryForm+directorForm USERS.Secretary</action>
 			<transitions>
 				<transition>
 					<condition>true</condition>
@@ -209,7 +209,7 @@
 
 		<state id="2.SEND_TO_ASC_DEAN">
 			<condition>true</condition>
-			<action>save studentForm+instructorForm+secretaryForm+directorForm ROLES.SAS_Asssociate_Dean</action>
+			<action>save studentForm+instructorForm+secretaryForm+directorForm USERS.SAS_Asssociate_Dean</action>
 		</state>
 
 		<state id="2.SEND_SPN_STUDENT">
@@ -225,7 +225,7 @@
 		<!-- When secretary form is submitted -->
 		<state id="3.SEND_TO_DIRECTOR">
 			<condition>secretaryForm._$.status == "submitted"</condition>
-			<action>assign directorForm ROLES.Graduate_Dean Graduate_Dean</action>
+			<action>assign directorForm USERS.Graduate_Dean Graduate_Dean</action>
 			<transitions>
 				<transition>
 					<condition>true</condition>
