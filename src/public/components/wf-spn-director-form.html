@@ -230,7 +230,7 @@
 			},
 			ready: function() {
 				this.instanceId = localStorage.getItem("instanceId");
-				this.formAlias = "directorForm"
+				this.formAlias = "directorForm";
 				this.$.getStudentFormAjax.params = {"instanceId": this.instanceId, "formAlias": this.studentFormAlias};
 				this.$.getStudentFormAjax.generateRequest();
 				this.$.getInstructorFormAjax.params = {"instanceId": this.instanceId, "formAlias": this.instructorFormAlias};

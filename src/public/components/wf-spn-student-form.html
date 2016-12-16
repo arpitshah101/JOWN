@@ -235,7 +235,7 @@
 			},
 			ready: function() {
 				this.instanceId = localStorage.getItem("instanceId");
-				this.formAlias = "studentForm"
+				this.formAlias = "studentForm";
 				this.$.getUsersWithRoleAjax.generateRequest();
 				this.$.getStudentFormAjax.params = {"instanceId": this.instanceId, "formAlias": this.studentFormAlias};
 				this.$.getStudentFormAjax.generateRequest();
