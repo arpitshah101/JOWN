@@ -43,6 +43,9 @@
                 position:relative;
                 left:75%;
             }
+			#student-form{
+				width:100%;
+			}
             paper-input {
                 --paper-input-container-disabled: {
                     opacity: 0.7;
@@ -99,15 +102,14 @@
 			<paper-toolbar>
 				<div class="paper-header">Just Our Workflow Notation</div>
 				<!-- title here should be the .workflowName of the workflow instance -->
-				<paper-item id="title">Workflows</paper-item>
-				<paper-item id="item1" value={{username}}>{{username}}</paper-item>
+				<paper-item id="item1" value={{userId}}>{{userId}}</paper-item>
 				<paper-item id="item2" value={{userrole}}>{{userrole}}</paper-item>
 				<paper-button id="item3" on-tap="logout">Logout</paper-button>
 			</paper-toolbar>
 		</paper-header-panel>
 
 		<!-- ADD NEW FIELDS AND CHANGE PARAMETERS FOR FORMS BELOW -->
-		<paper-card id="director-form" heading="Register New Account">
+		<paper-card id="student-form" heading="Student Form">
 			<div class="card-content">
                 <!-- Student -->
 				<paper-input id="firstNameInput" label="First name" maxlength="50" value={{firstName}}></paper-input>
@@ -145,7 +147,8 @@
 
 
 				<div class="card-actions">
-					<paper-button id="submitFormButton" flat on-tap="submitForm">Submit Form</paper-button>
+					<paper-button id="cancel" flat on-tap="goBack">Cancel</paper-button>
+					<paper-button id="submitFormButton" flat on-tap="submitForm">Submit</paper-button>
 				</div>
 			</div>
 		</paper-card>
@@ -164,6 +167,14 @@
                     type: String,
                     value: "studentForm"
                 },
+				userrole: {
+					type: String,
+					value: function(){return localStorage.getItem("userRole");},
+				},
+				userId: {
+					type: String,
+					value: function(){return localStorage.getItem("userId");},
+				},
 				studentFormParams: {},
 				instructorFormAlias: {
                     type: String,
@@ -224,6 +235,9 @@
 				this.$.getDirectorFormAjax.generateRequest();
                 this.secretaryFormParams = {"instanceId": this.instanceId, "formAlias": this.secretaryFormAlias};
                 this.$.getSecretaryFormAjax.generateRequest();
+			},
+			goBack:function(){
+				location.href="home.html";
 			},
 			logout: function() {
 				alert("logging out " + this.username);

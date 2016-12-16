@@ -81,17 +81,10 @@
 
 	<iron-ajax 
 		auto url="/instances/getInstances"
- 		params= '{"userId":"qwe123","role":"student"}'
+ 		params= '{"userId":"xc","role":"Student"}'
 		handle-as="json"
-		debounce-duration="300"
-		last-response="{{instanceList}}">
+		last-response={{instanceList}}>
 	</iron-ajax>
-
-    <iron-ajax auto 
-        url="http://www.json-generator.com/api/json/get/crkSCFTVvm?indent=2" 
-        handle-as="json" 
-        last-response="{{items}}">
-    </iron-ajax>
 
 	<iron-ajax
 		id="createNewInstanceAjax"
@@ -126,15 +119,14 @@
 	</paper-listbox>
 	</div>
 
-	<div
+	<div>
 	<div>
 	<paper-listbox id="mylistbox"class="dropdown-content">
-		<template is="dom-repeat" items="{{instanceList}}">
+		<template is="dom-repeat" items="[[instanceList]]">
 			<paper-card id="card">
-			<paper-item id="instance" value="[[item.id]]" on-tap="workflowDetail">Creator: {{item.creator}}</b><br>Workflow Id: {{item.workflowId}} <br> Statue: {{item.status}} <br> Created on: {{item.created}}
+			<paper-item id="instance" value="[[item.id]]" on-tap="naviForm">Creator:[[item.creator]]</b><br>Workflow Id:[[item.workflowId]]<br>Statue:[[item.status]]<br>Created on:[[item.created]]
 			<!--<paper-icon-button id="icond" value="[[item]]" src="/image/delete.png" on-tap="deleteWorkflow"></paper-icon-button>-->
 			</paper-item>
-			<paper-icon-button id="icone" src="/image/edit.png" on-tap="newInstance"></paper-icon-button>
 			
 			</paper-card>
 		</template>
@@ -223,7 +215,7 @@
 			},
 			naviForm: function(){
 				var role=localStorage.getItem("userRole");
-				if(role=="student"){
+				if(role=="Student"){
 					location.href = "/wf-spn-stu-page.html";
 				}
 			},
@@ -244,7 +236,6 @@
 				detailDio.open();
 			}
 			
-
         });
 
 	</script>
