@@ -139,7 +139,7 @@ router.post("/createNewWorkflow", (req: Request, res: Response, next) => {
 		})
 		.catch((reason) => {
 			console.log(reason);
-			res.json({success: false, message: "Could create a workflow!"});
+			res.json({success: false, message: "Could not create a workflow!"});
 		})
 		.then(() => {
 			next();
