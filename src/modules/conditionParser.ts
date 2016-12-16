@@ -52,12 +52,18 @@ export class ConditionParser {
 	 *          undefined if the conditional is not properly formatted
 	 */
 	public deconstructCondition (condition: String): any[] {
-		// console.log("deconstructCondition @ trim#1: " + condition);
-		condition = condition.trim();
-		// console.log("deconstructCondition @ trim#1");
+
 
 		let ret = [];
 		let currCondition = "";
+
+		// console.log("deconstructCondition @ trim#1: " + condition);
+		if (!condition) {
+			ret.push(true);
+			return ret;
+		}
+		condition = condition.trim();
+		// console.log("deconstructCondition @ trim#1");
 
 		for (let i = 0 ; i < condition.length ; i++) {
 			// From here until the end of the loop, C is the character at index i
@@ -153,8 +159,14 @@ export class ConditionParser {
 	 */
 	public parseCondition (condition: String): String[] {
 
-		condition = condition.trim();
 		let result = [];
+
+		if (!condition) {
+			result.push("true");
+			return result;
+		}
+		condition = condition.trim();
+
 		let splitIndex = this.isCondition(condition);
 
 		if (splitIndex === undefined) {
