@@ -297,7 +297,7 @@ export class InstanceManager {
 				data: {},
 				instanceId,
 				name: form.name,
-				status: FormData.FormStatus.INCOMPLETE,
+				status: "incomplete",
 			});
 			formDataSaves.push(formData.save());
 		}
