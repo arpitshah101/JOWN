@@ -7,43 +7,6 @@ import { DataManager } from "./dataManager";
 export class ConditionParser {
 
 	/**
-	 * Function that takes a conditional, parses it and returns a tree with all the conditions
-	 * @param   condition: String containing a conditional statement
-	 * @return  a tree containing the conditions split up by logical operators
-	 *          undefined if the conditional is not properly formatted
-	 */
-	public buildEvaluationTree (condition: String) {
-		condition = condition.trim();
-
-		let parsedCondition = this.deconstructCondition(condition);
-		if (parsedCondition === undefined) {
-			return undefined;
-		}
-		return this.addArrayToTree(parsedCondition);
-	}
-
-	/**
-	 * 
-	 */
-	public addArrayToTree (parsedCondition: any[]) {
-		let retTree: ExpressionNode.ExpressionNode;
-		if (parsedCondition.length === 1) {
-			let conditional = String(parsedCondition.pop);
-			retTree = new ExpressionNode.ExpressionNode(conditional, undefined, undefined);
-			return retTree;
-		}
-		for (let i = 0 ; i < parsedCondition.length ; i++) {
-			if (parsedCondition[i] === "&&" || parsedCondition[i] === "||") {
-				let left = this.addArrayToTree(parsedCondition[i - 1]);
-				let right = this.addArrayToTree(parsedCondition[i + 1]);
-				retTree = new ExpressionNode.ExpressionNode(String(parsedCondition[i]), left, right);
-			}
-		}
-
-		return retTree;
-	}
-
-	/**
 	 * Function that takes a "java style" conditional and looks for logical operators. If it finds any it splits up the
 	 * string and passes the pieces to parseCondition, if it does not find any it passes the entire string to
 	 * parseCondition.
@@ -52,44 +15,15 @@ export class ConditionParser {
 	 *          undefined if the conditional is not properly formatted
 	 */
 	public deconstructCondition (condition: String): any[] {
-
-
 		let ret = [];
 		let currCondition = "";
 
-		// console.log("deconstructCondition @ trim#1: " + condition);
-		if (!condition) {
-			ret.push(true);
-			return ret;
-		}
 		condition = condition.trim();
-		// console.log("deconstructCondition @ trim#1");
-
 		for (let i = 0 ; i < condition.length ; i++) {
 			// From here until the end of the loop, C is the character at index i
 			let c = condition.charAt(i);
-			if (c.match(/[^A-Za-z0-9=<>!"._ ]+/)) {
-				/*if ((i === 0) && (c === "(")) {
-					ret.push(c);
-				}*/
-				if ((i !== 0) && (c === "(")) {
-					let recRet = this.deconstructCondition(condition.substr(i));
-					i = i + recRet[recRet.length - 1];
-					// console.log(i + " -- " + recRet);
-					recRet.pop();
-					// console.log(recRet + "<<<<");
-					ret.push(recRet);
-				} else if ((i !== 0) && (c === ")")) {
-					// console.log("deconstructCondition @ trim#2");
-					currCondition = currCondition.trim();
-					// console.log("deconstructCondition @ trim#2");
-					if (currCondition !== "") {
-						ret.push(currCondition);
-					}
-					/*ret.push(c);*/
-					ret.push(i);
-					return ret;
-				} else if (c === "&" || c === "|") {
+			if (c.match(/[^A-Za-z0-9=<>!"._$ ]+/)) {
+				if (c === "&" || c === "|") {
 					if ((currCondition !== "") && (ret[ret.length - 1] !== currCondition)) {
 						// console.log("deconstructCondition @ trim#3");
 						currCondition = currCondition.trim();
@@ -103,7 +37,7 @@ export class ConditionParser {
 					if (!this.hasNextCondition(condition, i)) {
 						return undefined;
 					}
-					if ((c === condition.charAt(i + 1)) && (condition.charAt(i + 2).match(/[A-Za-z0-9" ]/))) {
+					if ((c === condition.charAt(i + 1)) && (condition.charAt(i + 2).match(/[A-Za-z0-9"_$ ]/))) {
 						c = c.concat(c);
 						ret.push(c);
 						i++;
@@ -118,13 +52,10 @@ export class ConditionParser {
 			}
 
 			if (i === (condition.length - 1)) {
-				// console.log("deconstructCondition @ trim#4");
 				currCondition = currCondition.trim();
-				// console.log("deconstructCondition @ trim#4");
 				if (currCondition !== "") {
 					ret.push(currCondition);
 				}
-
 			}
 		}
 		// console.log(ret);
@@ -141,7 +72,7 @@ export class ConditionParser {
 	public hasNextCondition (condition: String, index: number): boolean {
 		for (let j = index ; j < condition.length ; j++) {
 			let c = condition.charAt(j);
-			if (c.match(/[A-Za-z0-9"_.]/)) {
+			if (c.match(/[A-Za-z0-9"_.$]/)) {
 				return true;
 			}
 		}
@@ -157,27 +88,20 @@ export class ConditionParser {
 	 *          index 2: the right side of the condition
 	 * 			or if operators cannot be found, the original string to allow for situations where the string is "true"
 	 */
-	public parseCondition (condition: String): String[] {
-
+	public parseCondition (condition: String): string[] {
 		let result = [];
 
-		if (!condition) {
-			result.push("true");
-			return result;
-		}
 		condition = condition.trim();
-
 		let splitIndex = this.isCondition(condition);
-
-		if (splitIndex === undefined) {
-			result.push(condition);
-			return result; // not a java conditional statement
+		if (splitIndex === 0) {
+			// Not a conditional statement
+			console.log("WARNING! String not containing a conditional passed to conditionParser.parseConditional");
+			return ["false"]; // not a java conditional statement
 		}
-
 		result.push(condition.substr(0, splitIndex).trim());
 		// Less than 0 means condition is a conditional with a single character operator
 		if (splitIndex < 0) {
-			Math.abs(splitIndex);
+			splitIndex = Math.abs(splitIndex);
 			result.push(condition.substr(splitIndex, 1));
 			result.push(condition.substr(splitIndex + 1).trim());
 		}
@@ -185,7 +109,6 @@ export class ConditionParser {
 			result.push(condition.substr(splitIndex, 2));
 			result.push(condition.substr(splitIndex + 2).trim());
 		}
-
 		return result;
 	}
 
@@ -214,7 +137,7 @@ export class ConditionParser {
 		} else if (condition.indexOf(">") !== -1 ) {
 			i = condition.indexOf(">");
 			let ret = this.plusOffsetIsEdge(i, condition.length, 1);
-			if (ret === undefined) {
+			if (ret === 0) {
 				return ret;
 			}
 			else {
@@ -223,7 +146,7 @@ export class ConditionParser {
 		} else if (condition.indexOf("<") !== -1 ) {
 			i = condition.indexOf("<");
 			let ret = this.plusOffsetIsEdge(i, condition.length, 1);
-			if (ret === undefined) {
+			if (ret === 0) {
 				return ret;
 			}
 			else {
@@ -231,7 +154,7 @@ export class ConditionParser {
 			}
 
 		}
-		return undefined;
+		return 0;
 	}
 
 	/**
@@ -244,9 +167,9 @@ export class ConditionParser {
 	 */
 	public plusOffsetIsEdge (index: number, length: number, offset: number): number {
 		if (index === 0) {
-			return undefined;
+			return 0;
 		} else if ((index + offset) === length) {
-			return undefined;
+			return 0;
 		}
 		else {
 			return index;
@@ -259,27 +182,22 @@ export class ConditionParser {
 	 * 			instanceId: the id of the instance the string "expression" belongs to
 	 * @returns	the result of the evaluation of the condition
 	 */
-	public parseAndEvaluate(expression: String, instanceId: String ): Bluebird<boolean> {
+	public parseAndEvaluate(expression: String, instanceId: mongoose.Types.ObjectId ): Bluebird<boolean> {
 		let res: boolean;
 		let conditionArray: any[];
 		let evaluationString: String = "";
 
+		if (!expression) {
+			return Bluebird.resolve(false);
+		} else if (expression.toLowerCase() === "true") {
+			return Bluebird.resolve(true);
+		} else if (expression.toLowerCase() === "false") {
+			return Bluebird.resolve(false);
+		}
+		expression.trim();
 		// console.log("expression @ parseAndEval: " + expression);
 		let expressionArray = this.deconstructCondition(expression);
 
-		// DEBUGGING
-		// console.log("EXPRESSIONARRAY: " + expressionArray);
-
-		// CHANGE BELOW TO ACCOUNT FOR EVALUATE EXPRESSION RETURNING UNDEFINED
-		// for (let exp of expressionArray) {
-		// 	if (exp !== "&&" && exp !== "||") {
-		// 		conditionArray = this.parseCondition(exp);
-		// 		evaluationString = evaluationString + " " + this.evaluateExpression(conditionArray, instanceId);
-		// 	}
-		// 	else {
-		// 		evaluationString = evaluationString + exp;
-		// 	}
-		// }
 		return new Bluebird<boolean>((resolve, reject) => {
 			Bluebird.reduce(expressionArray, (total: String, current: String) => {
 				if (current !== "&&" && current !== "||") {
@@ -311,7 +229,7 @@ export class ConditionParser {
 	 * 			instanceId: the id of the instance the expression to be evaluated belongs to
 	 * @returns	the result of the evaluation
 	 */
-	public evaluateExpression(expression: any[], instanceId: String): Bluebird<boolean> {
+	public evaluateExpression(expression: any[], instanceId: mongoose.Types.ObjectId): Bluebird<boolean> {
 		let expressionArray = [];
 
 		if (expression === undefined) {
@@ -340,24 +258,29 @@ export class ConditionParser {
 			}
 
 			let fieldValue;
-			return DataManager.getFormData(mongoose.Types.ObjectId(instanceId.toString()), expressionArray[0])
+			return DataManager.getFormData(instanceId, expressionArray[0])
 				.then((formObject: any) => {
-					if (expressionArray.indexOf("_$") === -1) {
+					console.log("1. in promise: expressionArray: " + expressionArray);
+					console.log("2. in promise: expressionArray[0]: " + expressionArray[0]);
+					// if (expressionArray.indexOf("_$") === -1) {
+					if (expressionArray[1] !== "_$") {
+						console.log("3. indexOf(_$) === -1, before fieldValue: " + fieldValue);
 						// tslint:disable-next-line:no-eval
 						fieldValue = eval("formObject.data." + expressionArray[expressionArray.length - 1]);
+						console.log("4. indexOf(_$) === -1, after fieldValue: " + fieldValue);
 					}
 					else {
+						console.log("3. indexOf(_$) === 1, before fieldValue: " + fieldValue);
 						// tslint:disable-next-line:no-eval
 						fieldValue = eval("formObject." + expressionArray[expressionArray.length - 1]);
+						console.log("4. indexOf(_$) === 1, after fieldValue: " + fieldValue);
 					}
-					// For testing
-					// let fieldValue = "\"submitted\"";
-					// console.log("before concatExpression: " + fieldValue + " " + expression[1] + " " + expression[2]);
+
+					console.log("5. before concatExpression: " + fieldValue + " " + expression[1] + " " + expression[2]);
 					let concatExpression = "" + fieldValue + expression[1] + expression[2];
-					// console.log("after concatExpression: >>>" + concatExpression + "<<<");
 					// tslint:disable-next-line:no-eval
 					let evaluated = eval(concatExpression);
-					// console.log("evaluated: " + evaluated);
+					console.log("6. evaluated: " + evaluated);
 					if (typeof (evaluated) !== "boolean") {
 						return Bluebird.resolve(false);
 					}
