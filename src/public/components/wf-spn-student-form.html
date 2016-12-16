@@ -106,7 +106,7 @@
 				<div class="paper-header">Just Our Workflow Notation</div>
 				<!-- title here should be the .workflowName of the workflow instance -->
 				<paper-item id="item1" value={{userId}}>{{userId}}</paper-item>
-				<paper-item id="item2" value={{userrole}}>{{userrole}}</paper-item>
+				<paper-item id="item2" value={{userRole}}>{{userRole}}</paper-item>
 				<paper-button id="item3" on-tap="logout">Logout</paper-button>
 			</paper-toolbar>
 		</paper-header-panel>
@@ -140,6 +140,7 @@
 						</template>
 					</paper-listbox>
 				</paper-dropdown-menu>
+				<br>
                 <!--  Instructor -->
 				<b>Instructor's fields below</b>
                 <paper-input id="instructorApprovalInput" disabled="true" label="Approved by Instructor" maxlength="50" value={{instructorApproval}}></paper-input>
@@ -172,7 +173,7 @@
                     type: String,
                     value: "studentForm"
                 },
-				userrole: {
+				userRole: {
 					type: String,
 					value: function() {
 						return localStorage.getItem("userRole");
@@ -253,7 +254,8 @@
 			},
 			submitForm: function() {
 				console.log("student-form @ submitForm: submitting form and returns to home");
-				this.$.submitFormAjax.body = {"instanceId": this.instanceId, "formAlias": this.formAlias, "data":
+				this.$.submitFormAjax.body = {"instanceId": this.instanceId, "formAlias": this.formAlias, 
+						"status": "submitted" , "lastEdit": Date.now(), "assignedTo": this.instructorUserId, "data":
 					{
 						"firstName": this.firstName, "lastName": this.lastName, "middleInitials": this.middleInitials,
 						"ruid": this.ruid, "officialRutgersEmail": this.officialRutgersEmail,
@@ -267,7 +269,7 @@
 					}
 				};
 				this.$.submitFormAjax.generateRequest();
-				this.goBack();
+				//this.goBack();
 			},
 			handleSubmitFormResponse: function(request) {
 				console.log(request);
@@ -305,7 +307,7 @@
                         this.numberOfCredits = request.formData.data.numberOfCredits;
                         this.courseTitle = request.formData.data.courseTitle;
                         this.reasonsForTakingCourse = request.formData.data.reasonsForTakingCourse;
-						this.instructorUserId = request.formData.data.reasonForTakingCourse;
+						this.instructorUserId = request.formData.data.instructorId;
                         /* Disables fields pertaining to loaded form*/
                         this.$.firstNameInput.disabled = "true";
                         this.$.lastNameInput.disabled = "true";
