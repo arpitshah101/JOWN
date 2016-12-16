@@ -8,6 +8,7 @@ import * as FormData from "../models/FormData";
 import * as Instance from "../models/Instance";
 import * as User from "../models/User";
 
+import { DataManager } from "../modules/dataManager";
 import { InstanceManager } from "../modules/instanceManager";
 import { UserManager } from "../modules/userManager";
 
@@ -170,6 +171,22 @@ export class PreDefTasks {
 					})
 					.then((user: User.IDocument) => {
 						// get forms here
+						resolve(user);
+					});
+			}
+			else {
+				let formName = userId.substring(0, userId.indexOf("."));
+				let propName = userId.substring(userId.indexOf(".") + 1);
+
+				DataManager.getFormData(instanceId, formName)
+					.then((formObject: any) => {
+						// tslint:disable-next-line:no-eval
+						return eval("formObject." + propName);
+					})
+					.then((value: string) => {
+						return UserManager.getUser({userId: value});
+					})
+					.then((user: User.IDocument) => {
 						resolve(user);
 					});
 			}
