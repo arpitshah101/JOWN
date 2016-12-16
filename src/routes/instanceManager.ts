@@ -127,9 +127,9 @@ router.post("/createNewInstance", (req: Request, res: Response, next) => {
 
 router.post("/deleteInstance", (req: Request, res: Response, next) => {
 	let instance = req.body.instance;
-	let workflowId: mongoose.Types.ObjectId = instance.workflowId;
+	let instanceId: mongoose.Types.ObjectId = instance._id;
 
-	InstanceManager.deleteInstance(workflowId)
+	InstanceManager.deleteInstance(instanceId)
 		.then((success: boolean) => {
 			if (success) {
 				res.json({
@@ -170,6 +170,36 @@ router.post("/createNewWorkflow", (req: Request, res: Response, next) => {
 		.catch((reason) => {
 			console.log(reason);
 			res.json({success: false, message: "Could not create a workflow!"});
+		})
+		.then(() => {
+			next();
+		});
+});
+
+router.post("/deleteWorkflow", (req: Request, res: Response, next) => {
+	let workflow = req.body.workflow;
+	let name: string = workflow.name;
+
+	InstanceManager.deleteWorkflow(name)
+		.then((success: boolean) => {
+			if (success) {
+				res.json({
+					message: `Workflow deleted successfully!`,
+					success: true,
+				});
+			}
+			else {
+				res.json({
+					message: `Unable to delete workflow!`,
+					success: false,
+				});
+			}
+		})
+		.catch((reason) => {
+			res.json({
+				message: `An error occurred. Please try again.`,
+				success: false,
+			});
 		})
 		.then(() => {
 			next();
