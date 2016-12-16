@@ -244,7 +244,7 @@
 				// this.instructorApprovalDate = Date.now();
 				if (this.instructorApproval === "true" || this.instructorApproval === "false" ) {
 					this.$.submitFormAjax.body = {"instanceId": this.instanceId, "formAlias": this.formAlias,
-					"status": "submitted" , "lastEdit": Date.now(), "assignedTo": this.instructorUserId, "data":
+					"status": "submitted" , "lastEdit": Date.now(), "data":
 						{
 							"instructorApproval": this.instructorApproval, "instructorSignature": this.instructorSignature,
 							"instructorApprovalDate": this.instructorApprovalDate
@@ -278,7 +278,7 @@
 				console.log(this.$.getStudentFormAjax.lastResponse);
 				if (request === undefined) {
 					alert("request === undefined IN: handleStudentFormResponse");
-				} else if (request.success === true) {
+				} else if (request.success === "true") {
                     if (request.formData.data.firstName !== "") {
                         this.firstName = request.formData.data.firstName;
                         this.lastName = request.formData.data.lastName;
@@ -324,7 +324,7 @@
                     }
 				}
 				else {
-					console.log("student-form @ handleStudentFormResponse: request.success !== \"true\"");
+					console.log("instructor-form @ handleStudentFormResponse: request.success !== \"true\"");
 				}
 			},
 			handleInstructorFormResponse: function(request) {
@@ -332,7 +332,7 @@
 				console.log(this.$.getInstructorFormAjax.lastResponse);
 				if (request === undefined) {
 					alert("request === undefined IN: handleInstructorFormResponse");
-				} else if(request.success === true) {
+				} else if(request.success === "true") {
                     if(request.formData.data.instructorApproval !== "") {
                         this.instructorApproval = request.formData.data.instructorApproval;
 					    this.instructorSignature = request.formData.data.instructorSignature;
@@ -347,7 +347,7 @@
                     }
 				}
 				else {
-					alert("ERROR IN: handleInstructorFormResponse");
+					console.log("instructor-form @ handleInstructorFormResponse: success !== true");
 				}
 			},
             handleDirectorFormResponse: function(request) {
@@ -355,7 +355,7 @@
 				console.log(this.$.getDirectorFormAjax.lastResponse);
 				if (request === undefined) {
 					alert("request === undefined IN: handleDirectorFormResponse");
-				} else if(request.success === true) {
+				} else if(request.success === "true") {
                     if(request.formData.data.directorApproval !== "") {
                         this.directorApproval = request.formData.data.directorApproval;
                         this.directorSignature = request.formData.data.directorSignature;
@@ -370,7 +370,7 @@
                     }
 				}
 				else {
-					alert("ERROR IN: handleDirectorFormResponse");
+					console.log("instructor-form @ handleDirectorFormResponse: success !== true");
 				}
 			},
             handleSecretaryFormResponse: function(request) {
@@ -378,7 +378,7 @@
 				console.log(this.$.getDirectorFormAjax.lastResponse);
 				if (request === undefined) {
 					alert("request === undefined IN: handleSecretaryFormResponse");
-				} else if(request.success === true) {
+				} else if(request.success === "true") {
                     if(request.formData.data.secretarySignature !== "") {
                         this.spn = request.formData.data.spn;
                         /* Disables fields pertaining to loaded form*/
@@ -390,7 +390,7 @@
                     }
 				}
 				else {
-					alert("ERROR IN: handleSecretaryFormResponse");
+					console.log("instructor-form @ handleSecretaryFormResponse: success !== true");
 				}
 			}
 		});

@@ -187,6 +187,9 @@ export class ConditionParser {
 		let conditionArray: any[];
 		let evaluationString: String = "";
 
+		console.log(`EXECUTING PARSE & EVALUATE:`);
+		console.log(`\texpression: ${expression}`);
+
 		if (!expression) {
 			return Bluebird.resolve(false);
 		} else if (expression.toLowerCase() === "true") {
@@ -198,13 +201,17 @@ export class ConditionParser {
 		// console.log("expression @ parseAndEval: " + expression);
 		let expressionArray = this.deconstructCondition(expression);
 
+		console.log(`\texpressionArray: ${expressionArray}`);
+
 		return new Bluebird<boolean>((resolve, reject) => {
 			Bluebird.reduce(expressionArray, (total: String, current: String) => {
+				console.log(`\n\tCurrent value of totalExpression: ${total}`);
 				if (current !== "&&" && current !== "||") {
 					conditionArray = this.parseCondition(current);
 					total += " ";
 					return this.evaluateExpression(conditionArray, instanceId)
 						.then((value: any) => {
+							console.log(`\tExpression evaluated to ${value}`);
 							return total += value;
 						});
 				}
@@ -215,8 +222,10 @@ export class ConditionParser {
 				.then((value: String) => { evaluationString = value; })
 				.then(() => {
 					// console.log("evaluationString @ EVAL: " + evaluationString);
+					console.log(`Evaluating string using eval: ${evaluationString}`);
 					// tslint:disable-next-line:no-eval
 					res = eval("" + evaluationString);
+					console.log(`Evaluated to ${res}`);
 					resolve(res);
 				});
 		});
@@ -275,7 +284,7 @@ export class ConditionParser {
 						fieldValue = eval("formObject." + expressionArray[expressionArray.length - 1]);
 						console.log("4. indexOf(_$) === 1, after fieldValue: " + fieldValue);
 					}
-
+					fieldValue = "\"" + fieldValue + "\"";
 					console.log("5. before concatExpression: " + fieldValue + " " + expression[1] + " " + expression[2]);
 					let concatExpression = "" + fieldValue + expression[1] + expression[2];
 					// tslint:disable-next-line:no-eval

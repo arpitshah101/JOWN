@@ -48,9 +48,13 @@ function checkActiveInstances() {
 			InstanceManager.processEvents(instance._id);
 			InstanceManager.getActiveStates(instance._id)
 				.then((states: State.IDocument[]) => {
+					console.log(`Current Active States: ${JSON.stringify(states)}`);
 					for (let state of states) {
 						InstanceManager.processActiveState(state, instance._id);
 					}
+				})
+				.then(() => {
+					console.log(`\n\n=============================\n\n`);
 				});
 		});
 }
