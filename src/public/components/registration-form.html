@@ -36,7 +36,7 @@
 
     <paper-dialog id="modal" modal alwaysOnTop="true">
         <p>Could not register user</p>
-        <p>[[this.errorMessage]]</p>
+        <p>{{this.errorMessage}}</p>
         <div class="buttons">
             <paper-button dialog-confirm autofocus>OK!</paper-button>
         </div>
@@ -51,7 +51,7 @@
       <div class="card-content">
         <paper-input label="Username" maxlength="50" value={{username}}></paper-input>
         <paper-input label="UserID" maxlength="50" value={{userId}}></paper-input>
-        <paper-input label="Email" maxlength="50" type="email" auto-validate="true" value={{email}}></paper-input>
+        <paper-input id="email" label="Email" maxlength="50" type="email" auto-validate="true" value={{email}}></paper-input>
         <paper-input label="Password" type="password" maxlength="50" value={{password}}></paper-input>
         <paper-dropdown-menu class="dropdownmenu" label="Role" value="{{role}}">
           <paper-listbox class="dropdown-content">
@@ -77,23 +77,33 @@
         userId: String,
         email: String,
         password: String,
-        role: String
+        role: {
+          type: String,
+          value: ""
+        }
       },
 
       registerUser: function() {
         if (this.username === "" || this.username.trim() === "") {
           console.log("Missing username");
+          this.errorMessage = "Username is missing";
           modal.open();
         } else if (this.userId === "" || this.userId.trim() === "") {
           console.log("Missing userid");
+          this.errorMessage = "User ID is missing";
           modal.open();
         } else if (this.email === "" || this.email.trim() === "") {
-          console.log("Missing email");
+          this.errorMessage = "Email is missing";
           modal.open();
         }  else if (this.password === "" || this.password.trim() === "") {
-          console.log("Missing password");
+          this.errorMessage = "Password is missing";
           modal.open();
-        }
+        } else if (this.role === "" || this.role.trim() === "") {
+          this.errorMessage = "Role is missing";
+          modal.open();
+        } /*else if (this.$.email.invalid) {
+          modal.open();
+        } */
         else {
           this.$.createUserAjax.body = {"userObj": {"name": this.username, "email": this.email, "userId": this.userId, "password": this.password,  "roles": this.role}};
           this.$.createUserAjax.generateRequest();
