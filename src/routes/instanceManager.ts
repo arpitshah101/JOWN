@@ -125,6 +125,36 @@ router.post("/createNewInstance", (req: Request, res: Response, next) => {
 		});
 });
 
+router.post("/deleteInstance", (req: Request, res: Response, next) => {
+	let instance = req.body.instance;
+	let workflowId: mongoose.Types.ObjectId = instance.workflowId;
+
+	InstanceManager.deleteInstance(workflowId)
+		.then((success: boolean) => {
+			if (success) {
+				res.json({
+					message: `Instance deleted successfully!`,
+					success: true,
+				});
+			}
+			else {
+				res.json({
+					message: `Unable to delete instance!`,
+					success: false,
+				});
+			}
+		})
+		.catch((reason) => {
+			res.json({
+				message: `An error occurred. Please try again.`,
+				success: false,
+			});
+		})
+		.then(() => {
+			next();
+		});
+});
+
 router.post("/createNewWorkflow", (req: Request, res: Response, next) => {
 	let xml: string = req.body.xml;
 
