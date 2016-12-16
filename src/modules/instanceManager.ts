@@ -78,9 +78,9 @@ export class InstanceManager {
 		});
 	}
 
-	public static deleteInstance(workflowId: mongoose.Types.ObjectId) {
+	public static deleteInstance(instanceId: mongoose.Types.ObjectId) {
 		return new Bluebird<boolean>((resolve, reject) => {
-			Instance.model.findOneAndRemove({workflowId}).exec()
+			Instance.model.findOneAndRemove({instanceId}).exec()
 				.then((doc: Instance.IDocument) => {
 					if (doc) {
 						resolve(true);
@@ -181,6 +181,24 @@ export class InstanceManager {
 			});
 		});
 
+	}
+
+	public static deleteWorkflow(name: string) {
+		return new Bluebird<boolean>((resolve, reject) => {
+			Workflow.model.findOneAndRemove({name}).exec()
+				.then((doc: Workflow.IDocument) => {
+					if (doc) {
+						resolve(true);
+					}
+					else {
+						resolve(false);
+					}
+				})
+				.catch((reason: any) => {
+					console.error(reason);
+					reject(reason);
+				});
+		});
 	}
 
 	public static addInstanceMember(instance: Instance.IDocument, userDoc: User.IDocument,
