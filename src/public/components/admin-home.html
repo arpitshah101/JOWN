@@ -112,10 +112,10 @@
 
 	<iron-ajax
 		id="uploadAjax"
-		url="instances/createNewWorkflow"
+		url="/instances/createNewWorkflow"
 		method="POST"
 		handle-as="json"
-		conten-type="application/json"
+		content-type="application/json"
 		on-response="handleUploadResponse">
 	</iron-ajax>
 
@@ -183,25 +183,24 @@
 				this.$.getWorkflowsAjax.generateRequest();
 				this.$.getUsersAjax.generateRequest();
 			},
-		handleUploadResponse:function(request){
-				this.$.uploadAjax.body={"xml":this.xmlfile};
-				this.$.uploadAjax.generateRequest();
-
-				if(request.detail.response.success==true){
-					alert("Successfully Create the workflow");
-					this.$.getWorkflowsAjax.params = {"role": this.userrole};
-					this.$.getWorkflowsAjax.generateRequest();
-				}
-
-				
-		},
 			
 		uploadFile: function(){
 			upload.open();
-
 		},
 		sendfile: function(){
 			alert(this.xmlfile);
+			this.$.uploadAjax.body = {"xmlf":this.xmlfile};
+			this.$.uploadAjax.generateRequest();
+		},
+		handleUploadResponse:function(request){
+			if(request.detail.response.success==false){
+				alert("Failed")
+			}
+			else{
+				alert("Successfully Create the workflow");
+				this.$.getWorkflowsAjax.params = {"role": this.userrole};
+				this.$.getWorkflowsAjax.generateRequest();
+			}			
 		},
 		deleteUser1:function(e){
 			var model = e.model;
