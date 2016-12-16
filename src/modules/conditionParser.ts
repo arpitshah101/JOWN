@@ -14,32 +14,32 @@ export class ConditionParser {
 	 * @return  an array containing all the different conditions split up by logical operators and levels
 	 *          undefined if the conditional is not properly formatted
 	 */
-	public deconstructCondition (expression: string): string[] {
-
-		let result: string[];
+	public deconstructCondition (condition: String): any[] {
+		let ret = [];
 		let currCondition = "";
 
-		for (let i = 0; i < expression.length ; i++) {
+		condition = condition.trim();
+		for (let i = 0 ; i < condition.length ; i++) {
 			// From here until the end of the loop, C is the character at index i
-			let c = expression.charAt(i);
+			let c = condition.charAt(i);
 			if (c.match(/[^A-Za-z0-9=<>!"._$ ]+/)) {
 				if (c === "&" || c === "|") {
-					if (currCondition.trim() === "") {
-						// If there is no string before the logical operator
-						return ["false"];
-					} else if (result[result.length - 1] === "&&" || result[result.length - 1] === "||") {
-						// If the previous string is a logical operator
+					if ((currCondition !== "") && (ret[ret.length - 1] !== currCondition)) {
+						// console.log("deconstructCondition @ trim#3");
+						currCondition = currCondition.trim();
+						// console.log("deconstructCondition @ trim#3");
+						if (currCondition !== "") {
+							ret.push(currCondition);
+						}
+						currCondition = "";
+					}
+					// See if there are any names left in the condition
+					if (!this.hasNextCondition(condition, i)) {
 						return ["false"];
 					}
-					else {
-						result.push(currCondition);
-					}
-					if (i > expression.length - 3) {
-						// If there is no space for && or || or condition after
-						return ["false"];
-					} else if ((c === expression.charAt(i + 1)) && (expression.charAt(i + 2).match(/[A-Za-z0-9"_$ ]/))) {
-						result.push(currCondition);
-						result.push(c.concat(c));
+					if ((c === condition.charAt(i + 1)) && (condition.charAt(i + 2).match(/[A-Za-z0-9"_$ ]/))) {
+						c = c.concat(c);
+						ret.push(c);
 						i++;
 					}
 					else {
@@ -50,8 +50,16 @@ export class ConditionParser {
 			else {
 				currCondition = currCondition.concat(c);
 			}
+
+			if (i === (condition.length - 1)) {
+				currCondition = currCondition.trim();
+				if (currCondition !== "") {
+					ret.push(currCondition);
+				}
+			}
 		}
-		return result;
+		// console.log(ret);
+		return ret;
 	}
 
 
@@ -61,10 +69,10 @@ export class ConditionParser {
 	 *          index which is the index of where to start checking
 	 * @return  returns true if there is a trailing condition, false otherwise
 	 */
-	public hasNextCondition (condition: string, index: number): boolean {
+	public hasNextCondition (condition: String, index: number): boolean {
 		for (let j = index ; j < condition.length ; j++) {
 			let c = condition.charAt(j);
-			if (c.match(/[A-Za-z0-9"_.]/)) {
+			if (c.match(/[A-Za-z0-9"_.$]/)) {
 				return true;
 			}
 		}
@@ -80,11 +88,11 @@ export class ConditionParser {
 	 *          index 2: the right side of the condition
 	 * 			or if operators cannot be found, the original string to allow for situations where the string is "true"
 	 */
-	public parseConditional (condition: string): string[] {
+	public parseCondition (condition: String): string[] {
 		let result = [];
 
 		condition = condition.trim();
-		let splitIndex = this.isConditional(condition);
+		let splitIndex = this.isCondition(condition);
 		if (splitIndex === 0) {
 			// Not a conditional statement
 			console.log("WARNING! String not containing a conditional passed to conditionParser.parseConditional");
@@ -112,7 +120,7 @@ export class ConditionParser {
 	 *          the negative value of the index -1 if the test passes by finding a single character operator
 	 *          -1 to not end up in a situation where the index = 1 and becomes -1 which is the test fail code
 	 */
-	public isConditional (condition: string): number {
+	public isCondition (condition: String): number {
 		let i = -1;
 		if (condition.indexOf("==") !== -1 ) {
 			i = condition.indexOf("==");
@@ -174,84 +182,110 @@ export class ConditionParser {
 	 * 			instanceId: the id of the instance the string "expression" belongs to
 	 * @returns	the result of the evaluation of the condition
 	 */
-	public parseAndEvaluate(fullExpression: string, instanceId: mongoose.Types.ObjectId ): Bluebird<boolean> {
-		let result: boolean;
-		let fieldValue: Bluebird<string>;
-		let conditionalArray: string[];
-		let evaluationString: string = "";
+	public parseAndEvaluate(expression: String, instanceId: mongoose.Types.ObjectId ): Bluebird<boolean> {
+		let res: boolean;
+		let conditionArray: any[];
+		let evaluationString: String = "";
 
-		if (!fullExpression) {
+		if (!expression) {
 			return Bluebird.resolve(false);
-		} else if (fullExpression.toLowerCase() === "true") {
+		} else if (expression.toLowerCase() === "true") {
 			return Bluebird.resolve(true);
-		} else if (fullExpression.toLowerCase() === "false") {
+		} else if (expression.toLowerCase() === "false") {
 			return Bluebird.resolve(false);
 		}
-		fullExpression = fullExpression.trim();
-		// Splits fullExpression into an array where elements are separated by logical operators
-		let expressionArray = this.deconstructCondition(fullExpression);
-		// Goes through the array adding the elements to a string to evaluate later
-		for (let expression of expressionArray) {
-			if (expression === "&&" || expression === "||") {
-				evaluationString = evaluationString.concat(expression);
-			}
-			else {
-				if (this.isConditional(expression)) {
-					conditionalArray = this.parseConditional(expression);
-					fieldValue = this.resolveTerm(conditionalArray[0], instanceId);
-					evaluationString = evaluationString.concat(fieldValue);
-					evaluationString = evaluationString.concat(conditionalArray[1]);
-					evaluationString = evaluationString.concat(conditionalArray[2]);
-				} else {
-					fieldValue = this.resolveTerm(expression, instanceId);
-					evaluationString = evaluationString.concat(fieldValue);
-				}
-			}
-		}
-		// tslint:disable-next-line:no-eval
-		result = eval(evaluationString);
-		return Bluebird.resolve(result);
-	}
+		expression.trim();
+		// console.log("expression @ parseAndEval: " + expression);
+		let expressionArray = this.deconstructCondition(expression);
 
-	/**
-	 * Resolves a term by parsing it and querying the DataManager for it if needed
-	 */
-	public resolveTerm(term: string, instanceId: mongoose.Types.ObjectId): Bluebird<string> {
-		let result: string;
-		let termArray = this.parseTerm(term);
-		if (termArray.length === 1) {
-			return Bluebird.resolve(termArray[0]);
-		}
-		return DataManager.getFormData(instanceId, term[0])
-			.then((formObject: any) => {
-				if (termArray.length === 2 ) {
-					// Here the array looks something like ["formName", "data"]
-					// tslint:disable-next-line:no-eval
-					result = eval("formObject.data." + termArray[1]);
-				} else if( termArray.length === 3 ) {
-					// Here the array looks something like ["formName", "_$", "data"]
-					// tslint:disable-next-line:no-eval
-					result = eval("formObject." + termArray[2]);
+		return new Bluebird<boolean>((resolve, reject) => {
+			Bluebird.reduce(expressionArray, (total: String, current: String) => {
+				if (current !== "&&" && current !== "||") {
+					conditionArray = this.parseCondition(current);
+					total += " ";
+					return this.evaluateExpression(conditionArray, instanceId)
+						.then((value: any) => {
+							return total += value;
+						});
 				}
 				else {
-					// Shouldn't get here
-					console.log("WARNING! termArray > 3 in conditionParser.resolveTerm");
-					return Bluebird.resolve("false");
+					return Bluebird.resolve(total.concat(current.toString()));
 				}
-				return Bluebird.resolve(result);
-			});
+			}, evaluationString)
+				.then((value: String) => { evaluationString = value; })
+				.then(() => {
+					// console.log("evaluationString @ EVAL: " + evaluationString);
+					// tslint:disable-next-line:no-eval
+					res = eval("" + evaluationString);
+					resolve(res);
+				});
+		});
 	}
 
 	/**
-	 * Parses a term by splitting it by .
+	 * Evaluate expression in array and return boolean
+	 * @param	expression: an array with either one statement such as "true" or a conditional expression that needs
+	 * 			to be evaluated, in the format that deconstructCondition returns
+	 * 			instanceId: the id of the instance the expression to be evaluated belongs to
+	 * @returns	the result of the evaluation
 	 */
-	public parseTerm (word: string): string[] {
-		let result: string[];
-		if (word.split(".").length === 1) {
-			return [word];
+	public evaluateExpression(expression: any[], instanceId: mongoose.Types.ObjectId): Bluebird<boolean> {
+		let expressionArray = [];
+
+		if (expression === undefined) {
+			return Bluebird.resolve(false);
 		}
-		else {
-			return word.split(".");
+
+		if (expression.length === 1) {
+			// check for keywords?
+			if (expression[0] === undefined) {
+				return Bluebird.resolve(false);
+			} else if (expression[0] === "true") {
+				return Bluebird.resolve(true);
+			} else if (expression[0] === "false") {
+				return Bluebird.resolve(false);
+			} else {
+				return Bluebird.resolve(false);
+			}
+		}
+
+		if (expression.length === 3) {
+			if (typeof(expression[0]) === "string" || expression[0] instanceof String) {
+				expressionArray = expression[0].split(".");
+			}
+			else {
+				return Bluebird.resolve(false);
+			}
+
+			let fieldValue;
+			return DataManager.getFormData(instanceId, expressionArray[0])
+				.then((formObject: any) => {
+					console.log("1. in promise: expressionArray: " + expressionArray);
+					console.log("2. in promise: expressionArray[0]: " + expressionArray[0]);
+					// if (expressionArray.indexOf("_$") === -1) {
+					if (expressionArray[1] !== "_$") {
+						console.log("3. indexOf(_$) === -1, before fieldValue: " + fieldValue);
+						// tslint:disable-next-line:no-eval
+						fieldValue = eval("formObject.data." + expressionArray[expressionArray.length - 1]);
+						console.log("4. indexOf(_$) === -1, after fieldValue: " + fieldValue);
+					}
+					else {
+						console.log("3. indexOf(_$) === 1, before fieldValue: " + fieldValue);
+						// tslint:disable-next-line:no-eval
+						fieldValue = eval("formObject." + expressionArray[expressionArray.length - 1]);
+						console.log("4. indexOf(_$) === 1, after fieldValue: " + fieldValue);
+					}
+
+					console.log("5. before concatExpression: " + fieldValue + " " + expression[1] + " " + expression[2]);
+					let concatExpression = "" + fieldValue + expression[1] + expression[2];
+					// tslint:disable-next-line:no-eval
+					let evaluated = eval(concatExpression);
+					console.log("6. evaluated: " + evaluated);
+					if (typeof (evaluated) !== "boolean") {
+						return Bluebird.resolve(false);
+					}
+					return Bluebird.resolve(evaluated);
+				});
 		}
 	}
 }

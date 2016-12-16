@@ -8,6 +8,7 @@
 <link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="/bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="/bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="/bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="registration-form.html">
 <link rel="import" href="admin-regis.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
@@ -49,13 +50,36 @@
 		}
 		#paper-tabs{
 			width:95%;
-
+		}
+		#upload{
+			height:100%;
+			width:72%;
+			overflow: scroll;
+		}
+		#xmltext{
+			position:relative;
+			left:20px;
+		}
+		#buttons{
+			position:relative;
+			bottom:3%;
+			left:30%;
 		}
 
 		</style>
 		<paper-dialog id="createUser" modal alwaysOnTop="true">
 		<admin-regis></admin-regis>	
 		</paper-dialog>
+
+		<paper-dialog id="upload" modal alwaysOnTop="true">
+			<h2>Upload XML</h2>
+			<paper-textarea label="Paste your xml file here" value="{{xmlfile}}"></paper-textarea>
+			<div id="buttons">
+			<paper-button dialog-dismiss>Cancel</paper-button>
+			<paper-button dialog-confirm on-tap="sendfile">Upload</paper-button>
+			</div>
+		</paper-dialog>
+		
 
 	<paper-header-panel class="red">
 		<paper-toolbar>
@@ -68,14 +92,14 @@
 		</paper-toolbar>
 	 </paper-header-panel>
 
-		<iron-ajax
-		<iron-ajax
+
+	<iron-ajax
 		id="getWorkflowsAjax"
 		auto url="/instances/getWorkflows"	
 		params='{"role":"Student"}'
 		handle-as="json"
 		last-response={{workflows}}>
-		</iron-ajax>
+	</iron-ajax>
 
 	<iron-ajax
 		id="deleteUserAjax"
@@ -86,6 +110,23 @@
 		on-response="handleDeleteUserResponse">
 	</iron-ajax>
 
+	<iron-ajax
+		id="deleteWorkflowAjax"
+		url="/instances/deleteWorkflow"
+		method="POST"
+		handle-as="json"
+		content-type="application/json"
+		on-response="handleDeleteWorkflowResponse">
+	</iron-ajax>
+
+	<iron-ajax
+		id="uploadAjax"
+		url="/instances/createNewWorkflow"
+		method="POST"
+		handle-as="json"
+		content-type="application/json"
+		on-response="handleUploadResponse">
+	</iron-ajax>
 
 	<iron-ajax
 		id="getUsersAjax"
@@ -99,8 +140,8 @@
 	<paper-listbox id="mylistbox"class="dropdown-content">
 		<template is="dom-repeat" items="[[workflows]]">
 			<paper-card id="card">
-			<paper-item id="instance" value="[[item.id]]" on-tap="workflowDetail">Workflow:[[item.name]]</b><br>Owner:[[item.owner]]<br>Created: [[item.created]]
-			<!--<paper-icon-button id="icond" value="[[item]]" src="/image/delete.png" on-tap="deleteWorkflow"></paper-icon-button>-->
+			<paper-item id="instance" value="[[item.id]]">Workflow:[[item.name]]</b><br>Owner:[[item.owner]]<br>Created: [[item.created]]
+			<paper-icon-button id="icond" value="[[item]]" src="/image/delete.png" on-tap="deleteWorkflow"></paper-icon-button>
 			</paper-item>
 			<!--<paper-icon-button id="formicon" src="/image/back.png" on-tap="newInstance"></paper-icon-button>-->
 			<!--<paper-icon-button id="icone" src="/image/edit.png" on-tap="checkInstances"></paper-icon-button>
@@ -109,7 +150,7 @@
 			</paper-card>
 		</template>
 	</paper-listbox>
-	<paper-icon-button id="icone" src="/image/edit.png" on-tap="createUser1"></paper-icon-button>
+	<paper-icon-button id="icone" src="/image/add.png" on-tap="uploadFile"></paper-icon-button>
 	</div>
 
 	<div>	<div>
@@ -141,6 +182,9 @@
 			userrole:{
 				type:String,
 				value:"Student",
+			},
+			xmlfile:{
+				type:String,
 			}
 		},	
 		ready: function(){
@@ -148,6 +192,39 @@
 				this.$.getWorkflowsAjax.generateRequest();
 				this.$.getUsersAjax.generateRequest();
 			},
+		deleteWorkflow:function(e){
+			var model=e.model;
+			alert(model.item);
+			this.$.deleteWorkflowAjax.body = {"workflow":model.item};
+			this.$.deleteWorkflowAjax.generateRequest();
+		},
+		handleDeleteWorkflowResponse: function(request){
+			if(request.detail.response.success==false){
+				alert("Failed to delete workflow");
+			}else{
+				this.$.getWorkflowsAjax.params={"role":this.userrole};
+				this.$.getWorkflowAjax.generateRequest();
+			}
+		},
+			
+		uploadFile: function(){
+			upload.open();
+		},
+		sendfile: function(){
+			alert(this.xmlfile);
+			this.$.uploadAjax.body = {"xmlf":this.xmlfile};
+			this.$.uploadAjax.generateRequest();
+		},
+		handleUploadResponse:function(request){
+			if(request.detail.response.success==false){
+				alert("Failed")
+			}
+			else{
+				alert("Successfully Create the workflow");
+				this.$.getWorkflowsAjax.params = {"role": this.userrole};
+				this.$.getWorkflowsAjax.generateRequest();
+			}			
+		},
 		deleteUser1:function(e){
 			var model = e.model;
 			var id=e.model.item.userId;

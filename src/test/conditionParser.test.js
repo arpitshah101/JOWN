@@ -29,10 +29,7 @@ describe("ConditionParser", function() {
 			{arg: "testin && testenin", expected: ["testin", "&&", "testenin"]},
 			{arg: " this && isa || test     ", expected: ["this", "&&", "isa", "||", "test"]},
 			{arg: "  tis && teh || test ||", expected: undefined},
-			{arg: " another && (test || to) || test", expected: ["another", "&&", ["test", "||", "to"], "||", "test"]},
 			{arg: " testing &&&& to ||| getundefined &&& and |||| makeitwork", expected: undefined},
-			{arg: " test == 2 && (banana != boat) || hi == hello",
-				expected: ["test == 2", "&&", ["banana != boat"], "||", "hi == hello"]},
 			{arg: "cond == 2 && another != 5 || this == \"that\"",
 				expected: ["cond == 2", "&&", "another != 5", "||", "this == \"that\""]},
 		];
@@ -65,9 +62,9 @@ describe("ConditionParser", function() {
 			{arg: "banana>=boat", expected: 6},
 			{arg: "123 != 456", expected: 4},
 			{arg: "123 < 345", expected: -4},
-			{arg: "<=345", expected: undefined},
-			{arg: "123<", expected: undefined},
-			{arg: "==", expected: undefined},
+			{arg: "<=345", expected: 0},
+			{arg: "123<", expected: 0},
+			{arg: "==", expected: 0},
 		];
 
 		tests.forEach(function(test) {

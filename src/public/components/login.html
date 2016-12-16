@@ -87,7 +87,7 @@
 				} else if (this.password === "" || this.password.trim() === "") {
 		          	console.log("Missing password");
 					modal.open();
-				}else if(this.userId==="admin"){
+				}else if(this.userId==="admin"||this.role==="Admin"){
 					location.href="/admin.html";
 				}
 				else {
