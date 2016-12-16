@@ -247,7 +247,7 @@
 			submitForm: function() {
 				console.log("student-form @ submitForm: submitting form and returns to home");
 				// this.directorApprovalDate = Date.now();
-				if (this.instructorApproval === "true" || this.instructorApproval === "false" ) {
+				if (this.directorApproval === "true" || this.directorApproval === "false" ) {
 					this.$.submitFormAjax.body = {"instanceId": this.instanceId, "formAlias": this.formAlias,
 					"status": "submitted" , "lastEdit": Date.now(), "data":
 						{
