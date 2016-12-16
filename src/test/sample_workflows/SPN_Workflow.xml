@@ -5,7 +5,8 @@
 			<group>Student</group>
 			<group>Instructor</group>
 			<group>Secretary</group>
-			<group>Director</group>
+			<group>Graduate_Dean</group>
+			<group>SAS_Asssociate_Dean</group>
 		</groups>
 		<form name="Student SPN Request Form" alias="studentForm" fileName="wf-spn-student-form.html">
 			<entity>
@@ -167,7 +168,7 @@
 		<state id="1.REVIEW_FORM">
 		<!-- When student form is submitted -->
 			<condition>studentForm._$.status == "submitted"</condition>
-			<action>assign instructorForm USERS.insi Instructor</action>
+			<action>assign instructorForm studentForm.instructorUserId Instructor</action>
 			<transitions>
 				<transition>
 					<condition>true</condition>
@@ -178,7 +179,7 @@
 
 		<state id="2.SAVE_REQUEST_FORM">
 			<condition>instructorForm._$.status == "submitted"</condition>
-			<action>save studentForm+instructorForm USERS.sec</action>
+			<action>save studentForm+instructorForm USERS.Secretary</action>
 			<transition>
 				<condition>true</condition>
 				<dest>2.ASSIGN_SPN</dest>
@@ -186,7 +187,7 @@
 		</state>
 		<state id="2.ASSIGN_SPN">
 			<condition>true</condition>
-			<action>assign secretaryForm USERS.sec Secretary</action>
+			<action>assign secretaryForm USERS.Secretary Secretary</action>
 			<transitions>
 				<transition>
 					<condition>true</condition>
@@ -197,7 +198,7 @@
 
 		<state id="2.SAVE_FORM">
 			<condition>directorForm._$.status == "submitted"</condition>
-			<action>save studentForm+instructorForm+secretaryForm+directorForm USERS.sec</action>
+			<action>save studentForm+instructorForm+secretaryForm+directorForm USERS.Secretary</action>
 			<transitions>
 				<transition>
 					<condition>true</condition>
@@ -208,7 +209,7 @@
 
 		<state id="2.SEND_TO_ASC_DEAN">
 			<condition>true</condition>
-			<action>save studentForm+instructorForm+secretaryForm+directorForm USERS.dir</action>
+			<action>save studentForm+instructorForm+secretaryForm+directorForm USERS.SAS_Asssociate_Dean</action>
 		</state>
 
 		<state id="2.SEND_SPN_STUDENT">
@@ -224,7 +225,7 @@
 		<!-- When secretary form is submitted -->
 		<state id="3.SEND_TO_DIRECTOR">
 			<condition>secretaryForm._$.status == "submitted"</condition>
-			<action>assign directorForm USERS.dir Director</action>
+			<action>assign directorForm USERS.Graduate_Dean Graduate_Dean</action>
 			<transitions>
 				<transition>
 					<condition>true</condition>
