@@ -96,7 +96,7 @@
           modal.open();
         }
         else {
-          this.$.createUserAjax.body = {"userObj": {"name": this.username, "email": this.email, "userId": this.userId, "password": this.password,  "roles": "stoodent"}};
+          this.$.createUserAjax.body = {"userObj": {"name": this.username, "email": this.email, "userId": this.userId, "password": this.password,  "roles": this.roles}};
           this.$.createUserAjax.generateRequest();
         }
 			},
