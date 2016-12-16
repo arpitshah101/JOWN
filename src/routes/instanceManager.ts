@@ -128,6 +128,8 @@ router.post("/createNewInstance", (req: Request, res: Response, next) => {
 router.post("/createNewWorkflow", (req: Request, res: Response, next) => {
 	let xml: string = req.body.xml;
 
+	console.log(xml);
+
 	DefParser.parse(xml)
 		.then((parsedSuccessfully: boolean) => {
 			if (parsedSuccessfully) {
