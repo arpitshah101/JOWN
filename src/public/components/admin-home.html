@@ -111,6 +111,15 @@
 	</iron-ajax>
 
 	<iron-ajax
+		id="deleteWorkflowAjax"
+		url="/instances/deleteWorkflow"
+		method="POST"
+		handle-as="json"
+		content-type="application/json"
+		on-response="handleDeleteWorkflowResponse">
+	</iron-ajax>
+
+	<iron-ajax
 		id="uploadAjax"
 		url="/instances/createNewWorkflow"
 		method="POST"
@@ -131,8 +140,8 @@
 	<paper-listbox id="mylistbox"class="dropdown-content">
 		<template is="dom-repeat" items="[[workflows]]">
 			<paper-card id="card">
-			<paper-item id="instance" value="[[item.id]]" on-tap="workflowDetail">Workflow:[[item.name]]</b><br>Owner:[[item.owner]]<br>Created: [[item.created]]
-			<!--<paper-icon-button id="icond" value="[[item]]" src="/image/delete.png" on-tap="deleteWorkflow"></paper-icon-button>-->
+			<paper-item id="instance" value="[[item.id]]">Workflow:[[item.name]]</b><br>Owner:[[item.owner]]<br>Created: [[item.created]]
+			<paper-icon-button id="icond" value="[[item]]" src="/image/delete.png" on-tap="deleteWorkflow"></paper-icon-button>
 			</paper-item>
 			<!--<paper-icon-button id="formicon" src="/image/back.png" on-tap="newInstance"></paper-icon-button>-->
 			<!--<paper-icon-button id="icone" src="/image/edit.png" on-tap="checkInstances"></paper-icon-button>
@@ -141,7 +150,7 @@
 			</paper-card>
 		</template>
 	</paper-listbox>
-	<paper-icon-button id="icone" src="/image/edit.png" on-tap="uploadFile"></paper-icon-button>
+	<paper-icon-button id="icone" src="/image/add.png" on-tap="uploadFile"></paper-icon-button>
 	</div>
 
 	<div>	<div>
@@ -183,6 +192,20 @@
 				this.$.getWorkflowsAjax.generateRequest();
 				this.$.getUsersAjax.generateRequest();
 			},
+		deleteWorkflow:function(e){
+			var model=e.model;
+			alert(model.item);
+			this.$.deleteWorkflowAjax.body = {"workflow":model.item};
+			this.$.deleteWorkflowAjax.generateRequest();
+		},
+		handleDeleteWorkflowResponse: function(request){
+			if(request.detail.response.success==false){
+				alert("Failed to delete workflow");
+			}else{
+				this.$.getWorkflowsAjax.params={"role":this.userrole};
+				this.$.getWorkflowAjax.generateRequest();
+			}
+		},
 			
 		uploadFile: function(){
 			upload.open();
