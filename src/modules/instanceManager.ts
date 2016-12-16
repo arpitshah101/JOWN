@@ -317,7 +317,11 @@ export class InstanceManager {
 				let index = instance.activeStates.indexOf(stateId);
 				if (index > -1) {
 					instance.activeStates.splice(index, 1);
-					instance.save();
+					console.log(`Instance after removing a state: ${JSON.stringify(instance)}`);
+					instance.save()
+						.catch((reason) => {
+							//
+						});
 				}
 			});
 	}

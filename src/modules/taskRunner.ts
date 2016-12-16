@@ -1,6 +1,7 @@
 import * as Bluebird from "bluebird";
 import { exec } from "child_process";
 import * as mongoose from "mongoose";
+import { DataManager } from "./dataManager";
 import { PreDefTasks } from "./preDefTasks";
 
 export class TaskRunner {
@@ -16,7 +17,25 @@ export class TaskRunner {
 				return Bluebird.resolve(PreDefTasks.assign(instanceId, args[0], args[1], args[2]));
 			}
 			else if (cmdName === "email") {
-				return Bluebird.resolve(PreDefTasks.email(args[0], args[1], instanceId));
+				console.log(`email command arguments: ${JSON.stringify(args)}`);
+				return Bluebird.reduce(args.slice(1), (message: string, current: string) => {
+					return new Bluebird<string>((resolve, reject) =>  {
+						if (current.charAt(0) === "+") {
+							DataManager.getDataFromFormExp(current.substring(1), instanceId)
+								.then((value: string) => {
+									message += value;
+									resolve(message);
+								});
+						}
+						else {
+							message += current.substring(1, current.length - 2);
+							resolve(message);
+						}
+					});
+				}, "")
+				.then((message: string) => {
+					return Bluebird.resolve(PreDefTasks.email(args[0], message, instanceId));
+				});
 			}
 			else if (cmdName === "save") {
 				return Bluebird.resolve(PreDefTasks.save(args[0], args[1], instanceId));
