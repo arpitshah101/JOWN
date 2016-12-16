@@ -87,6 +87,7 @@ export class ConditionParser {
 		let splitIndex = this.isConditional(condition);
 		if (splitIndex === 0) {
 			// Not a conditional statement
+			console.log("WARNING! String not containing a conditional passed to conditionParser.parseConditional");
 			return ["false"]; // not a java conditional statement
 		}
 		result.push(condition.substr(0, splitIndex).trim());
@@ -175,7 +176,8 @@ export class ConditionParser {
 	 */
 	public parseAndEvaluate(fullExpression: string, instanceId: mongoose.Types.ObjectId ): Bluebird<boolean> {
 		let result: boolean;
-		let conditionArray: string[];
+		let fieldValue: Bluebird<string>;
+		let conditionalArray: string[];
 		let evaluationString: string = "";
 
 		if (!fullExpression) {
@@ -185,105 +187,71 @@ export class ConditionParser {
 		} else if (fullExpression.toLowerCase() === "false") {
 			return Bluebird.resolve(false);
 		}
-
 		fullExpression = fullExpression.trim();
-
+		// Splits fullExpression into an array where elements are separated by logical operators
 		let expressionArray = this.deconstructCondition(fullExpression);
-		// PARSE TERM BEFORE EVALUATING
-		expressionArray = this.parseTerm(expression[0]);
-
-		return new Bluebird<boolean>((resolve, reject) => {
-			Bluebird.reduce(expressionArray, (total: string, current: string) => {
-				if (current !== "&&" && current !== "||") {
-					conditionArray = this.parseConditional(current);
-					total += " ";
-					return this.evaluateExpression(conditionArray, instanceId)
-						.then((value: any) => {
-							return total += value;
-						});
+		// Goes through the array adding the elements to a string to evaluate later
+		for (let expression of expressionArray) {
+			if (expression === "&&" || expression === "||") {
+				evaluationString = evaluationString.concat(expression);
+			}
+			else {
+				if (this.isConditional(expression)) {
+					conditionalArray = this.parseConditional(expression);
+					fieldValue = this.resolveTerm(conditionalArray[0], instanceId);
+					evaluationString = evaluationString.concat(fieldValue);
+					evaluationString = evaluationString.concat(conditionalArray[1]);
+					evaluationString = evaluationString.concat(conditionalArray[2]);
+				} else {
+					fieldValue = this.resolveTerm(expression, instanceId);
+					evaluationString = evaluationString.concat(fieldValue);
 				}
-				else {
-					return Bluebird.resolve(total.concat(current.toString()));
-				}
-			}, evaluationString)
-				.then((value: String) => { evaluationString = value; })
-				.then(() => {
-					// tslint:disable-next-line:no-eval
-					res = eval("" + evaluationString);
-					resolve(res);
-				});
-		});
+			}
+		}
+		// tslint:disable-next-line:no-eval
+		result = eval(evaluationString);
+		return Bluebird.resolve(result);
 	}
 
 	/**
-	 * 
+	 * Resolves a term by parsing it and querying the DataManager for it if needed
+	 */
+	public resolveTerm(term: string, instanceId: mongoose.Types.ObjectId): Bluebird<string> {
+		let result: string;
+		let termArray = this.parseTerm(term);
+		if (termArray.length === 1) {
+			return Bluebird.resolve(termArray[0]);
+		}
+		return DataManager.getFormData(instanceId, term[0])
+			.then((formObject: any) => {
+				if (termArray.length === 2 ) {
+					// Here the array looks something like ["formName", "data"]
+					// tslint:disable-next-line:no-eval
+					result = eval("formObject.data." + termArray[1]);
+				} else if( termArray.length === 3 ) {
+					// Here the array looks something like ["formName", "_$", "data"]
+					// tslint:disable-next-line:no-eval
+					result = eval("formObject." + termArray[2]);
+				}
+				else {
+					// Shouldn't get here
+					console.log("WARNING! termArray > 3 in conditionParser.resolveTerm");
+					return Bluebird.resolve("false");
+				}
+				return Bluebird.resolve(result);
+			});
+	}
+
+	/**
+	 * Parses a term by splitting it by .
 	 */
 	public parseTerm (word: string): string[] {
 		let result: string[];
-
 		if (word.split(".").length === 1) {
 			return [word];
 		}
 		else {
 			return word.split(".");
-		}
-
-	}
-
-	/**
-	 * Evaluate expression in array and return boolean
-	 * @param	expression: an array with either one statement such as "true" or a conditional expression that needs
-	 * 			to be evaluated, in the format that deconstructCondition returns
-	 * 			instanceId: the id of the instance the expression to be evaluated belongs to
-	 * @returns	the result of the evaluation
-	 */
-	public evaluateExpression(expression: string[], instanceId: mongoose.Types.ObjectId): Bluebird<boolean> {
-		let expressionArray = [];
-
-		if (expression.length === 1) {
-			// check for keywords?
-			if (expression[0] === "true") {
-				return Bluebird.resolve(true);
-			} else if (expression[0] === "false") {
-				return Bluebird.resolve(false);
-			} else {
-				return Bluebird.resolve(false);
-			}
-		}
-
-		
-		if (expression.length === 3) {
-			if (typeof(expression[0]) === "string") {
-				expressionArray = expression[0].split(".");
-			}
-			else {
-				return Bluebird.resolve(false);
-			}
-
-			let fieldValue;
-			return DataManager.getFormData(mongoose.Types.ObjectId(instanceId.toString()), expressionArray[0])
-				.then((formObject: any) => {
-					if (expressionArray.indexOf("_$") === -1) {
-						// tslint:disable-next-line:no-eval
-						fieldValue = eval("formObject.data." + expressionArray[expressionArray.length - 1]);
-					}
-					else {
-						// tslint:disable-next-line:no-eval
-						fieldValue = eval("formObject." + expressionArray[expressionArray.length - 1]);
-					}
-					// For testing
-					// let fieldValue = "\"submitted\"";
-					// console.log("before concatExpression: " + fieldValue + " " + expression[1] + " " + expression[2]);
-					let concatExpression = "" + fieldValue + expression[1] + expression[2];
-					// console.log("after concatExpression: >>>" + concatExpression + "<<<");
-					// tslint:disable-next-line:no-eval
-					let evaluated = eval(concatExpression);
-					// console.log("evaluated: " + evaluated);
-					if (typeof (evaluated) !== "boolean") {
-						return Bluebird.resolve(false);
-					}
-					return Bluebird.resolve(evaluated);
-				});
 		}
 	}
 }
