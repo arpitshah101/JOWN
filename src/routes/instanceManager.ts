@@ -156,9 +156,7 @@ router.post("/deleteInstance", (req: Request, res: Response, next) => {
 });
 
 router.post("/createNewWorkflow", (req: Request, res: Response, next) => {
-	let xml: string = req.body.xml;
-
-	console.log(xml);
+	let xml: string = req.body.xmlf;
 
 	DefParser.parse(xml)
 		.then((parsedSuccessfully: boolean) => {
