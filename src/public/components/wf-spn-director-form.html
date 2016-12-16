@@ -60,6 +60,14 @@
 			last-response="{{instructors}}">
 		</iron-ajax>
 
+		<iron-ajax id="submitFormAjax"
+			url="/data/saveFormData"
+			method="POST"
+			handle-as="json"
+			content-type="application/json"
+			on-response="handleSubmitFormResponse">
+		</iron-ajax>
+
 		<iron-ajax id="getStudentFormAjax"
 			url="/data/getFormData"
 			method="GET"
@@ -223,13 +231,13 @@
 			ready: function() {
 				this.instanceId = localStorage.getItem("instanceId");
 				this.formAlias = "directorForm"
-				this.studentFormParams = {"instanceId": this.instanceId, "formAlias": this.studentFormAlias};
+				this.$.getStudentFormAjax.params = {"instanceId": this.instanceId, "formAlias": this.studentFormAlias};
 				this.$.getStudentFormAjax.generateRequest();
-				this.instructorFormParams = {"instanceId": this.instanceId, "formAlias": this.instructorFormAlias};
+				this.$.getInstructorFormAjax.params = {"instanceId": this.instanceId, "formAlias": this.instructorFormAlias};
 				this.$.getInstructorFormAjax.generateRequest();
-				this.directorFormParams = {"instanceId": this.instanceId, "formAlias": this.directorFormAlias};
+				this.$.getDirectorFormAjax.params = {"instanceId": this.instanceId, "formAlias": this.directorFormAlias};
 				this.$.getDirectorFormAjax.generateRequest();
-                this.secretaryFormParams = {"instanceId": this.instanceId, "formAlias": this.secretaryFormAlias};
+                this.$.getSecretaryFormAjax.params = {"instanceId": this.instanceId, "formAlias": this.secretaryFormAlias};
                 this.$.getSecretaryFormAjax.generateRequest();
 			},
 			logout: function() {
