@@ -52,12 +52,18 @@ export class ConditionParser {
 	 *          undefined if the conditional is not properly formatted
 	 */
 	public deconstructCondition (condition: String): any[] {
-		// console.log("deconstructCondition @ trim#1: " + condition);
-		condition = condition.trim();
-		// console.log("deconstructCondition @ trim#1");
+
 
 		let ret = [];
 		let currCondition = "";
+
+		// console.log("deconstructCondition @ trim#1: " + condition);
+		if (!condition) {
+			ret.push(true);
+			return ret;
+		}
+		condition = condition.trim();
+		// console.log("deconstructCondition @ trim#1");
 
 		for (let i = 0 ; i < condition.length ; i++) {
 			// From here until the end of the loop, C is the character at index i
@@ -153,8 +159,14 @@ export class ConditionParser {
 	 */
 	public parseCondition (condition: String): String[] {
 
-		condition = condition.trim();
 		let result = [];
+
+		if (!condition) {
+			result.push("true");
+			return result;
+		}
+		condition = condition.trim();
+
 		let splitIndex = this.isCondition(condition);
 
 		if (splitIndex === undefined) {
@@ -252,11 +264,11 @@ export class ConditionParser {
 		let conditionArray: any[];
 		let evaluationString: String = "";
 
-		console.log("expression @ parseAndEval: " + expression);
+		// console.log("expression @ parseAndEval: " + expression);
 		let expressionArray = this.deconstructCondition(expression);
 
 		// DEBUGGING
-		console.log("EXPRESSIONARRAY: " + expressionArray);
+		// console.log("EXPRESSIONARRAY: " + expressionArray);
 
 		// CHANGE BELOW TO ACCOUNT FOR EVALUATE EXPRESSION RETURNING UNDEFINED
 		// for (let exp of expressionArray) {
@@ -284,7 +296,7 @@ export class ConditionParser {
 			}, evaluationString)
 				.then((value: String) => { evaluationString = value; })
 				.then(() => {
-					console.log("evaluationString @ EVAL: " + evaluationString);
+					// console.log("evaluationString @ EVAL: " + evaluationString);
 					// tslint:disable-next-line:no-eval
 					res = eval("" + evaluationString);
 					resolve(res);
@@ -301,7 +313,6 @@ export class ConditionParser {
 	 */
 	public evaluateExpression(expression: any[], instanceId: String): Bluebird<boolean> {
 		let expressionArray = [];
-		// let fieldValue = String;
 
 		if (expression === undefined) {
 			return Bluebird.resolve(false);
@@ -309,14 +320,15 @@ export class ConditionParser {
 
 		if (expression.length === 1) {
 			// check for keywords?
-			if (expression[0] === "true") {
+			if (expression[0] === undefined) {
+				return Bluebird.resolve(false);
+			} else if (expression[0] === "true") {
 				return Bluebird.resolve(true);
 			} else if (expression[0] === "false") {
 				return Bluebird.resolve(false);
+			} else {
+				return Bluebird.resolve(false);
 			}
-
-			// return expression[0]; for testing
-			// return expression[0];
 		}
 
 		if (expression.length === 3) {
@@ -326,7 +338,7 @@ export class ConditionParser {
 			else {
 				return Bluebird.resolve(false);
 			}
-			// PSEUDO-ish
+
 			let fieldValue;
 			return DataManager.getFormData(mongoose.Types.ObjectId(instanceId.toString()), expressionArray[0])
 				.then((formObject: any) => {
@@ -340,12 +352,12 @@ export class ConditionParser {
 					}
 					// For testing
 					// let fieldValue = "\"submitted\"";
-					console.log("before concatExpression: " + fieldValue + " " + expression[1] + " " + expression[2]);
+					// console.log("before concatExpression: " + fieldValue + " " + expression[1] + " " + expression[2]);
 					let concatExpression = "" + fieldValue + expression[1] + expression[2];
-					console.log("after concatExpression: >>>" + concatExpression + "<<<");
+					// console.log("after concatExpression: >>>" + concatExpression + "<<<");
 					// tslint:disable-next-line:no-eval
 					let evaluated = eval(concatExpression);
-					console.log("evaluated: " + evaluated);
+					// console.log("evaluated: " + evaluated);
 					if (typeof (evaluated) !== "boolean") {
 						return Bluebird.resolve(false);
 					}

@@ -34,19 +34,12 @@ export class InstanceManager {
 			newInstance.save()
 				.then((instance: Instance.IDocument) => {
 					// find all events for the workflow
-					console.log(workflowId);
 					newInstance = instance;
 					return Event.model.find({ workflowId }).exec();
 				})
 				.then((events: Event.IDocument[]) => {
 					// create new event listeners for this instance
 					let origEvents = events;
-					console.log(origEvents);
-					// for (let event of origEvents) {
-					// 	delete event._id;
-					// 	event.instanceId = newInstance._id;
-					// }
-					console.log(newInstance.events);
 					let eventList: mongoose.Types.ObjectId[] = [];
 					for (let event of origEvents) {
 						eventList.push(event._id);
@@ -214,6 +207,7 @@ export class InstanceManager {
 	public static processEvents(instanceId: mongoose.Types.ObjectId): void {
 		this.getInstance({_id: instanceId})
 			.then((instance: Instance.IDocument) => {
+				console.log(instance.events);
 				return Bluebird.all(
 					instance.events.map(
 						(eventId: mongoose.Types.ObjectId) => Event.model.findById(eventId),
@@ -312,30 +306,55 @@ export class InstanceManager {
 	}
 
 	private static processTransitions(transitions: Event.ITransition[], instanceId: mongoose.Types.ObjectId): void {
+		let instanceDoc: Instance.IDocument;
 		this.getInstance({ _id: instanceId })
-			.then((instance: Instance.IDocument) => {
-				Bluebird.reduce(transitions, (total: State.IDocument[], current: Event.ITransition) => {
-					return ConditionParser.prototype.parseAndEvaluate(current.condition, instanceId.toString())
-						.then((value: boolean) => {
-							if (value) {
-								State.model.findOne({ name: current.dest, workflowId: instance.workflowId }).exec()
-									.then((state: State.IDocument) => {
-										total.push(state);
-										return total;
-									});
-							}
-							else {
-								return total;
-							}
-						});
-				}, [])
-					.then((states: State.IDocument[]) => {
-						for (let state of states) {
-							if (instance.activeStates.indexOf(state._id) < 0) {
-								instance.activeStates.push(state._id);
-							}
-						}
+			.then((instance: Instance.IDocument): Bluebird<State.IDocument[]> => {
+				instanceDoc = instance;
+				return Bluebird.map(transitions, (transition: Event.ITransition) => {
+					return new Bluebird<State.IDocument>((resolve, reject) => {
+						ConditionParser.prototype.parseAndEvaluate(transition.condition, instanceId.toString())
+							.then((value: boolean) => {
+								if (value) {
+									State.model.findOne({ name: transition.dest, workflowId: instance.workflowId }).exec()
+										.then((state: State.IDocument) => {
+											resolve(state);
+										});
+								}
+								else {
+									resolve(undefined);
+								}
+							});
 					});
+				});
+			})
+			.then((states: State.IDocument[]) => {
+				console.log(states);
+				for (let state of states) {
+					if (state && instanceDoc.activeStates.indexOf(state._id) < 0) {
+						instanceDoc.activeStates.push(state._id);
+					}
+				}
+			})
+			.then(() => {
+				instanceDoc.save();
+			});
+
+
+				// return Bluebird.reduce(transitions, (total: State.IDocument[], current: Event.ITransition) => {
+				// 	return ConditionParser.prototype.parseAndEvaluate(current.condition, instanceId.toString())
+				// 		.then((value: boolean) => {
+				// 			if (value) {
+				// 				State.model.findOne({ name: current.dest, workflowId: instance.workflowId }).exec()
+				// 					.then((state: State.IDocument) => {
+				// 						total.push(state);
+				// 						return total;
+				// 					});
+				// 			}
+				// 			else {
+				// 				return total;
+				// 			}
+				// 		});
+				// }, [])
 			});
 	}
 }
