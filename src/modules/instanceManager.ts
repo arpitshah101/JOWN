@@ -203,7 +203,7 @@ export class InstanceManager {
 
 	public static addInstanceMember(instance: Instance.IDocument, userDoc: User.IDocument,
 		role: string): Bluebird<Instance.IDocument> {
-
+		console.log(`Adding the user ${userDoc.userId} as a member of an instance`);
 		// verify that the user is a member of the instance. if not, add the user
 		let alreadyAdded = instance.members.some((member: Instance.IMember) => {
 			if (member.user.equals(userDoc._id)) {
@@ -213,13 +213,18 @@ export class InstanceManager {
 			return false;
 		});
 
+		console.log(`\t${instance.members}`);
+
 		if (!alreadyAdded) {
-			instance.members.push(<Instance.IMember>{
+			instance.members.push(<Instance.IMember> {
 				user: userDoc._id,
 				role,
 			});
+			console.log(`\tAdded user to instance`);
+			console.log(`\t${instance.members}`);
 			return instance.save();
 		}
+		console.log(`\tThe user was already added with the given role & userId`);
 		return Bluebird.resolve(instance);
 	}
 
@@ -250,11 +255,14 @@ export class InstanceManager {
 			})
 			.then((events: Event.IDocument[]) => {
 				if (!events) {
+					console.log(`No events to parse at the moment...`);
 					return;
 				}
+				console.log(`Found the following events:\n\t${JSON.stringify(events)}`);
 				Bluebird.each(events, (event: Event.IDocument) => {
 					if (event.condition !== "START") {
-						ConditionParser.prototype.parseAndEvaluate(event.condition, instanceId.toString())
+						console.log(`Parsing the event: ${event}`);
+						ConditionParser.prototype.parseAndEvaluate(event.condition, instanceId)
 							.then((value: boolean) => {
 								if (value) {
 									this.processTransitions(event.transitions, instanceId);
@@ -289,8 +297,10 @@ export class InstanceManager {
 		 * 		remove self state from instance's active states
 		 * 		process transitions
 		 */
-		ConditionParser.prototype.parseAndEvaluate(state.condition, instanceId.toString())
+		console.log(`Processing the active state: ${JSON.stringify(state)}`);
+		ConditionParser.prototype.parseAndEvaluate(state.condition, instanceId)
 			.then((value: boolean) => {
+				console.log(`Active state ${state.name} condition was evaluated to {value}`);
 				if (value) {
 					// process action
 					TaskRunner.run(state.action, instanceId);
@@ -303,6 +313,7 @@ export class InstanceManager {
 	private static deactivateState(stateId: mongoose.Types.ObjectId, instanceId: mongoose.Types.ObjectId) {
 		Instance.model.findOne(instanceId).exec()
 			.then((instance: Instance.IDocument) => {
+				console.log(`Deactivating state: ${stateId}`);
 				let index = instance.activeStates.indexOf(stateId);
 				if (index > -1) {
 					instance.activeStates.splice(index, 1);
@@ -347,9 +358,10 @@ export class InstanceManager {
 				instanceDoc = instance;
 				return Bluebird.map(transitions, (transition: Event.ITransition) => {
 					return new Bluebird<State.IDocument>((resolve, reject) => {
-						ConditionParser.prototype.parseAndEvaluate(transition.condition, instanceId.toString())
+						ConditionParser.prototype.parseAndEvaluate(transition.condition, instanceId)
 							.then((value: boolean) => {
 								if (value) {
+									console.log(`transition ${transition} evaluated to ${value}`);
 									State.model.findOne({ name: transition.dest, workflowId: instance.workflowId }).exec()
 										.then((state: State.IDocument) => {
 											resolve(state);
@@ -363,8 +375,10 @@ export class InstanceManager {
 				});
 			})
 			.then((states: State.IDocument[]) => {
+				console.log(`Adding the following states to the active list:\n${JSON.stringify(states)}`);
 				for (let state of states) {
 					if (state && instanceDoc.activeStates.indexOf(state._id) < 0) {
+						console.log(`Actually adding state ${state}`);
 						instanceDoc.activeStates.push(state._id);
 					}
 				}
