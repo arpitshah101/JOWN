@@ -203,12 +203,10 @@
 			newInstance: function(e){
 				var model=e.model;
 				var name =e.model.item.name;
-				alert(name);
 				this.$.createNewInstanceAjax.body = {"workflowName": name,"userId": this.userId, "role": this.userrole};
 				this.$.createNewInstanceAjax.generateRequest();
 			},
 			handleCreateNewResponse: function(request) {
-				alert(request);
 				if(request.detail.response.success === true) {
 					alert=("create instance successfully");
 				}
@@ -248,7 +246,6 @@
 			naviForm: function(e){
 				var model = e.model;
 				localStorage.setItem("instanceId",model.item._id);
-				// alert(model.item._id);
 				var role=localStorage.getItem("userRole");
 				if(role=="Student"){
 					location.href = "/wf-spn-stu-page.html";
@@ -267,7 +264,6 @@
 				var model = e.model;		
 				localStorage.setItem("id",model.item._id);
 				localStorage.setItem("name",model.item.name);
-				alert(localStorage.getItem("id"));
 			 },
 			checkInstances: function(){
 				location.href ="/instance.html";

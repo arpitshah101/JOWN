@@ -44,6 +44,9 @@
                 position:relative;
                 left:75%;
             }
+			#director-form{
+				width:100%;
+			}
             paper-input {
                 --paper-input-container-disabled: {
                     opacity: 0.7;
@@ -141,15 +144,15 @@
 					</paper-listbox>
 				</paper-dropdown-menu>
                 <!--  Instructor -->
-				<b>Student form below</b>
+				<b>Instructor's fields below</b>
                 <paper-input id="instructorApprovalInput" disabled="true" label="Approved by Instructor" maxlength="50" value={{instructorApproval}}></paper-input>
                 <paper-input id="instructorApprovalDateInput" disabled="true" label="Approval Date" maxlength="50" value={{instructorApprovalDate}}></paper-input>
                 <!-- Director -->
-				<b>Student form below</b>
+				<b>Director's fields below</b>
                 <paper-input id="directorApprovalInput" label="Approved by Director" maxlength="50" value={{directorApproval}}></paper-input>
                 <paper-input id="directorApprovalDateInput" label="Approval Date" maxlength="50" value={{directorApprovalDate}}></paper-input>
                 <!-- Secretary -->
-				<b>Secretary form below</b>
+				<b>Secretary's fields below</b>
                 <paper-input id="spnInput" disabled="true" label="Special Permission #" maxlength="50" value={{spn}}></paper-input>
 
 				<div class="card-actions">
