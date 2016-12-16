@@ -82,7 +82,6 @@
 	<iron-ajax 
 		id="getInstancesAjax"
 		auto url="/instances/getInstances"
- 		params= '{"userId":"xc","role":"Student"}'
 		handle-as="json"
 		last-response={{instanceList}}>
 	</iron-ajax>
@@ -99,7 +98,6 @@
 	<iron-ajax
 		id="getWorkflowsAjax"
 		auto url="/instances/getWorkflows"	
-		params='{"role":"Student"}'
 		handle-as="json"
 		last-response={{workflows}}>
 		</iron-ajax>
@@ -180,7 +178,13 @@
 				 workflowId:{
 					 type:Number,
 					 value:"123456123456"
-				 }
+				 },
+			},
+			ready: function(){
+				this.$.getWorkflowsAjax.params = {"role": this.userrole};
+				this.$.getWorkflowsAjax.generateRequest();
+				this.$.getInstancesAjax.params = {"userId": this.userId,"role": this.userrole};
+				this.$.getInstancesAjax.generateRequest();
 			},
 			newInstance: function(e){
 				var model=e.model;
