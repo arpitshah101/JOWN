@@ -71,16 +71,14 @@
 		<iron-ajax id="getStudentFormAjax"
 			url="/data/getFormData"
 			method="GET"
-			params="studentFormParams"
 			handle-as="json"
 			content-type="application/json"
-			on-response="handlestudentFormResponse">
+			on-response="handleStudentFormResponse">
 		</iron-ajax>
 
 		<iron-ajax id="getInstructorFormAjax"
 			url="/data/getFormData"
 			method="GET"
-			params="instructorFormParams"
 			handle-as="json"
 			content-type="application/json"
 			on-response="handleInstructorFormResponse">
@@ -89,7 +87,6 @@
 		<iron-ajax id="getDirectorFormAjax"
 			url="/data/getFormData"
 			method="GET"
-			params="directorFormParams"
 			handle-as="json"
 			content-type="application/json"
 			on-response="handleDirectorFormResponse">
@@ -98,7 +95,6 @@
 		<iron-ajax id="getSecretaryFormAjax"
 			url="/data/getFormData"
 			method="GET"
-			params="secretaryFormParams"
 			handle-as="json"
 			content-type="application/json"
 			on-response="handleSecretaryFormResponse">
@@ -116,7 +112,7 @@
 		</paper-header-panel>
 
 		<!-- ADD NEW FIELDS AND CHANGE PARAMETERS FOR FORMS BELOW -->
-		<paper-card id="director-form" heading="Register New Account">
+		<paper-card id="director-form" heading="Graduate Course Request Form">
 			<div class="card-content">
                 <!-- Student -->
 				<b>Student form below</b>
@@ -241,15 +237,16 @@
                 this.$.getSecretaryFormAjax.generateRequest();
 			},
 			logout: function() {
-				alert("logging out " + this.username);
+				console.log("student-form @ logout: clearing local storage and logging out " + this.username);
                 localStorage.clear();
 				location.href = "index.html";
 			},
 			submitForm: function() {
-				alert("Submitting form");
+				console.log("student-form @ submitForm: submitting form and returns to home");
 				// this.directorApprovalDate = Date.now();
 				if (this.instructorApproval === "true" || this.instructorApproval === "false" ) {
-					this.$.submitFormAjax.body = {"instanceId": this.instanceId, "formAlias": this.formAlias, "data":
+					this.$.submitFormAjax.body = {"instanceId": this.instanceId, "formAlias": this.formAlias,
+					"status": "submitted" , "lastEdit": Date.now(), "assignedTo": this.directorUserId, "data":
 						{
 							"directorApproval": this.directorApproval, "directorSignature": this.directorSignature,
 							"directorApprovalDate": this.directorApprovalDate
@@ -266,14 +263,14 @@
 				console.log(request.detail.response);
 				console.log(this.$.submitFormAjax.lastResponse);
 				if( request === undefined) {
-					alert("REQUEST UNDEFINED")
+					console.log("student-form @ handleSubmitFormResponse: request === undefined");
 				} else if(request.success === true) {
-					alert("FORM SAVED");
+					console.log("student-form @ handleSubmitFormResponse: form saved");
 				} else if (request.success === false){
-					alert("ERROR! COULD NOT SAVE FORM");
+					console.log("student-form @ handleSubmitFormResponse: request.success === \"false\"");
 				}
 				else {
-					alert("IF YOU READ THIS, YOU HAVE GOT SOME KIND OF TROUBLE");
+					console.log("student-form @ handleSubmitFormResponse: ELSE");
 				}
 			},
 			handleStudentFormResponse: function(request) {
@@ -298,7 +295,7 @@
                         this.numberOfCredits = request.formData.data.numberOfCredits;
                         this.courseTitle = request.formData.data.courseTitle;
                         this.reasonsForTakingCourse = request.formData.data.reasonsForTakingCourse;
-						this.instructorUserId = request.formData.data.reasonForTakingCourse;
+						this.instructorUserId = request.formData.data.instructorUserId;
                         /* Disables fields pertaining to loaded form*/
                         this.$.firstNameInput.disabled = "true";
                         this.$.lastNameInput.disabled = "true";
@@ -325,7 +322,7 @@
                     }
 				}
 				else {
-					// modal.open();
+					console.log("student-form @ handleStudentFormResponse: request.success !== \"true\"");
 				}
 			},
 			handleInstructorFormResponse: function(request) {

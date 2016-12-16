@@ -32,7 +32,8 @@ export class DefParser {
 				workflow = doc;
 			})
 			.catch((reason: mongoose.NativeError) => {
-				if (reason.name === "MongoError" && reason.message.match("insertDocument.+duplicate\\skey\\serror.*").length > 0) {
+				let messageMatch = reason.message.match("insertDocument.+duplicate\\skey\\serror.*");
+				if (reason.name === "MongoError" && messageMatch && messageMatch.length > 0) {
 					reject(`A workflow already exists with the name '${workflow.name}'`);
 				}
 				else {

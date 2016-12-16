@@ -13,7 +13,6 @@
 <dom-module id="workflow-spn-student-form">
 	<template>
 		<style>	
-
             paper-button{
                 width:5%;
             }
@@ -52,7 +51,6 @@
                     opacity: 0.7;
                 };
             } 
-
 		</style>
 
 		<iron-ajax id="getUsersWithRoleAjax"
@@ -74,16 +72,14 @@
 		<iron-ajax id="getStudentFormAjax"
 			url="/data/getFormData"
 			method="GET"
-			params="studentFormParams"
 			handle-as="json"
 			content-type="application/json"
-			on-response="handlestudentFormResponse">
+			on-response="handleStudentFormResponse">
 		</iron-ajax>
 
 		<iron-ajax id="getInstructorFormAjax"
 			url="/data/getFormData"
 			method="GET"
-			params="instructorFormParams"
 			handle-as="json"
 			content-type="application/json"
 			on-response="handleInstructorFormResponse">
@@ -92,7 +88,6 @@
 		<iron-ajax id="getDirectorFormAjax"
 			url="/data/getFormData"
 			method="GET"
-			params="directorFormParams"
 			handle-as="json"
 			content-type="application/json"
 			on-response="handleDirectorFormResponse">
@@ -101,7 +96,6 @@
 		<iron-ajax id="getSecretaryFormAjax"
 			url="/data/getFormData"
 			method="GET"
-			params="secretaryFormParams"
 			handle-as="json"
 			content-type="application/json"
 			on-response="handleSecretaryFormResponse">
@@ -112,15 +106,16 @@
 				<div class="paper-header">Just Our Workflow Notation</div>
 				<!-- title here should be the .workflowName of the workflow instance -->
 				<paper-item id="item1" value={{userId}}>{{userId}}</paper-item>
-				<paper-item id="item2" value={{userrole}}>{{userrole}}</paper-item>
+				<paper-item id="item2" value={{userRole}}>{{userRole}}</paper-item>
 				<paper-button id="item3" on-tap="logout">Logout</paper-button>
 			</paper-toolbar>
 		</paper-header-panel>
 
 		<!-- ADD NEW FIELDS AND CHANGE PARAMETERS FOR FORMS BELOW -->
-		<paper-card id="student-form" heading="Student Form">
+		<paper-card id="student-form" heading="Graduate Course Request Form">
 			<div class="card-content">
                 <!-- Student -->
+				<b>Student's fields below</b>
 				<paper-input id="firstNameInput" label="First name" maxlength="50" value={{firstName}}></paper-input>
 				<paper-input id="lastNameInput" label="Last name" maxlength="50" value={{lastName}}></paper-input>
 				<paper-input id="middleInitialsInput" label="Middle initials" maxlength="50" value={{middleInitials}}></paper-input>
@@ -145,15 +140,18 @@
 						</template>
 					</paper-listbox>
 				</paper-dropdown-menu>
+				<br>
                 <!--  Instructor -->
+				<b>Instructor's fields below</b>
                 <paper-input id="instructorApprovalInput" disabled="true" label="Approved by Instructor" maxlength="50" value={{instructorApproval}}></paper-input>
                 <paper-input id="instructorApprovalDateInput" disabled="true" label="Approval Date" maxlength="50" value={{instructorApprovalDate}}></paper-input>
                 <!-- Director -->
+				<b>Director's fields below</b>
                 <paper-input id="directorApprovalInput" disabled="true" label="Approved by Director" maxlength="50" value={{directorApproval}}></paper-input>
                 <paper-input id="directorApprovalDateInput" disabled="true" label="Approval Date" maxlength="50" value={{directorApprovalDate}}></paper-input>
                 <!-- Secretary -->
+				<b>Secretary's fields below</b>
                 <paper-input id="spnInput" disabled="true" label="Special Permission #" maxlength="50" value={{spn}}></paper-input>
-
 
 				<div class="card-actions">
 					<paper-button id="cancel" flat on-tap="goBack">Cancel</paper-button>
@@ -162,7 +160,6 @@
 			</div>
 		</paper-card>
 		<!-- ADD NEW FIELDS AND CHANGE PARAMETERS FOR FORMS ABOVE -->
-	</template>
 	</template>
 
 	<script>
@@ -176,25 +173,26 @@
                     type: String,
                     value: "studentForm"
                 },
-				userrole: {
+				userRole: {
 					type: String,
-					value: function(){return localStorage.getItem("userRole");},
+					value: function() {
+						return localStorage.getItem("userRole");
+					},
 				},
 				userId: {
 					type: String,
-					value: function(){return localStorage.getItem("userId");},
+					value: function() {
+						return localStorage.getItem("userId");
+					},
 				},
-				studentFormParams: {},
 				instructorFormAlias: {
                     type: String,
                     value: "instructorForm"
                 },
-				instructorFormParams: {},
                 directorFormAlias: {
                     type: String,
                     value: "directorForm"
                 },
-                directorFormParams: {},
                 secretaryFormAlias: {
                     type: String,
                     value: "secretaryForm"
@@ -250,13 +248,14 @@
 				location.href="home.html";
 			},
 			logout: function() {
-				alert("logging out " + this.username);
+				console.log("student-form @ logout: clearing local storage and logging out " + this.username);
                 localStorage.clear();
 				location.href = "index.html";
 			},
 			submitForm: function() {
-				alert("Submitting form");
-				this.$.submitFormAjax.body = {"instanceId": this.instanceId, "formAlias": this.formAlias, "data":
+				console.log("student-form @ submitForm: submitting form and returns to home");
+				this.$.submitFormAjax.body = {"instanceId": this.instanceId, "formAlias": this.formAlias, 
+						"status": "submitted" , "lastEdit": Date.now(), "assignedTo": this.instructorUserId, "data":
 					{
 						"firstName": this.firstName, "lastName": this.lastName, "middleInitials": this.middleInitials,
 						"ruid": this.ruid, "officialRutgersEmail": this.officialRutgersEmail,
@@ -270,26 +269,26 @@
 					}
 				};
 				this.$.submitFormAjax.generateRequest();
+				//this.goBack();
 			},
 			handleSubmitFormResponse: function(request) {
 				console.log(request);
 				console.log(request.detail.response);
-				console.log(this.$.submitFormAjax.lastResponse);
 				if( request === undefined) {
-					alert("REQUEST UNDEFINED")
-				} else if(request.success === true) {
-					alert("FORM SAVED");
-				} else if (request.success === false){
-					alert("ERROR! COULD NOT SAVE FORM");
+					console.log("student-form @ handleSubmitFormResponse: request === undefined");
+				} else if(request.success === "true") {
+					console.log("student-form @ handleSubmitFormResponse: form saved");
+				} else if (request.success === "false"){
+					console.log("student-form @ handleSubmitFormResponse: request.success === \"false\"");
 				}
 				else {
-					alert("IF YOU READ THIS, YOU HAVE GOT SOME KIND OF TROUBLE");
+					console.log("student-form @ handleSubmitFormResponse: ELSE");
 				}
 			},
 			handleStudentFormResponse: function(request) {
 				console.log(request.detail.response);
 				console.log(this.$.getStudentFormAjax.lastResponse);
-				if (request.success === true) {
+				if (request.success === "true") {
                     if (request.formData.data.firstName !== "") {
                         this.firstName = request.formData.data.firstName;
                         this.lastName = request.formData.data.lastName;
@@ -308,7 +307,7 @@
                         this.numberOfCredits = request.formData.data.numberOfCredits;
                         this.courseTitle = request.formData.data.courseTitle;
                         this.reasonsForTakingCourse = request.formData.data.reasonsForTakingCourse;
-						this.instructorUserId = request.formData.data.reasonForTakingCourse;
+						this.instructorUserId = request.formData.data.instructorId;
                         /* Disables fields pertaining to loaded form*/
                         this.$.firstNameInput.disabled = "true";
                         this.$.lastNameInput.disabled = "true";
@@ -335,13 +334,13 @@
                     }
 				}
 				else {
-					// modal.open();
+					console.log("student-form @ handleStudentFormResponse: request.success !== \"true\"");
 				}
 			},
 			handleInstructorFormResponse: function(request) {
 				console.log(request.detail.response);
 				console.log(this.$.getInstructorFormAjax.lastResponse);
-				if(request.success === true) {
+				if(request.success === "true") {
                     if(request.formData.data.instructorApproval !== "") {
                         this.instructorApproval = request.formData.data.instructorApproval;
 					    this.instructorSignature = request.formData.data.instructorSignature;
@@ -356,13 +355,13 @@
                     }
 				}
 				else {
-					// modal.open();
+					console.log("student-form @ handleInstructorFormResponse: request.success !== \"true\"");
 				}
 			},
             handleDirectorFormResponse: function(request) {
 				console.log(request.detail.response);
 				console.log(this.$.getDirectorFormAjax.lastResponse);
-				if(request.success === true) {
+				if(request.success === "true") {
                     if(request.formData.data.directorApproval !== "") {
                         this.directorApproval = request.formData.data.directorApproval;
                         this.directorSignature = request.formData.data.directorSignature;
@@ -377,13 +376,13 @@
                     }
 				}
 				else {
-					// modal.open();
+					console.log("student-form @ handleDirectorFormResponse: request.success !== \"true\"");
 				}
 			},
             handleSecretaryFormResponse: function(request) {
 				console.log(request.detail.response);
 				console.log(this.$.getDirectorFormAjax.lastResponse);
-				if(request.success === true) {
+				if(request.success === "true") {
                     if(request.formData.data.secretarySignature !== "") {
                         this.spn = request.formData.data.spn;
                         /* Disables fields pertaining to loaded form*/
@@ -395,7 +394,7 @@
                     }
 				}
 				else {
-					// modal.open();
+					console.log("student-form @ handleSecretaryFormResponse: request.success !== \"true\"");
 				}
 			}
 		});

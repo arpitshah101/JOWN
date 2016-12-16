@@ -4,6 +4,7 @@ import * as mongoose from "mongoose";
 import * as Instance from "../models/Instance";
 import * as User from "../models/User";
 import * as Workflow from "../models/Workflow";
+import { DefParser } from "../modules/defParser";
 import { InstanceManager } from "../modules/instanceManager";
 import { UserManager } from "../modules/userManager";
 
@@ -109,6 +110,87 @@ router.post("/createNewInstance", (req: Request, res: Response, next) => {
 			else {
 				res.json({
 					message: `We could NOT create a new instance for you. Try again.`,
+					success: false,
+				});
+			}
+		})
+		.catch((reason) => {
+			res.json({
+				message: `An error occurred. Please try again.`,
+				success: false,
+			});
+		})
+		.then(() => {
+			next();
+		});
+});
+
+router.post("/deleteInstance", (req: Request, res: Response, next) => {
+	let instance = req.body.instance;
+	let instanceId: mongoose.Types.ObjectId = instance._id;
+
+	InstanceManager.deleteInstance(instanceId)
+		.then((success: boolean) => {
+			if (success) {
+				res.json({
+					message: `Instance deleted successfully!`,
+					success: true,
+				});
+			}
+			else {
+				res.json({
+					message: `Unable to delete instance!`,
+					success: false,
+				});
+			}
+		})
+		.catch((reason) => {
+			res.json({
+				message: `An error occurred. Please try again.`,
+				success: false,
+			});
+		})
+		.then(() => {
+			next();
+		});
+});
+
+router.post("/createNewWorkflow", (req: Request, res: Response, next) => {
+	let xml: string = req.body.xmlf;
+
+	DefParser.parse(xml)
+		.then((parsedSuccessfully: boolean) => {
+			if (parsedSuccessfully) {
+				res.json(parsedSuccessfully);
+			}
+			else {
+				res.json(parsedSuccessfully);
+			}
+		})
+		.catch((reason) => {
+			console.log(reason);
+			res.json({success: false, message: "Could not create a workflow!"});
+		})
+		.then(() => {
+			next();
+		});
+});
+
+router.post("/deleteWorkflow", (req: Request, res: Response, next) => {
+	let workflow = req.body.workflow;
+	let name: string = workflow.name;
+
+	InstanceManager.deleteWorkflow(name)
+		.then((success: boolean) => {
+			if (success) {
+				res.json({
+					message: `Workflow deleted successfully!`,
+					success: true,
+				});
+			}
+			else {
+				res.json({
+					message: `Unable to delete workflow!`,
 					success: false,
 				});
 			}
