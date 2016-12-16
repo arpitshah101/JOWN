@@ -126,7 +126,7 @@ router.post("/createNewInstance", (req: Request, res: Response, next) => {
 });
 
 router.post("/createNewWorkflow", (req: Request, res: Response, next) => {
-	let xml = req.body.xml;
+	let xml: string = req.body.xml;
 
 	DefParser.parse(xml)
 		.then((parsedSuccessfully: boolean) => {
