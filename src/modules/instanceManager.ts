@@ -78,6 +78,24 @@ export class InstanceManager {
 		});
 	}
 
+	public static deleteInstance(workflowId: mongoose.Types.ObjectId) {
+		return new Bluebird<boolean>((resolve, reject) => {
+			Instance.model.findOneAndRemove({workflowId}).exec()
+				.then((doc: Instance.IDocument) => {
+					if (doc) {
+						resolve(true);
+					}
+					else {
+						reject("Instance doesn't exist.");
+					}
+				})
+				.catch((reason: any) => {
+					console.error(reason);
+					reject(reason);
+				});
+		});
+	}
+
 	/**
 	 * Changes the status of the workflow instance corresponding to the instanceId provided.
 	 * If status is not "active" or "archived" then defaults to "active".
