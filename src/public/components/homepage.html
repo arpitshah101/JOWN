@@ -80,6 +80,7 @@
     </paper-header-panel>
 
 	<iron-ajax 
+		id="getInstancesAjax"
 		auto url="/instances/getInstances"
  		params= '{"userId":"xc","role":"Student"}'
 		handle-as="json"
@@ -96,6 +97,7 @@
 		</iron-ajax>
 
 	<iron-ajax
+		id="getWorkflowsAjax"
 		auto url="/instances/getWorkflows"	
 		params='{"role":"Student"}'
 		handle-as="json"
@@ -202,9 +204,13 @@
 
 			tab1: function(){
 				selected=0;
+				this.$.getWorkflowsAjax.params = {"role": this.userrole};
+				this.$.getWorkflowsAjax.generateRequest();
 			},
 			tab2:function(){
 				selected=1;
+				this.$.getInstancesAjax.params = {"userId": this.userId,"role": this.userrole};
+				this.$.getInstancesAjax.generateRequest();
 			},
             logout: function() {
 				alert("logging out " + this.userId);
@@ -214,7 +220,7 @@
 			naviForm: function(e){
 				var model = e.model;
 				localStorage.setItem("instanceId",model.item._id);
-				alert(model.item._id);
+				// alert(model.item._id);
 				var role=localStorage.getItem("userRole");
 				if(role=="Student"){
 					location.href = "/wf-spn-stu-page.html";
