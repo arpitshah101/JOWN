@@ -5,7 +5,7 @@ let Schema = mongoose.Schema;
 let instanceSchema = new Schema({
 	activeStates: {
 		default: [],
-		types: [Schema.Types.ObjectId],
+		type: [Schema.Types.ObjectId],
 	},
 	created: {
 		default: Date.now(),
@@ -14,11 +14,11 @@ let instanceSchema = new Schema({
 	creator: Schema.Types.ObjectId,
 	events: {
 		default: [],
-		types: [Schema.Types.ObjectId],
+		type: [Schema.Types.ObjectId],
 	},
 	members: {
 		default: [],
-		types: [Schema.Types.Mixed],
+		type: [Schema.Types.Mixed],
 	},
 	status: {
 		default: "active",

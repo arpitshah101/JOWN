@@ -27,25 +27,35 @@ export class InstanceManager {
 		return new Bluebird<boolean>((resolve, reject) => {
 			let newInstance = new Instance.model({
 				creator,
+				events: [],
 				members: [{user: creator, role}],
 				workflowId,
 			});
 			newInstance.save()
 				.then((instance: Instance.IDocument) => {
 					// find all events for the workflow
+					console.log(workflowId);
 					newInstance = instance;
-					return Event.model.find({ workflowId, instanceId: null }).exec();
+					return Event.model.find({ workflowId }).exec();
 				})
 				.then((events: Event.IDocument[]) => {
 					// create new event listeners for this instance
 					let origEvents = events;
+					console.log(origEvents);
+					// for (let event of origEvents) {
+					// 	delete event._id;
+					// 	event.instanceId = newInstance._id;
+					// }
+					console.log(newInstance.events);
+					let eventList: mongoose.Types.ObjectId[] = [];
 					for (let event of origEvents) {
-						delete event._id;
-						event.instanceId = newInstance._id;
+						eventList.push(event._id);
 					}
-					return Bluebird.all(events.map((event: Event.IDocument) => event.save()));
+					newInstance.events = eventList;
+					return newInstance.save();
+					// return Bluebird.all(events.map((event: Event.IDocument) => event.save()));
 				})
-				.then((events: Event.IDocument[]) => {
+				.then((instance: Instance.IDocument) => {
 					// create form data instances
 					return Workflow.model.findOne({ _id: workflowId }).exec();
 				})
@@ -58,9 +68,7 @@ export class InstanceManager {
 				.then((formDatas: FormData.IDocument[]) => {
 					// get all events
 					return Bluebird.all(
-						newInstance.events.map(
-							(eventId: mongoose.Types.ObjectId) => Event.model.findById(eventId),
-						));
+						Bluebird.map(newInstance.events, (eventId: mongoose.Types.ObjectId) => Event.model.findById(eventId)));
 				})
 				.then((events: Event.IDocument[]) => {
 					for (let event of events) {
@@ -212,6 +220,9 @@ export class InstanceManager {
 					));
 			})
 			.then((events: Event.IDocument[]) => {
+				if (!events) {
+					return;
+				}
 				Bluebird.each(events, (event: Event.IDocument) => {
 					if (event.condition !== "START") {
 						ConditionParser.prototype.parseAndEvaluate(event.condition, instanceId.toString())

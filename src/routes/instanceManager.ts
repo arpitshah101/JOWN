@@ -76,7 +76,7 @@ router.get("/getWorkflows", (req: Request, res: Response, next) => {
  * 
  */
 router.post("/createNewInstance", (req: Request, res: Response, next) => {
-	let workflowIdStr = req.body.workflowId;
+	let workflowName = req.body.workflowName;
 	let userId = req.body.userId;
 	let role = req.body.role;
 
@@ -95,8 +95,10 @@ router.post("/createNewInstance", (req: Request, res: Response, next) => {
 			}
 		})
 		.then((userObjectId: mongoose.Types.ObjectId) => {
-			let workflowId = mongoose.Types.ObjectId(workflowIdStr);
-			return InstanceManager.createNewInstance(workflowId, userObjectId, role);
+			return Workflow.model.findOne({name: workflowName}).exec()
+				.then((workflow: Workflow.IDocument) => {
+					return InstanceManager.createNewInstance(workflow._id, userObjectId, role);
+				});
 		})
 		.then((success: boolean) => {
 			if (success) {
