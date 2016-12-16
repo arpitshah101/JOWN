@@ -69,6 +69,8 @@
 	 </paper-header-panel>
 
 		<iron-ajax
+		<iron-ajax
+		id="getWorkflowsAjax"
 		auto url="/instances/getWorkflows"	
 		params='{"role":"Student"}'
 		handle-as="json"
@@ -86,6 +88,7 @@
 
 
 	<iron-ajax
+		id="getUsersAjax"
 		auto url="/users/getAllUsers"
 		handle-as="json"
 		last-response="{{users}}">
@@ -135,7 +138,16 @@
 				type:Number,
 				value: 0,
 			},
+			userrole:{
+				type:String,
+				value:"Student",
+			}
 		},	
+		ready: function(){
+				this.$.getWorkflowsAjax.params = {"role": this.userrole};
+				this.$.getWorkflowsAjax.generateRequest();
+				this.$.getUsersAjax.generateRequest();
+			},
 		deleteUser1:function(e){
 			var model = e.model;
 			var id=e.model.item.userId;
@@ -146,7 +158,7 @@
 			}
 			this.$.deleteUserAjax.body={"userObj": {"userId": id}};
 			this.$.deleteUserAjax.generateRequest();
-			this.$.userlist.render();
+			this.$.getUsersAjax.generateRequest();
 		},
 		handleDeleteUserResponse:function(request){
 			alert(request.detail.response.success);	
@@ -163,9 +175,12 @@
 		},
 		tab1: function(){
 			selected=0;
+			this.$.getWorkflowsAjax.params = {"role": this.userrole};
+			this.$.getWorkflowsAjax.generateRequest();
 		},
 		tab2:function(){
 			selected=1;
+			this.$.getUsersAjax.generateRequest();
 		}
   	});
 	</script>
