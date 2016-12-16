@@ -4,6 +4,7 @@ import * as mongoose from "mongoose";
 import * as Instance from "../models/Instance";
 import * as User from "../models/User";
 import * as Workflow from "../models/Workflow";
+import { DefParser } from "../modules/defParser";
 import { InstanceManager } from "../modules/instanceManager";
 import { UserManager } from "../modules/userManager";
 
@@ -118,6 +119,27 @@ router.post("/createNewInstance", (req: Request, res: Response, next) => {
 				message: `An error occurred. Please try again.`,
 				success: false,
 			});
+		})
+		.then(() => {
+			next();
+		});
+});
+
+router.post("/createNewWorkflow", (req: Request, res: Response, next) => {
+	let xml = req.body.xml;
+
+	DefParser.parse(xml)
+		.then((parsedSuccessfully: boolean) => {
+			if (parsedSuccessfully) {
+				res.json(parsedSuccessfully);
+			}
+			else {
+				res.json(parsedSuccessfully);
+			}
+		})
+		.catch((reason) => {
+			console.log(reason);
+			res.json({success: false, message: "Could create a workflow!"});
 		})
 		.then(() => {
 			next();
