@@ -223,9 +223,7 @@ export class DefParser {
 			switch (child.name) {
 				case "action":
 				case "condition":
-					if (!state[child.name]) {
-						state[child.name] = child.content;
-					}
+					state[child.name] = child.content;
 					break;
 				case "transitions":
 					for (let transition of child.children) {

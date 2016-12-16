@@ -175,7 +175,7 @@ export class PreDefTasks {
 						return UserManager.getUser({ _id: userObjectId });
 					})
 					.then((user: User.IDocument) => {
-						console.log(`Found instance creator to be ${user.userId}}`);
+						console.log(`Found instance creator to be ${user.userId}`);
 						resolve(user);
 					});
 			}
@@ -190,7 +190,8 @@ export class PreDefTasks {
 						// tslint:disable-next-line:no-eval
 						// return eval("formObject." + propName);
 						// tslint:disable-next-line:no-string-literal
-						return formObject["formName"];
+						console.log(`\n\n${JSON.stringify(formObject.data)}\n\n`);
+						return formObject.data[propName];
 					})
 					.then((value: string) => {
 						console.log(`${userId} evaluated to ${value}`);

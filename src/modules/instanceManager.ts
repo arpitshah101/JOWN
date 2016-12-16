@@ -300,7 +300,7 @@ export class InstanceManager {
 		console.log(`Processing the active state: ${JSON.stringify(state)}`);
 		ConditionParser.prototype.parseAndEvaluate(state.condition, instanceId)
 			.then((value: boolean) => {
-				console.log(`Active state ${state.name} condition was evaluated to {value}`);
+				console.log(`Active state ${state.name} condition ${state.condition} was evaluated to ${value}`);
 				if (value) {
 					// process action
 					TaskRunner.run(state.action, instanceId);
@@ -361,7 +361,7 @@ export class InstanceManager {
 						ConditionParser.prototype.parseAndEvaluate(transition.condition, instanceId)
 							.then((value: boolean) => {
 								if (value) {
-									console.log(`transition ${transition} evaluated to ${value}`);
+									console.log(`transition ${JSON.stringify(transition)} evaluated to ${value}\n`);
 									State.model.findOne({ name: transition.dest, workflowId: instance.workflowId }).exec()
 										.then((state: State.IDocument) => {
 											resolve(state);
@@ -375,7 +375,7 @@ export class InstanceManager {
 				});
 			})
 			.then((states: State.IDocument[]) => {
-				console.log(`Adding the following states to the active list:\n${JSON.stringify(states)}`);
+				console.log(`Adding the following states to the active list:\n${JSON.stringify(states)}\n`);
 				for (let state of states) {
 					if (state && instanceDoc.activeStates.indexOf(state._id) < 0) {
 						console.log(`Actually adding state ${state}`);
