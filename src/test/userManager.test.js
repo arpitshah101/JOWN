@@ -84,7 +84,7 @@ describe("#UserManager", function () {
 			});
 	});
 
-	describe("#createUser", function () {
+	describe.only("#createUser", function () {
 		testUsers.forEach(function (testUser){
 			it("successfully creates a user when account doesn't already exist", function (done) {
 				UserManager.createUser(testUser.userName, testUser.userEmail, testUser.userId, testUser.password, testUser.roles)

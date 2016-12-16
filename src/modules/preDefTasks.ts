@@ -24,7 +24,7 @@ export class PreDefTasks {
 		let output: string = args.reduce(
 			(prev: string, curr: string) => prev.concat((prev.length > 0) ? " " + curr : curr), "");
 		output.substring(0, output.length - 1);
-		console.log(output);
+		// console.log(output);
 		return output;
 	}
 
@@ -45,7 +45,7 @@ export class PreDefTasks {
 		let formData: FormData.IDocument;
 		let user: User.IDocument;
 
-		console.log(`Received command to assign ${formAlias} to ${userId}`);
+		// console.log(`Received command to assign ${formAlias} to ${userId}`);
 
 		return new Bluebird<boolean>((resolve, reject) => {
 			// search for instance
@@ -121,13 +121,13 @@ export class PreDefTasks {
 				};
 
 				// send mail with defined transport object
-				// transporter.sendMail(mailOptions, (error, info) => {
-				// 	if (error) {
-				// 		return console.error(error);
-				// 	}
-				// 	console.log(`Email sent to ${emailAddr} with the following message:\n\t${message}\nResponse: ${info.response}`);
-				// });
-				console.log(`Email would be sent to ${emailAddr} with the following message:\n\t${message}`);
+				transporter.sendMail(mailOptions, (error, info) => {
+					if (error) {
+						return console.error(error);
+					}
+					// console.log(`Email sent to ${emailAddr} with the following message:\n\t${message}\nResponse: ${info.response}`);
+				});
+				// console.log(`Email would be sent to ${emailAddr} with the following message:\n\t${message}`);
 			});
 
 	}
@@ -157,12 +157,12 @@ export class PreDefTasks {
 	}
 
 	private static getTargetUser(userId: string, instanceId: mongoose.Types.ObjectId): Bluebird<User.IDocument> {
-		console.log(`Trying to find a user based on ${userId}`);
+		// console.log(`Trying to find a user based on ${userId}`);
 		return new Bluebird<User.IDocument>((resolve, reject) => {
 			if (userId.indexOf("USERS.") > -1) {
 				UserManager.getUser({userId: userId.substring(userId.indexOf("USERS.") + 6)})
 					.then((user: User.IDocument) => {
-						console.log(`User found as ${JSON.stringify(user)}`);
+						// console.log(`User found as ${JSON.stringify(user)}`);
 						resolve(user);
 					});
 			}
@@ -175,7 +175,7 @@ export class PreDefTasks {
 						return UserManager.getUser({ _id: userObjectId });
 					})
 					.then((user: User.IDocument) => {
-						console.log(`Found instance creator to be ${user.userId}`);
+						// console.log(`Found instance creator to be ${user.userId}`);
 						resolve(user);
 					});
 			}
@@ -183,23 +183,23 @@ export class PreDefTasks {
 				let formName = userId.substring(0, userId.indexOf("."));
 				let propName = userId.substring(userId.indexOf(".") + 1);
 
-				console.log(`Attempting to find a user corresponding to ${propName} in form ${formName}`);
+				// console.log(`Attempting to find a user corresponding to ${propName} in form ${formName}`);
 
 				DataManager.getFormData(instanceId, formName)
 					.then((formObject: any) => {
 						// tslint:disable-next-line:no-eval
 						// return eval("formObject." + propName);
 						// tslint:disable-next-line:no-string-literal
-						console.log(`\n\n${JSON.stringify(formObject.data)}\n\n`);
+						// console.log(`\n\n${JSON.stringify(formObject.data)}\n\n`);
 						return formObject.data[propName];
 					})
 					.then((value: string) => {
-						console.log(`${userId} evaluated to ${value}`);
-						console.log(`\tTrying to find user with userId: ${value}`);
+						// console.log(`${userId} evaluated to ${value}`);
+						// console.log(`\tTrying to find user with userId: ${value}`);
 						return UserManager.getUser({userId: value});
 					})
 					.then((user: User.IDocument) => {
-						console.log(`Found a user from userId: ${userId} as ${user.userId}`);
+						// console.log(`Found a user from userId: ${userId} as ${user.userId}`);
 						resolve(user);
 					});
 			}

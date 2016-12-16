@@ -214,7 +214,7 @@
 
 		<state id="2.SEND_SPN_STUDENT">
 			<condition>directorForm.directorApproval == "true"</condition>
-			<action>email INSTANCE.creator "Your SPN is "+secretaryForm.spn</action>
+			<action>email INSTANCE.creator "Your SPN is  "+secretaryForm.spn</action>
 		</state>
 
 		<state id="2.SEND_SPN_REJECTION">

@@ -167,7 +167,7 @@ export class UserManager {
 	 */
 	public static userExists(userId: string, password: string, role: string): Bluebird<User.IDocument> {
 		return new Bluebird<User.IDocument>((resolve, reject) => {
-			console.log(`UserId: ${userId}, Password: ${password}, Role: ${role}`);
+			// console.log(`UserId: ${userId}, Password: ${password}, Role: ${role}`);
 			User.model.findOne({ userId, password, roles: role})
 				.exec()
 				.then((doc: User.IDocument) => {

@@ -167,9 +167,9 @@ export class InstanceManager {
 	 * Function to retrieve the available workflows for a role
 	 */
 	public static getWorkflows(role: string): Bluebird<Workflow.IDocument[]> {
-		console.log("getWorkflows @@@@ :" + role);
+		// console.log("getWorkflows @@@@ :" + role);
 		return new Bluebird<Workflow.IDocument[]>((resolve, reject) => {
-			console.log("getWorkflows @@ :" + role);
+			// console.log("getWorkflows @@ :" + role);
 			Workflow.model.find({groups: role}).exec()
 			.then((workflow: Workflow.IDocument[]) => {
 				if(!workflow) {
@@ -203,7 +203,7 @@ export class InstanceManager {
 
 	public static addInstanceMember(instance: Instance.IDocument, userDoc: User.IDocument,
 		role: string): Bluebird<Instance.IDocument> {
-		console.log(`Adding the user ${userDoc.userId} as a member of an instance`);
+		// console.log(`Adding the user ${userDoc.userId} as a member of an instance`);
 		// verify that the user is a member of the instance. if not, add the user
 		let alreadyAdded = instance.members.some((member: Instance.IMember) => {
 			if (member.user.equals(userDoc._id)) {
@@ -213,18 +213,18 @@ export class InstanceManager {
 			return false;
 		});
 
-		console.log(`\t${instance.members}`);
+		// console.log(`\t${instance.members}`);
 
 		if (!alreadyAdded) {
 			instance.members.push(<Instance.IMember> {
 				user: userDoc._id,
 				role,
 			});
-			console.log(`\tAdded user to instance`);
-			console.log(`\t${instance.members}`);
+			// console.log(`\tAdded user to instance`);
+			// console.log(`\t${instance.members}`);
 			return instance.save();
 		}
-		console.log(`\tThe user was already added with the given role & userId`);
+		// console.log(`\tThe user was already added with the given role & userId`);
 		return Bluebird.resolve(instance);
 	}
 
@@ -255,13 +255,13 @@ export class InstanceManager {
 			})
 			.then((events: Event.IDocument[]) => {
 				if (!events) {
-					console.log(`No events to parse at the moment...`);
+					// console.log(`No events to parse at the moment...`);
 					return;
 				}
-				console.log(`Found the following events:\n\t${JSON.stringify(events)}`);
+				// console.log(`Found the following events:\n\t${JSON.stringify(events)}`);
 				Bluebird.each(events, (event: Event.IDocument) => {
 					if (event.condition !== "START") {
-						console.log(`Parsing the event: ${event}`);
+						// console.log(`Parsing the event: ${event}`);
 						ConditionParser.prototype.parseAndEvaluate(event.condition, instanceId)
 							.then((value: boolean) => {
 								if (value) {
@@ -297,10 +297,10 @@ export class InstanceManager {
 		 * 		remove self state from instance's active states
 		 * 		process transitions
 		 */
-		console.log(`Processing the active state: ${JSON.stringify(state)}`);
+		// console.log(`Processing the active state: ${JSON.stringify(state)}`);
 		ConditionParser.prototype.parseAndEvaluate(state.condition, instanceId)
 			.then((value: boolean) => {
-				console.log(`Active state ${state.name} condition ${state.condition} was evaluated to ${value}`);
+				// console.log(`Active state ${state.name} condition ${state.condition} was evaluated to ${value}`);
 				if (value) {
 					// process action
 					TaskRunner.run(state.action, instanceId);
@@ -313,11 +313,11 @@ export class InstanceManager {
 	private static deactivateState(stateId: mongoose.Types.ObjectId, instanceId: mongoose.Types.ObjectId) {
 		Instance.model.findOne(instanceId).exec()
 			.then((instance: Instance.IDocument) => {
-				console.log(`Deactivating state: ${stateId}`);
+				// console.log(`Deactivating state: ${stateId}`);
 				let index = instance.activeStates.indexOf(stateId);
 				if (index > -1) {
 					instance.activeStates.splice(index, 1);
-					console.log(`Instance after removing a state: ${JSON.stringify(instance)}`);
+					// console.log(`Instance after removing a state: ${JSON.stringify(instance)}`);
 					instance.save()
 						.catch((reason) => {
 							//
@@ -365,7 +365,7 @@ export class InstanceManager {
 						ConditionParser.prototype.parseAndEvaluate(transition.condition, instanceId)
 							.then((value: boolean) => {
 								if (value) {
-									console.log(`transition ${JSON.stringify(transition)} evaluated to ${value}\n`);
+									// console.log(`transition ${JSON.stringify(transition)} evaluated to ${value}\n`);
 									State.model.findOne({ name: transition.dest, workflowId: instance.workflowId }).exec()
 										.then((state: State.IDocument) => {
 											resolve(state);
@@ -379,10 +379,10 @@ export class InstanceManager {
 				});
 			})
 			.then((states: State.IDocument[]) => {
-				console.log(`Adding the following states to the active list:\n${JSON.stringify(states)}\n`);
+				// console.log(`Adding the following states to the active list:\n${JSON.stringify(states)}\n`);
 				for (let state of states) {
 					if (state && instanceDoc.activeStates.indexOf(state._id) < 0) {
-						console.log(`Actually adding state ${state}`);
+						// console.log(`Actually adding state ${state}`);
 						instanceDoc.activeStates.push(state._id);
 					}
 				}

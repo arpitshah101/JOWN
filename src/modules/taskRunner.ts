@@ -17,7 +17,7 @@ export class TaskRunner {
 				return Bluebird.resolve(PreDefTasks.assign(instanceId, args[0], args[1], args[2]));
 			}
 			else if (cmdName === "email") {
-				console.log(`email command arguments: ${JSON.stringify(args)}`);
+				// console.log(`email command arguments: ${JSON.stringify(args)}`);
 				return Bluebird.reduce(args.slice(1), (message: string, current: string) => {
 					return new Bluebird<string>((resolve, reject) =>  {
 						if (current.charAt(0) === "+") {

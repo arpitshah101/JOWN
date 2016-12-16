@@ -187,8 +187,8 @@ export class ConditionParser {
 		let conditionArray: any[];
 		let evaluationString: String = "";
 
-		console.log(`EXECUTING PARSE & EVALUATE:`);
-		console.log(`\texpression: ${expression}`);
+		// console.log(`EXECUTING PARSE & EVALUATE:`);
+		// console.log(`\texpression: ${expression}`);
 
 		if (!expression) {
 			return Bluebird.resolve(false);
@@ -201,17 +201,17 @@ export class ConditionParser {
 		// console.log("expression @ parseAndEval: " + expression);
 		let expressionArray = this.deconstructCondition(expression);
 
-		console.log(`\texpressionArray: ${expressionArray}`);
+		// console.log(`\texpressionArray: ${expressionArray}`);
 
 		return new Bluebird<boolean>((resolve, reject) => {
 			Bluebird.reduce(expressionArray, (total: String, current: String) => {
-				console.log(`\n\tCurrent value of totalExpression: ${total}`);
+				// console.log(`\n\tCurrent value of totalExpression: ${total}`);
 				if (current !== "&&" && current !== "||") {
 					conditionArray = this.parseCondition(current);
 					total += " ";
 					return this.evaluateExpression(conditionArray, instanceId)
 						.then((value: any) => {
-							console.log(`\tExpression evaluated to ${value}`);
+							// console.log(`\tExpression evaluated to ${value}`);
 							return total += value;
 						});
 				}
@@ -222,10 +222,10 @@ export class ConditionParser {
 				.then((value: String) => { evaluationString = value; })
 				.then(() => {
 					// console.log("evaluationString @ EVAL: " + evaluationString);
-					console.log(`Evaluating string using eval: ${evaluationString}`);
+					// console.log(`Evaluating string using eval: ${evaluationString}`);
 					// tslint:disable-next-line:no-eval
 					res = eval("" + evaluationString);
-					console.log(`Evaluated to ${res}`);
+					// console.log(`Evaluated to ${res}`);
 					resolve(res);
 				});
 		});
@@ -273,7 +273,7 @@ export class ConditionParser {
 					console.log("2. in promise: expressionArray[0]: " + expressionArray[0]);
 					// if (expressionArray.indexOf("_$") === -1) {
 
-					console.log(`\n\texpressionArray: ${expressionArray}\n`);
+					// console.log(`\n\texpressionArray: ${expressionArray}\n`);
 
 					if (expressionArray[1] !== "_$") {
 						console.log("3. indexOf(_$) === -1, before fieldValue: " + fieldValue);

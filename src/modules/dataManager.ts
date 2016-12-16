@@ -77,18 +77,18 @@ export class DataManager {
 			let formName = expression.substring(0, expression.indexOf("."));
 			let propName = expression.substring(expression.indexOf(".") + 1);
 
-			console.log(`Attempting to find a user corresponding to ${propName} in form ${formName}`);
+			// console.log(`Attempting to find a user corresponding to ${propName} in form ${formName}`);
 
 			DataManager.getFormData(instanceId, formName)
 				.then((formObject: any) => {
 					// tslint:disable-next-line:no-eval
 					// return eval("formObject." + propName);
 					// tslint:disable-next-line:no-string-literal
-					console.log(`\n\n${JSON.stringify(formObject.data)}\n\n`);
+					// console.log(`\n\n${JSON.stringify(formObject.data)}\n\n`);
 					return formObject.data[propName];
 				})
 				.then((value: string) => {
-					console.log(`${expression} evaluated to ${value}`);
+					// console.log(`${expression} evaluated to ${value}`);
 					resolve(value);
 				});
 		});
