@@ -86,7 +86,7 @@ export class InstanceManager {
 						resolve(true);
 					}
 					else {
-						reject("Instance doesn't exist.");
+						resolve(false);
 					}
 				})
 				.catch((reason: any) => {
