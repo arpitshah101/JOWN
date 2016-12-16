@@ -184,10 +184,8 @@
 				var model=e.model;
 				var name =e.model.item.name;
 				alert(name);
-				alert("before");
 				this.$.createNewInstanceAjax.body = {"workflowName": name,"userId": this.userId, "role": this.userrole};
 				this.$.createNewInstanceAjax.generateRequest();
-				alert("123");
 			},
 			handleCreateNewResponse: function(request) {
 				alert(request);
@@ -213,7 +211,10 @@
 				localStorage.clear();
 				location.href = "index.html";
 			},
-			naviForm: function(){
+			naviForm: function(e){
+				var model = e.model;
+				localStorage.setItem("instanceId",model.item._id);
+				alert(model.item._id);
 				var role=localStorage.getItem("userRole");
 				if(role=="Student"){
 					location.href = "/wf-spn-stu-page.html";

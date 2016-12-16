@@ -6,6 +6,7 @@
 <link rel="import" href="/bower_components/paper-button/paper-button.html">
 <link rel="import" href="/bower_components/paper-card/paper-card.html">
 <link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 
@@ -112,6 +113,7 @@
 		<paper-card id="student-form" heading="Student Form">
 			<div class="card-content">
                 <!-- Student -->
+				<b>Student form below</b>
 				<paper-input id="firstNameInput" label="First name" maxlength="50" value={{firstName}}></paper-input>
 				<paper-input id="lastNameInput" label="Last name" maxlength="50" value={{lastName}}></paper-input>
 				<paper-input id="middleInitialsInput" label="Middle initials" maxlength="50" value={{middleInitials}}></paper-input>
@@ -137,12 +139,15 @@
 					</paper-listbox>
 				</paper-dropdown-menu>
                 <!--  Instructor -->
+				<b>Student form below</b>
                 <paper-input id="instructorApprovalInput" label="Approved by Instructor" maxlength="50" value={{instructorApproval}}></paper-input>
                 <paper-input id="instructorApprovalDateInput" label="Approval Date" maxlength="50" value={{instructorApprovalDate}}></paper-input>
                 <!-- Director -->
+				<b>Student form below</b>
                 <paper-input id="directorApprovalInput" label="Approved by Director" maxlength="50" value={{directorApproval}}></paper-input>
                 <paper-input id="directorApprovalDateInput" label="Approval Date" maxlength="50" value={{directorApprovalDate}}></paper-input>
                 <!-- Secretary -->
+				<b>Secretary form below</b>
                 <paper-input id="spnInput" label="Special Permission #" maxlength="50" value={{spn}}></paper-input>
 
 
