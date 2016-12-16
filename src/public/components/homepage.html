@@ -4,16 +4,13 @@
 <link rel="import" href="/bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="/bower_components/paper-button/paper-button.html">
 <link rel="import" href="/bower_components/paper-card/paper-card.html">
-<link rel="import" href="/bower_components/paper-dialog/paper-dialog.html">
-<link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="/bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="/bower_components/iron-pages/iron-pages.html">
-<link rel="import" href="registration-form.html">
-<link rel="import" href="admin-regis.html">
+<link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../index.html">
 
-<dom-module is="dom-bind" id="admin-home">
+<dom-module id="home-page">
 	<template>
 		<style>	
 		
@@ -25,16 +22,16 @@
 			left:22%;
 		}
 		#item1{
-			position:absolute;
-			left:43%;
-		}
-		#item2{
 			position:relative;
 			left:1%;
 		}
+		#item2{
+			position:relative;
+			left:3%;
+		}
 		#item3{
 			position:relative;
-			left:2%;
+			left:5%;
 		}
 		#card{
 			width:100%;
@@ -45,143 +42,215 @@
 		}
 		#icone{
 			position:relative;
-			left:1%;
+			left:90%;
+
+		}
+		#detailDio{
+			width:70%;
 		}
 		#paper-tabs{
-			width:95%;
-
+			width:85%;
 		}
 
+
 		</style>
-		<paper-dialog id="createUser" modal alwaysOnTop="true">
-		<admin-regis></admin-regis>	
-		</paper-dialog>
+	
+
+	<paper-dialog id="detailDio" modal alwaysOnTop="true">
+			<paper-item >Workflow Detail</paper-item>
+			<paper-item value="{{workflowname}}">Name: {{workflowname}}</paper-item>
+			<paper-item value="{{workflowform}}">Form: {{workflowform}}</paper-item>
+			<paper-item value="{{workflowgroups}}">Groups: {{workflowgroups}}</paper-item>
+			<paper-button dialog-dismiss autofocus>Cancel</paper-button>
+		</div>
+    </paper-dialog>
 
 	<paper-header-panel class="red">
 		<paper-toolbar>
+        <div class="paper-header">Just Our Workflow Notation</div>
 		<paper-tabs id="paper-tabs" selected="{{selected}}" >
-			<paper-tab on-tap="tab1">Manage Workflows</paper-tab>
-			<paper-tab on-tap="tab2">Manage Users</paper-tab>
+			<paper-tab on-tap="tab1">Workflows</paper-tab>
+			<paper-tab on-tap="tab2">All Instances</paper-tab>
 		<paper-tabs>
-		<paper-item id="item2">Admin</paper-item>
+		
+		<paper-item id="item1" value={{userId}}>{{userId}}</paper-item>
+		<paper-item id="item2" value={{userrole}}>{{userrole}}</paper-item>
 		<paper-button id="item3" on-tap="logout">Logout</paper-button>
 		</paper-toolbar>
-	 </paper-header-panel>
+    </paper-header-panel>
 
-		<iron-ajax
-		<iron-ajax
+	<iron-ajax 
+		id="getInstancesAjax"
+		auto url="/instances/getInstances"
+		handle-as="json"
+		last-response={{instanceList}}>
+	</iron-ajax>
+
+	<iron-ajax
+		id="createNewInstanceAjax"
+		url="/instances/createNewInstance"
+		method="POST"
+		handle-as="json"
+		content-type="application/json"
+		on-response="handleCreateNewResponse">
+		</iron-ajax>
+
+	<iron-ajax
 		id="getWorkflowsAjax"
 		auto url="/instances/getWorkflows"	
-		params='{"role":"Student"}'
 		handle-as="json"
 		last-response={{workflows}}>
 		</iron-ajax>
 
-	<iron-ajax
-		id="deleteUserAjax"
-		url="/users/deleteUser"
-		method="POST"
-		handle-as="json"
-		content-type="application/json"
-		on-response="handleDeleteUserResponse">
-	</iron-ajax>
-
-
-	<iron-ajax
-		id="getUsersAjax"
-		auto url="/users/getAllUsers"
-		handle-as="json"
-		last-response="{{users}}">
-	</iron-ajax>
-
-	<iron-pages id="iron-pages" selected="{{selected}}">
+		<iron-pages id="iron-pages" selected="{{selected}}">
 	<div>
 	<paper-listbox id="mylistbox"class="dropdown-content">
 		<template is="dom-repeat" items="[[workflows]]">
 			<paper-card id="card">
-			<paper-item id="instance" value="[[item.id]]" on-tap="workflowDetail">Workflow:[[item.name]]</b><br>Owner:[[item.owner]]<br>Created: [[item.created]]
+			<paper-item id="instance" value="[[item.id]]" on-tap="workflowDetail">Workflow:[[item.name]]</b><br>Created: [[item.created]]
 			<!--<paper-icon-button id="icond" value="[[item]]" src="/image/delete.png" on-tap="deleteWorkflow"></paper-icon-button>-->
 			</paper-item>
-			<!--<paper-icon-button id="formicon" src="/image/back.png" on-tap="newInstance"></paper-icon-button>-->
+			<paper-icon-button id="formicon" src="/image/back.png" on-tap="newInstance"></paper-icon-button>
 			<!--<paper-icon-button id="icone" src="/image/edit.png" on-tap="checkInstances"></paper-icon-button>
 			<paper-icon-button id="icond" src="/image/delete.png" on-tap="newInstance"></paper-icon-button>-->
 			
 			</paper-card>
 		</template>
 	</paper-listbox>
-	<paper-icon-button id="icone" src="/image/edit.png" on-tap="createUser1"></paper-icon-button>
 	</div>
 
-	<div>	<div>
+	<div>
+	<div>
 	<paper-listbox id="mylistbox"class="dropdown-content">
-		<template id="userlist" is="dom-repeat" items="{{users.data}}">
+		<template is="dom-repeat" items="[[instanceList]]">
 			<paper-card id="card">
-			<paper-item id="instance" value="[[item.id]]" >User Name:[[item.userName]]<br>User Id:[[item.userId]]
-			<paper-icon-button id="icond" value="[[item]]" src="/image/delete.png" on-tap="deleteUser1"></paper-icon-button>
+			<paper-item id="instance" value="[[item.id]]" on-tap="naviForm">Creator:[[item.creator]]</b><br>Workflow Id:[[item.workflowId]]<br>Statue:[[item.status]]<br>Created on:[[item.created]]
+			<!--<paper-icon-button id="icond" value="[[item]]" src="/image/delete.png" on-tap="deleteWorkflow"></paper-icon-button>-->
 			</paper-item>
 			
 			</paper-card>
 		</template>
 	</paper-listbox>
-			<paper-icon-button id="icone" src="/image/edit.png" on-tap="createUser1"></paper-icon-button>
-
-	</div></div>
+	</div>
+	</div>
 
 	</iron-pages>
-	</template>
-	<script>
-	Polymer({
-		is: "admin-home",
 
-		properties:{
-			selected:{
-				type:Number,
-				value: 0,
+	
+	</template>
+
+	<script>
+
+	 Polymer({
+            is: "home-page",
+			properties: {
+				userId: {
+					type: String,
+					value: function(){return localStorage.getItem("userId");},
+				},
+
+				selected:{
+					type: Number,
+					value:0,
+				},
+					
+				userrole: {
+					type: String,
+					value: function(){return localStorage.getItem("userRole");},
+
+				},
+				workflowname: {
+					type: String,
+					value:function(){return {};}
+				},
+				workflowform:{
+					type:String,
+					value:function(){return{};}
+				},
+				workflowgroups:{
+					type:String,
+					value:function(){return{};}
+				},
+				 ajaxParams:{
+				 	type:String,
+					computed: 'getParams(userId,userrole)'
+				 },
+				 workflowId:{
+					 type:Number,
+					 value:"123456123456"
+				 },
 			},
-			userrole:{
-				type:String,
-				value:"Student",
-			}
-		},	
-		ready: function(){
+			ready: function(){
 				this.$.getWorkflowsAjax.params = {"role": this.userrole};
 				this.$.getWorkflowsAjax.generateRequest();
-				this.$.getUsersAjax.generateRequest();
+				this.$.getInstancesAjax.params = {"userId": this.userId,"role": this.userrole};
+				this.$.getInstancesAjax.generateRequest();
 			},
-		deleteUser1:function(e){
-			var model = e.model;
-			var id=e.model.item.userId;
-			alert(e.model.item.userId);	
-			if(id=="admin"){
-				alert("Deleting Admin is not allowed");
-				return;
-			}
-			this.$.deleteUserAjax.body={"userObj": {"userId": id}};
-			this.$.deleteUserAjax.generateRequest();
-			this.$.userlist.render();
-		},
-		handleDeleteUserResponse:function(request){
-			alert(request.detail.response.success);	
-			alert(request.detail.response.message);
-			
-		},
-		logout: function() {
+			newInstance: function(e){
+				var model=e.model;
+				var name =e.model.item.name;
+				alert(name);
+				this.$.createNewInstanceAjax.body = {"workflowName": name,"userId": this.userId, "role": this.userrole};
+				this.$.createNewInstanceAjax.generateRequest();
+			},
+			handleCreateNewResponse: function(request) {
+				alert(request);
+				if(request.detail.response.success === true) {
+					alert=("create instance successfully");
+				}
+			},
+
+			getParams: function(userId,userrole){
+				return {userId: userId, 
+						role: userrole
+					};
+			},
+
+			tab1: function(){
+				selected=0;
+				this.$.getWorkflowsAjax.params = {"role": this.userrole};
+				this.$.getWorkflowsAjax.generateRequest();
+			},
+			tab2:function(){
+				selected=1;
+				this.$.getInstancesAjax.params = {"userId": this.userId,"role": this.userrole};
+				this.$.getInstancesAjax.generateRequest();
+			},
+            logout: function() {
+				alert("logging out " + this.userId);
 				localStorage.clear();
 				location.href = "index.html";
 			},
-		createUser1:function(){
+			naviForm: function(e){
+				var model = e.model;
+				localStorage.setItem("instanceId",model.item._id);
+				// alert(model.item._id);
+				var role=localStorage.getItem("userRole");
+				if(role=="Student"){
+					location.href = "/wf-spn-stu-page.html";
+				}
+			},
+			deleteWorkflow: function(e){
+				var model = e.model;		
+				localStorage.setItem("id",model.item._id);
+				localStorage.setItem("name",model.item.name);
+				alert(localStorage.getItem("id"));
+			 },
+			checkInstances: function(){
+				location.href ="/instance.html";
+			},
+			workflowDetail: function(e){
+				var model=e.model;
+				this.workflowname=model.item.name;
+				this.workflowform=model.item.forms;
+				this.workflowgroups=model.item.groups;
+				detailDio.open();
+			}
+			
+        });
 
-			createUser.open();
-		},
-		tab1: function(){
-			selected=0;
-			this.$.getWorkflowsAjax.params = {"role": this.userrole};
-			this.$.getWorkflowsAjax.generateRequest();
-		},
-		tab2:function(){
-			selected=1;
-			this.$.getUsersAjax.generateRequest();
-		}
-  	});
 	</script>
+
+
 </dom-module>
+
